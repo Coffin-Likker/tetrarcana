@@ -1,0 +1,75 @@
+[gd_scene load_steps=2 format=3 uid="uid://wan2isystoxp"]
+
+[ext_resource type="Script" path="res://scripts/OptionsMenu.gd" id="1_5qkym"]
+
+[node name="Options Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5qkym")
+
+[node name="OptionsVBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -184.0
+offset_right = 184.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MasterVolume" type="VBoxContainer" parent="OptionsVBox"]
+layout_mode = 2
+size_flags_vertical = 6
+alignment = 1
+
+[node name="Label" type="Label" parent="OptionsVBox/MasterVolume"]
+layout_mode = 2
+text = "Master"
+horizontal_alignment = 1
+
+[node name="MasterHSlider" type="HSlider" parent="OptionsVBox/MasterVolume"]
+layout_mode = 2
+max_value = 1.0
+step = 0.1
+
+[node name="MusicVolume" type="VBoxContainer" parent="OptionsVBox"]
+layout_mode = 2
+size_flags_vertical = 6
+alignment = 1
+
+[node name="Label" type="Label" parent="OptionsVBox/MusicVolume"]
+layout_mode = 2
+text = "Music"
+horizontal_alignment = 1
+
+[node name="MusicSlider" type="HSlider" parent="OptionsVBox/MusicVolume"]
+layout_mode = 2
+max_value = 1.0
+step = 0.1
+
+[node name="SFXVolume" type="VBoxContainer" parent="OptionsVBox"]
+layout_mode = 2
+size_flags_vertical = 6
+alignment = 1
+
+[node name="Label" type="Label" parent="OptionsVBox/SFXVolume"]
+layout_mode = 2
+text = "SFX"
+horizontal_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="OptionsVBox/SFXVolume"]
+layout_mode = 2
+max_value = 1.0
+step = 0.1
+
+[node name="Back" type="Button" parent="OptionsVBox"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Back"
+
+[connection signal="pressed" from="OptionsVBox/Back" to="." method="_on_back_pressed"]
