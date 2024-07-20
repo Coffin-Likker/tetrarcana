@@ -11,11 +11,18 @@ const EMPTY_TILE = Vector2i(0, 0)
 const PLAYER_1_TILE = Vector2i(16, 5)
 const GHOST_TILE = Vector2i(16, 0)
 
+# Layer IDs
+const BOARD_LAYER = 0
+const GHOST_LAYER = 1
+
 var current_ghost_position = Vector2i(0, 0)
-var ghost_tiles = []
 
 func _ready():
 	set_process_unhandled_input(true)
+	print("TileMap initialized. Ready to process input.")
+	
+	if get_layers_count() < 2:
+		add_layer(GHOST_LAYER)
 
 func _input(event):
 	if not event is InputEventMouseButton or not event.pressed:
@@ -25,10 +32,8 @@ func _input(event):
 	_on_tile_clicked(event.position, event.button_index)
 
 func _unhandled_input(event):
-	if not event is InputEventMouseMotion:
-		return
-	
-	update_ghost_piece()
+	if event is InputEventMouseMotion:
+		update_ghost_piece()
 
 func _on_tile_clicked(click_position: Vector2, button_index: int):
 	var base_position = local_to_map(to_local(click_position))
@@ -44,16 +49,16 @@ func _on_tile_clicked(click_position: Vector2, button_index: int):
 
 func place_piece(base_position: Vector2i, shape: Array, tile: Vector2i):
 	print("Placing piece at base position: ", base_position)
-	clear_ghost_piece()
 	for offset in shape:
 		var tile_position = base_position + offset
 		print("Setting tile at position: ", tile_position)
-		set_cell(0, tile_position, 0, tile)  # Assuming 0 is the board tileset ID
+		set_cell(BOARD_LAYER, tile_position, 0, tile)
+	print("Piece placed. Updating ghost piece.")
 	update_ghost_piece()
 
 func clear_connected_piece(start_position: Vector2i):
 	print("Starting to clear connected piece from position: ", start_position)
-	var start_tile = get_cell_atlas_coords(0, start_position)
+	var start_tile = get_cell_atlas_coords(BOARD_LAYER, start_position)
 	print("Start tile atlas coords: ", start_tile)
 	if start_tile == EMPTY_TILE:
 		print("Start tile is empty, returning")
@@ -70,11 +75,11 @@ func clear_connected_piece(start_position: Vector2i):
 			continue
 		
 		checked[current_position] = true
-		var current_tile = get_cell_atlas_coords(0, current_position)
+		var current_tile = get_cell_atlas_coords(BOARD_LAYER, current_position)
 		print("Current tile atlas coords: ", current_tile)
 		if current_tile == start_tile:
 			print("Clearing tile at position: ", current_position)
-			set_cell(0, current_position, 0, EMPTY_TILE)
+			set_cell(BOARD_LAYER, current_position, 0, EMPTY_TILE)
 			for direction in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
 				var next_position = current_position + direction
 				if next_position not in checked:
@@ -82,25 +87,25 @@ func clear_connected_piece(start_position: Vector2i):
 					print("Added adjacent tile to check: ", next_position)
 		
 		print("Finished clearing connected piece")
+		print("Updating ghost pieces after clearing")
 		update_ghost_piece()
 
 func update_ghost_piece():
-	clear_ghost_piece()
+	print("Updating ghost piece")
 	var mouse_position = get_global_mouse_position()
 	var base_position = local_to_map(to_local(mouse_position))
 	
 	if base_position != current_ghost_position:
+		print("Ghost position changed from ", current_ghost_position, " to ", base_position)
 		current_ghost_position = base_position
 	
-	ghost_tiles.clear()  # Clear the list of ghost tiles
+	clear_layer(GHOST_LAYER)
+	
+	print("Placing ghost tiles:")
 	for offset in S_SHAPE:
-		var tile_position = current_ghost_position + offset
-		var existing_tile = get_cell_atlas_coords(0, tile_position)
-		if existing_tile == EMPTY_TILE:
-			set_cell(0, tile_position, 0, GHOST_TILE)
-			ghost_tiles.append(tile_position)  # Add to the list of ghost tiles
-
-func clear_ghost_piece():
-	for tile_position in ghost_tiles:
-		set_cell(0, tile_position, 0, EMPTY_TILE)
-	ghost_tiles.clear()  # Clear the list after removing ghost tiles
+			var tile_position = current_ghost_position + offset
+			if get_cell_atlas_coords(BOARD_LAYER, tile_position) == EMPTY_TILE:
+				set_cell(GHOST_LAYER, tile_position, 0, GHOST_TILE)
+				print("Placed ghost tile at ", tile_position)
+			else:
+				print("Cannot place ghost tile at ", tile_position, ". Tile not empty.")
