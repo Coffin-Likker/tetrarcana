@@ -1,20 +1,18 @@
-extends "res://scripts/BaseMenu.gd"
+extends Control
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	$VBoxContainer/Start.grab_focus()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+signal start_game
+signal show_options
+signal quit_game
+
 
 func _on_start_pressed():
-	get_tree().change_scene_to_file("res://scenes/game_manager.tscn")
+	start_game.emit()
 
 
 func _on_options_pressed():
-	change_menu(MenuTypes.Type.OPTIONS)
+	show_options.emit()
 
 
 func _on_quit_to_desktop_pressed():
-	get_tree().quit()
+	quit_game.emit()

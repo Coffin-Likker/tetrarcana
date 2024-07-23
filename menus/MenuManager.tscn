@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://bqwy0lc55ksab"]
+
+[ext_resource type="Script" path="res://scripts/MenuManager.gd" id="1_qcj65"]
+[ext_resource type="AudioStream" uid="uid://cebhn3co8nfvv" path="res://assets/main_menu.wav" id="2_1d223"]
+[ext_resource type="PackedScene" uid="uid://bts3l1tbe6g7j" path="res://menus/MainMenu.tscn" id="3_ebugh"]
+[ext_resource type="PackedScene" uid="uid://wan2isystoxp" path="res://menus/OptionsMenu.tscn" id="4_qi2jo"]
+
+[node name="MenuManager" type="Node"]
+script = ExtResource("1_qcj65")
+
+[node name="MenuMusic" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_1d223")
+autoplay = true
+bus = &"Music"
+
+[node name="MainMenu" parent="." instance=ExtResource("3_ebugh")]
+
+[node name="OptionsMenu" parent="." instance=ExtResource("4_qi2jo")]
+
+[connection signal="quit_game" from="MainMenu" to="." method="_on_main_menu_quit_game"]
+[connection signal="show_options" from="MainMenu" to="." method="_on_main_menu_show_options"]
+[connection signal="start_game" from="MainMenu" to="." method="_on_main_menu_start_game"]
+[connection signal="go_back" from="OptionsMenu" to="." method="_on_options_menu_go_back"]
+
+[editable path="MainMenu"]
+[editable path="OptionsMenu"]

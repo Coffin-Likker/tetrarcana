@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://7nl6ihqdq2a" path="res://assets/board_mockup.jpg" id="1_rv4av"]
 [ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://scenes/game_manager.tscn" id="1_s27cw"]
 
-[node name="Main Scene" type="Node2D"]
+[node name="Main" type="Node2D"]
 
 [node name="TextureRect" type="TextureRect" parent="."]
 offset_left = -1231.0
