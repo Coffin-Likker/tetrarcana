@@ -52,7 +52,7 @@ var grab_bag = []
 
 func _ready():
 	set_process_unhandled_input(true)
-	print("TileMap initialized. Ready to process input.")
+	print_debug("TileMap initialized. Ready to process input.")
 	refill_grab_bag()
 	active_piece = get_next_piece()
 	
@@ -63,7 +63,7 @@ func _input(event):
 	if not event is InputEventMouseButton or not event.pressed:
 		return
 	
-	print("Input event detected: ", event.button_index)
+	print_debug("Input event detected: ", event.button_index)
 	_on_tile_clicked(event.position, event.button_index)
 
 func _process(delta):
@@ -78,32 +78,32 @@ func _unhandled_input(event):
 
 func _on_tile_clicked(click_position: Vector2, button_index: int):
 	var base_position = local_to_map(to_local(click_position))
-	print("Clicked tile position: ", base_position)
+	print_debug("Clicked tile position: ", base_position)
 	
 	match button_index:
 		MOUSE_BUTTON_LEFT:
-			print("Left click detected, placing piece")
+			print_debug("Left click detected, placing piece")
 			place_piece(base_position, PLAYER_1_TILE)
 		MOUSE_BUTTON_RIGHT:
-			print("Right click detected, clearing connected piece")
+			print_debug("Right click detected, clearing connected piece")
 			clear_connected_piece(base_position)
 
 func place_piece(base_position: Vector2i, tile: Vector2i):
-	print("Placing piece at base position: ", base_position)
+	print_debug("Placing piece at base position: ", base_position)
 	for offset in active_piece:
 		var tile_position = base_position + offset
-		print("Setting tile at position: ", tile_position)
+		print_debug("Setting tile at position: ", tile_position)
 		set_cell(BOARD_LAYER, tile_position, 0, tile)
-	print("Piece placed. Updating ghost piece.")
+	print_debug("Piece placed. Updating ghost piece.")
 	active_piece = get_next_piece()
 	update_ghost_piece()
 
 func clear_connected_piece(start_position: Vector2i):
-	print("Starting to clear connected piece from position: ", start_position)
+	print_debug("Starting to clear connected piece from position: ", start_position)
 	var start_tile = get_cell_atlas_coords(BOARD_LAYER, start_position)
-	print("Start tile atlas coords: ", start_tile)
+	print_debug("Start tile atlas coords: ", start_tile)
 	if start_tile == EMPTY_TILE:
-		print("Start tile is empty, returning")
+		print_debug("Start tile is empty, returning")
 		return
 	
 	var to_clear = [start_position]
@@ -111,46 +111,46 @@ func clear_connected_piece(start_position: Vector2i):
 	
 	while not to_clear.is_empty():
 		var current_position = to_clear.pop_back()
-		print("Checking tile at position: ", current_position)
+		print_debug("Checking tile at position: ", current_position)
 		if current_position in checked:
-			print("Tile already checked, skipping")
+			print_debug("Tile already checked, skipping")
 			continue
 		
 		checked[current_position] = true
 		var current_tile = get_cell_atlas_coords(BOARD_LAYER, current_position)
-		print("Current tile atlas coords: ", current_tile)
+		print_debug("Current tile atlas coords: ", current_tile)
 		if current_tile == start_tile:
-			print("Clearing tile at position: ", current_position)
+			print_debug("Clearing tile at position: ", current_position)
 			set_cell(BOARD_LAYER, current_position, 0, EMPTY_TILE)
 			for direction in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
 				var next_position = current_position + direction
 				if next_position not in checked:
 					to_clear.append(next_position)
-					print("Added adjacent tile to check: ", next_position)
+					print_debug("Added adjacent tile to check: ", next_position)
 		
-		print("Finished clearing connected piece")
-		print("Updating ghost pieces after clearing")
+		print_debug("Finished clearing connected piece")
+		print_debug("Updating ghost pieces after clearing")
 		update_ghost_piece()
 
 func update_ghost_piece():
-	print("Updating ghost piece")
+	print_debug("Updating ghost piece")
 	var mouse_position = get_global_mouse_position()
 	var base_position = local_to_map(to_local(mouse_position))
 	
 	if base_position != current_ghost_position:
-		print("Ghost position changed from ", current_ghost_position, " to ", base_position)
+		print_debug("Ghost position changed from ", current_ghost_position, " to ", base_position)
 		current_ghost_position = base_position
 	
 	clear_layer(GHOST_LAYER)
 	
-	print("Placing ghost tiles:")
+	print_debug("Placing ghost tiles:")
 	for offset in active_piece:
 			var tile_position = current_ghost_position + offset
 			if get_cell_atlas_coords(BOARD_LAYER, tile_position) == EMPTY_TILE:
 				set_cell(GHOST_LAYER, tile_position, 0, GHOST_TILE)
-				print("Placed ghost tile at ", tile_position)
+				print_debug("Placed ghost tile at ", tile_position)
 			else:
-				print("Cannot place ghost tile at ", tile_position, ". Tile not empty.")
+				print_debug("Cannot place ghost tile at ", tile_position, ". Tile not empty.")
 				
 func rotate_piece(direction: int):
 	if can_rotate():

@@ -24,9 +24,9 @@ func _ready():
 
 func game_started():
 	game_state = GameState.PLAYING
-	print("game_started", game_state)
+	print_debug("game_started", game_state)
 	current_player = Player.PLAYER_1
-	print("game_started", current_player)
+	print_debug("game_started", current_player)
 	turn_count = 0
 	tile_map.reset()
 
@@ -40,26 +40,26 @@ func end_game():
 			winner_message = "Game Over! Player 2 wins!"
 		WinResult.TIE:
 			winner_message = "Game Over! It's a tie!"
-	print(winner_message)
+	print_debug(winner_message)
 	ui.on_game_over(winner_message)
 
 func go_main_menu():
 	game_state = GameState.MENU
 
 func _on_piece_placed():
-	print("printing the game state", game_state)
+	print_debug("printing the game state", game_state)
 	if game_state != GameState.PLAYING:
 		return
 	end_turn()
 
 func end_turn():
 	turn_count += 1
-	print("Turn " + str(turn_count) + " completed")
+	print_debug("Turn " + str(turn_count) + " completed")
 	if turn_count >= MAX_TURNS:
 		end_game()
 	else:
 		switch_player()
-		print("Turn " + str(turn_count + 1) + " - Player " + str(current_player + 1) + "'s turn")
+		print_debug("Turn " + str(turn_count + 1) + " - Player " + str(current_player + 1) + "'s turn")
 
 func switch_player():
 	current_player = Player.PLAYER_2 if current_player == Player.PLAYER_1 else Player.PLAYER_1
@@ -76,8 +76,8 @@ func determine_winner() -> WinResult:
 			elif cell == tile_map.PLAYER_2_TILE:
 				player2_tiles += 1
 	
-	print("player1_tiles - ", player1_tiles)
-	print("player2_tiles - ", player2_tiles)
+	print_debug("player1_tiles - ", player1_tiles)
+	print_debug("player2_tiles - ", player2_tiles)
 	
 	if player1_tiles > player2_tiles:
 		return WinResult.PLAYER_1_WIN
