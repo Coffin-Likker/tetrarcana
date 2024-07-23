@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=3 uid="uid://dxnnpkjmx71ic"]
+
+[ext_resource type="Script" path="res://improover/scripts/ui.gd" id="1_bbje1"]
+
+[node name="ui" type="CanvasLayer"]
+script = ExtResource("1_bbje1")
+
+[node name="game_over_screen" type="Node2D" parent="."]
+
+[node name="restart_button" type="Button" parent="game_over_screen"]
+offset_left = 569.0
+offset_top = 275.0
+offset_right = 634.0
+offset_bottom = 306.0
+text = "Restart"
+
+[node name="main_menu_button" type="Button" parent="game_over_screen"]
+offset_left = 532.0
+offset_top = 316.0
+offset_right = 681.0
+offset_bottom = 347.0
+text = "Got to main menu"
+
+[node name="game_over_display" type="Node2D" parent="game_over_screen"]
+
+[node name="winner_label" type="Label" parent="game_over_screen/game_over_display"]
+offset_left = 525.0
+offset_top = 248.0
+offset_right = 568.0
+offset_bottom = 271.0
+text = "vsvsd"
+horizontal_alignment = 1
+
+[node name="main_menu_screen" type="Node2D" parent="."]
+
+[node name="start_button" type="Button" parent="main_menu_screen"]
+offset_left = 557.0
+offset_top = 278.0
+offset_right = 653.0
+offset_bottom = 309.0
+text = "Start Game"
+
+[node name="quit_button" type="Button" parent="main_menu_screen"]
+offset_left = 540.0
+offset_top = 324.0
+offset_right = 670.0
+offset_bottom = 355.0
+text = "Quit to Desktop"
+
+[connection signal="pressed" from="game_over_screen/restart_button" to="." method="_on_restart_button_pressed"]
+[connection signal="pressed" from="game_over_screen/main_menu_button" to="." method="_on_main_menu_button_pressed"]
+[connection signal="pressed" from="main_menu_screen/start_button" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="main_menu_screen/quit_button" to="." method="_on_quit_button_pressed"]

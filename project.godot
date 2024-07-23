@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="PSGJ"
-run/main_scene="res://scenes/menu_manager.tscn"
+config/name="Ying Yang"
+run/main_scene="res://improover/scenes/menu_manager.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 

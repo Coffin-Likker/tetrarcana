@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cuqf4g5w6qaee"]
+
+[ext_resource type="PackedScene" uid="uid://dxnnpkjmx71ic" path="res://improover/scenes/ui.tscn" id="1_0k8wu"]
+[ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://scenes/game_manager.tscn" id="2_kq64o"]
+
+[node name="Main" type="Node"]
+
+[node name="GameManager" parent="." instance=ExtResource("2_kq64o")]
+
+[node name="ui" parent="." instance=ExtResource("1_0k8wu")]
