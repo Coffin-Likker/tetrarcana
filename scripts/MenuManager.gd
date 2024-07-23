@@ -14,12 +14,12 @@ func _ready():
 	main_menu.hide()
 	options_menu.hide()
 	
-	current_menu = main_menu
 	change_menu(main_menu)
 
 
 func change_menu(menu: Control):
-	current_menu.hide()
+	if current_menu:
+		current_menu.hide()
 	menu.show()
 	current_menu = menu
 
