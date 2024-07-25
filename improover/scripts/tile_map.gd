@@ -41,6 +41,7 @@ const ALL_SHAPES = [S_SHAPE, I_SHAPE, L_Shape, J_Shape, T_Shape, O_SHAPE, Z_SHAP
 const EMPTY_TILE = Vector2i(0, 0)
 const GHOST_TILE = Vector2i(16, 0)
 const GHOST_TILE_OPPONENT = Vector2i(15, 0)
+const INVALID_GHOST_TILE = Vector2i(14, 0) 
 
 # Layer IDs
 const BOARD_LAYER = 0
@@ -49,9 +50,6 @@ const GHOST_LAYER = 1
 
 enum Player { PLAYER_1, PLAYER_2 }
 enum GameState { MENU, PLAYING, GAME_OVER }
-#var current_player :Player
-#var game_state: GameState
-#var turn_count = 0
 
 # Tile IDs for each player
 const PLAYER_1_TILE = Vector2i(16, 5)
@@ -137,24 +135,34 @@ func _on_tile_clicked(click_position: Vector2, button_index: int):
 
 func place_piece(base_position: Vector2i, tile: Vector2i):
 	print_debug("Placing piece at base position: ", base_position)
-	for offset in active_piece:
-		var tile_position = base_position + offset
-		#print_debug("Setting tile at position: ", tile_position)
-		set_cell(BOARD_LAYER, tile_position, 0, tile)
-	# print_debug("Piece placed. Updating ghost piece.")
-	active_piece = get_next_piece()
-	update_ghost_piece()
-	emit_signal("piece_placed")
-	#switch_player()
-	#update_turn_display()
+	var game_manager = get_parent()
+	
+	if game_manager.turn_count < 2 or can_place_piece(base_position, tile):
+		for offset in active_piece:
+			var tile_position = base_position + offset
+			set_cell(BOARD_LAYER, tile_position, 0, tile)
+		active_piece = get_next_piece()
+		update_ghost_piece()
+		emit_signal("piece_placed")
+	else:
+		print_debug("Invalid placement")
 
-#func switch_player():
-	#current_player = Player.PLAYER_2 if current_player == Player.PLAYER_1 else Player.PLAYER_1
-#
 #func update_turn_display():
 	## Update UI to show current player and turn count
 	## You'll need to implement this based on your UI setup
 	#print_debug("Turn " + str(turn_count) + " - Player " + str(current_player + 1) + "'s turn")
+func can_place_piece(base_position: Vector2i, tile: Vector2i) -> bool:
+	var overlaps_own_color = false
+	for offset in active_piece:
+		var tile_position = base_position + offset
+		var existing_tile = get_cell_atlas_coords(BOARD_LAYER, tile_position)
+		if existing_tile == tile:
+			overlaps_own_color = true
+			break
+		elif existing_tile != EMPTY_TILE:
+			return false  
+	return overlaps_own_color
+
 
 func clear_connected_piece(start_position: Vector2i):
 	print_debug("Starting to clear connected piece from position: ", start_position)
@@ -201,18 +209,18 @@ func update_ghost_piece():
 	
 	clear_layer(GHOST_LAYER)
 	
-	var ghost_tile = GHOST_TILE if   get_parent().current_player == Player.PLAYER_1 else GHOST_TILE_OPPONENT
+	var game_manager = get_parent()
+	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
+	var ghost_tile = GHOST_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else GHOST_TILE_OPPONENT
 
-	# print_debug("Placing ghost tiles:")
+	var can_place = game_manager.turn_count < 2 or can_place_piece(current_ghost_position, current_player_tile)
+	ghost_tile = ghost_tile if can_place else INVALID_GHOST_TILE
+
 	for offset in active_piece:
-			var tile_position = current_ghost_position + offset
-			if get_cell_atlas_coords(BOARD_LAYER, tile_position) == EMPTY_TILE:
-				set_cell(GHOST_LAYER, tile_position, 0, ghost_tile)
-				# print_debug("Placed ghost tile at ", tile_position)
-			else:
-				pass
-				# print_debug("Cannot place ghost tile at ", tile_position, ". Tile not empty.")
-				
+		var tile_position = current_ghost_position + offset
+		if get_cell_atlas_coords(BOARD_LAYER, tile_position) == EMPTY_TILE:
+			set_cell(GHOST_LAYER, tile_position, 0, ghost_tile)
+
 func rotate_piece(direction: int):
 	if can_rotate():
 		# Create a rotation matrix for 90 degrees rotation (clockwise or counterclockwise)
