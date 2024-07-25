@@ -1,10 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://cuqf4g5w6qaee"]
+[gd_scene load_steps=4 format=3 uid="uid://cuqf4g5w6qaee"]
 
 [ext_resource type="PackedScene" uid="uid://dxnnpkjmx71ic" path="res://improover/scenes/ui.tscn" id="1_0k8wu"]
-[ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://scenes/game_manager.tscn" id="2_kq64o"]
+[ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://improover/scenes/game_manager.tscn" id="1_h0q10"]
+[ext_resource type="PackedScene" uid="uid://bqwy0lc55ksab" path="res://menus/MenuManager.tscn" id="2_vgn30"]
 
 [node name="Main" type="Node"]
 
-[node name="GameManager" parent="." instance=ExtResource("2_kq64o")]
+[node name="GameManager" parent="." instance=ExtResource("1_h0q10")]
+
+[node name="MenuManager" parent="." instance=ExtResource("2_vgn30")]
 
 [node name="ui" parent="." instance=ExtResource("1_0k8wu")]
+visible = false

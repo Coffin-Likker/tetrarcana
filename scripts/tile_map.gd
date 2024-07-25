@@ -39,16 +39,29 @@ const Z_SHAPE = [
 const ALL_SHAPES = [S_SHAPE, I_SHAPE, L_Shape, J_Shape, T_Shape, O_SHAPE, Z_SHAPE]
 # Tile IDs
 const EMPTY_TILE = Vector2i(0, 0)
-const PLAYER_1_TILE = Vector2i(16, 5)
 const GHOST_TILE = Vector2i(16, 0)
+const GHOST_TILE_OPPONENT = Vector2i(15, 0)
 
 # Layer IDs
 const BOARD_LAYER = 0
 const GHOST_LAYER = 1
 
+
+enum Player { PLAYER_1, PLAYER_2 }
+enum GameState { MENU, PLAYING, GAME_OVER }
+#var current_player :Player
+#var game_state: GameState
+#var turn_count = 0
+
+# Tile IDs for each player
+const PLAYER_1_TILE = Vector2i(16, 5)
+const PLAYER_2_TILE = Vector2i(16, 6)  # Red tile
+
 var current_ghost_position = Vector2i(0, 0)
 var active_piece = []
 var grab_bag = []
+
+signal piece_placed
 
 func _ready():
 	set_process_unhandled_input(true)
@@ -59,8 +72,41 @@ func _ready():
 	if get_layers_count() < 2:
 		add_layer(GHOST_LAYER)
 
+func reset():
+	print_debug("Resetting the game board")
+
+	# Clear both layers of the TileMap
+	var board_size = get_used_rect().size
+	for x in range(board_size.x):
+		for y in range(board_size.y):
+			var cell_pos = Vector2i(x, y)
+			var cell_atlas_coords = get_cell_atlas_coords(BOARD_LAYER, cell_pos)
+			if cell_atlas_coords != EMPTY_TILE:
+				set_cell(BOARD_LAYER, cell_pos, 0, EMPTY_TILE)
+
+	clear_layer(GHOST_LAYER)
+
+	# Reset game-specific variables
+	current_ghost_position = Vector2i(0, 0)
+	active_piece = []
+	grab_bag = []
+
+	# Refill the grab bag and get a new active piece
+	refill_grab_bag()
+	active_piece = get_next_piece()
+
+	# Ensure there are at least two layers (BOARD_LAYER and GHOST_LAYER)
+	if get_layers_count() < 2:
+		add_layer(GHOST_LAYER)
+
+	# Update the ghost piece to reflect the new active piece
+	update_ghost_piece()
+
+	print_debug("Game board reset complete")
+
+
 func _input(event):
-	if not event is InputEventMouseButton or not event.pressed:
+	if not event is InputEventMouseButton or not event.pressed or get_parent().game_state != GameState.PLAYING:
 		return
 	
 	print_debug("Input event detected: ", event.button_index)
@@ -73,7 +119,7 @@ func _process(delta):
 		rotate_piece(-1)
 
 func _unhandled_input(event):
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion and  get_parent().game_state == GameState.PLAYING:
 		update_ghost_piece()
 
 func _on_tile_clicked(click_position: Vector2, button_index: int):
@@ -83,7 +129,8 @@ func _on_tile_clicked(click_position: Vector2, button_index: int):
 	match button_index:
 		MOUSE_BUTTON_LEFT:
 			print_debug("Left click detected, placing piece")
-			place_piece(base_position, PLAYER_1_TILE)
+			var player_tile = PLAYER_1_TILE if   get_parent().current_player == Player.PLAYER_1 else PLAYER_2_TILE
+			place_piece(base_position, player_tile)
 		MOUSE_BUTTON_RIGHT:
 			print_debug("Right click detected, clearing connected piece")
 			clear_connected_piece(base_position)
@@ -92,11 +139,22 @@ func place_piece(base_position: Vector2i, tile: Vector2i):
 	print_debug("Placing piece at base position: ", base_position)
 	for offset in active_piece:
 		var tile_position = base_position + offset
-		print_debug("Setting tile at position: ", tile_position)
+		#print_debug("Setting tile at position: ", tile_position)
 		set_cell(BOARD_LAYER, tile_position, 0, tile)
-	print_debug("Piece placed. Updating ghost piece.")
+	# print_debug("Piece placed. Updating ghost piece.")
 	active_piece = get_next_piece()
 	update_ghost_piece()
+	emit_signal("piece_placed")
+	#switch_player()
+	#update_turn_display()
+
+#func switch_player():
+	#current_player = Player.PLAYER_2 if current_player == Player.PLAYER_1 else Player.PLAYER_1
+#
+#func update_turn_display():
+	## Update UI to show current player and turn count
+	## You'll need to implement this based on your UI setup
+	#print_debug("Turn " + str(turn_count) + " - Player " + str(current_player + 1) + "'s turn")
 
 func clear_connected_piece(start_position: Vector2i):
 	print_debug("Starting to clear connected piece from position: ", start_position)
@@ -128,29 +186,32 @@ func clear_connected_piece(start_position: Vector2i):
 					to_clear.append(next_position)
 					print_debug("Added adjacent tile to check: ", next_position)
 		
-		print_debug("Finished clearing connected piece")
-		print_debug("Updating ghost pieces after clearing")
+		# print_debug("Finished clearing connected piece")
+		# print_debug("Updating ghost pieces after clearing")
 		update_ghost_piece()
 
 func update_ghost_piece():
-	print_debug("Updating ghost piece")
+	# print_debug("Updating ghost piece")
 	var mouse_position = get_global_mouse_position()
 	var base_position = local_to_map(to_local(mouse_position))
 	
 	if base_position != current_ghost_position:
-		print_debug("Ghost position changed from ", current_ghost_position, " to ", base_position)
+		# print_debug("Ghost position changed from ", current_ghost_position, " to ", base_position)
 		current_ghost_position = base_position
 	
 	clear_layer(GHOST_LAYER)
 	
-	print_debug("Placing ghost tiles:")
+	var ghost_tile = GHOST_TILE if   get_parent().current_player == Player.PLAYER_1 else GHOST_TILE_OPPONENT
+
+	# print_debug("Placing ghost tiles:")
 	for offset in active_piece:
 			var tile_position = current_ghost_position + offset
 			if get_cell_atlas_coords(BOARD_LAYER, tile_position) == EMPTY_TILE:
-				set_cell(GHOST_LAYER, tile_position, 0, GHOST_TILE)
-				print_debug("Placed ghost tile at ", tile_position)
+				set_cell(GHOST_LAYER, tile_position, 0, ghost_tile)
+				# print_debug("Placed ghost tile at ", tile_position)
 			else:
-				print_debug("Cannot place ghost tile at ", tile_position, ". Tile not empty.")
+				pass
+				# print_debug("Cannot place ghost tile at ", tile_position, ". Tile not empty.")
 				
 func rotate_piece(direction: int):
 	if can_rotate():

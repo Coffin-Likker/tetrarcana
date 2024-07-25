@@ -1,5 +1,7 @@
 extends Node2D
 
+class_name game_manager
+
 enum GameState { MENU, PLAYING, GAME_OVER }
 enum Player { PLAYER_1, PLAYER_2 }
 enum WinResult { PLAYER_1_WIN, PLAYER_2_WIN, TIE }
@@ -14,12 +16,16 @@ var winner_message: String
 @onready var tile_map: TileMap = $TileMap
 @onready var game_manager = $"."
 @onready var ui = $"../ui"
+@onready var menu_manager = $"../MenuManager"
 
 func _ready():
 	tile_map.connect("piece_placed", Callable(self, "_on_piece_placed"))
-	ui.connect("game_started", Callable(self, "game_started"))
-	ui.connect("go_main_menu", Callable(self, "go_main_menu"))
-	ui.connect("restart_game", Callable(self, "game_started"))
+	#ui.connect("game_started", Callable(self, "game_started"))
+	menu_manager.connect("go_main_menu", Callable(self, "go_main_menu"))
+	#ui.connect("restart_game", Callable(self, "game_started"))
+	menu_manager.connect("game_started", Callable(self, "game_started"))
+	#menu_manager.connect("go_main_menu", Callable(self, "go_main_menu"))
+	#menu_manager.connect("restart_game", Callable(self, "game_started"))
 	game_state = GameState.MENU
 
 func game_started():
@@ -41,7 +47,8 @@ func end_game():
 		WinResult.TIE:
 			winner_message = "Game Over! It's a tie!"
 	print_debug(winner_message)
-	ui.on_game_over(winner_message)
+	#ui.on_game_over(winner_message)
+	menu_manager.on_game_over(winner_message)
 
 func go_main_menu():
 	game_state = GameState.MENU
