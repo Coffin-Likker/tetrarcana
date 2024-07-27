@@ -26,6 +26,20 @@ func change_menu(menu: Control):
 		current_menu.hide()
 	menu.show()
 	current_menu = menu
+	focus_first_button(menu)
+	
+func focus_first_button(node: Node):
+	if node is Button:
+		node.grab_focus()
+		return true
+	for child in node.get_children():
+		if focus_first_button(child):
+			return true
+	return false
+	
+func _unhandled_input(event):
+	if event.is_action_pressed("ui_cancel") and current_menu != main_menu:
+		change_menu(main_menu)
 
 
 func set_music_volume(value: float):
