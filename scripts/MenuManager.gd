@@ -1,4 +1,4 @@
-extends Node
+extends Container
 
 class_name menu_manager
 signal game_started

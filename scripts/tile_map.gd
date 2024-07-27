@@ -11,17 +11,17 @@ const I_SHAPE = [
 	Vector2i(1,0), Vector2i(2,0) 
 ]
 
-const L_Shape = [
+const L_SHAPE = [
 	Vector2i(-1,0), Vector2i(0,0),
 	Vector2i(1,0), Vector2i(1,1) 
 ]
 
-const J_Shape = [
+const J_SHAPE = [
 	Vector2i(-1,0), Vector2i(0,0),
 	Vector2i(1,0), Vector2i(1,1) 
 ]
 
-const T_Shape = [
+const T_SHAPE = [
 	Vector2i(-1,0), Vector2i(0,0), 
 	Vector2i(1,0), Vector2i(0,1)
 ]
@@ -36,7 +36,7 @@ const Z_SHAPE = [
 	Vector2i(0,1), Vector2i(1,1)
 ]
 
-const ALL_SHAPES = [S_SHAPE, I_SHAPE, L_Shape, J_Shape, T_Shape, O_SHAPE, Z_SHAPE]
+const ALL_SHAPES = [S_SHAPE, I_SHAPE, L_SHAPE, J_SHAPE, T_SHAPE, O_SHAPE, Z_SHAPE]
 # Tile IDs
 const EMPTY_TILE = Vector2i(0, 0)
 const GHOST_TILE = Vector2i(16, 0)
@@ -191,27 +191,19 @@ func clear_connected_piece(start_position: Vector2i):
 		update_ghost_piece()
 
 func update_ghost_piece():
-	# print_debug("Updating ghost piece")
-	var mouse_position = get_global_mouse_position()
-	var base_position = local_to_map(to_local(mouse_position))
+	var mouse_position = get_local_mouse_position()
+	var map_position = local_to_map(mouse_position)
 	
-	if base_position != current_ghost_position:
-		# print_debug("Ghost position changed from ", current_ghost_position, " to ", base_position)
-		current_ghost_position = base_position
+	if map_position != current_ghost_position:
+		current_ghost_position = map_position
 	
 	clear_layer(GHOST_LAYER)
 	
-	var ghost_tile = GHOST_TILE if   get_parent().current_player == Player.PLAYER_1 else GHOST_TILE_OPPONENT
+	var ghost_tile = GHOST_TILE if get_parent().current_player == Player.PLAYER_1 else GHOST_TILE_OPPONENT
 
-	# print_debug("Placing ghost tiles:")
 	for offset in active_piece:
 			var tile_position = current_ghost_position + offset
-			if get_cell_atlas_coords(BOARD_LAYER, tile_position) == EMPTY_TILE:
-				set_cell(GHOST_LAYER, tile_position, 0, ghost_tile)
-				# print_debug("Placed ghost tile at ", tile_position)
-			else:
-				pass
-				# print_debug("Cannot place ghost tile at ", tile_position, ". Tile not empty.")
+			set_cell(GHOST_LAYER, tile_position, 0, ghost_tile)
 				
 func rotate_piece(direction: int):
 	if can_rotate():

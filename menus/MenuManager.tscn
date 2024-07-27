@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://wan2isystoxp" path="res://menus/OptionsMenu.tscn" id="4_qi2jo"]
 [ext_resource type="PackedScene" uid="uid://bdrku4cijohn3" path="res://menus/GameOverMenu.tscn" id="5_j36pj"]
 
-[node name="MenuManager" type="Node"]
+[node name="MenuManager" type="Container"]
 script = ExtResource("1_qcj65")
 
 [node name="MenuMusic" type="AudioStreamPlayer2D" parent="."]
@@ -16,11 +16,14 @@ bus = &"Music"
 
 [node name="MainMenu" parent="." instance=ExtResource("3_ebugh")]
 visible = false
+layout_mode = 2
 
 [node name="OptionsMenu" parent="." instance=ExtResource("4_qi2jo")]
 visible = false
+layout_mode = 2
 
 [node name="GameOverMenu" parent="." instance=ExtResource("5_j36pj")]
+layout_mode = 2
 
 [connection signal="quit_game" from="MainMenu" to="." method="_on_main_menu_quit_game"]
 [connection signal="show_options" from="MainMenu" to="." method="_on_main_menu_show_options"]
