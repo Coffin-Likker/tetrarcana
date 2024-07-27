@@ -3,29 +3,34 @@
 [ext_resource type="PackedScene" uid="uid://dxnnpkjmx71ic" path="res://improover/scenes/ui.tscn" id="1_0k8wu"]
 [ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://scenes/game_manager.tscn" id="1_h0q10"]
 [ext_resource type="PackedScene" uid="uid://bqwy0lc55ksab" path="res://menus/MenuManager.tscn" id="2_vgn30"]
-[ext_resource type="Texture2D" uid="uid://7nl6ihqdq2a" path="res://assets/board_mockup.jpg" id="4_ojpjg"]
+[ext_resource type="Texture2D" uid="uid://ctqil11mpfnrn" path="res://assets/backboard_final.png" id="4_a8plr"]
 
 [node name="Main" type="Node2D"]
 
 [node name="GameManager" parent="." instance=ExtResource("1_h0q10")]
-scale = Vector2(1, 1.211)
 
 [node name="TileMap" parent="GameManager" index="0"]
 position = Vector2(648, 244.426)
 
 [node name="MenuManager" parent="." instance=ExtResource("2_vgn30")]
-offset_left = 1184.0
-offset_top = 656.0
-offset_right = 1184.0
-offset_bottom = 656.0
+offset_left = 1186.0
+offset_top = 547.0
+offset_right = 1186.0
+offset_bottom = 547.0
 
 [node name="ui" parent="." instance=ExtResource("1_0k8wu")]
 visible = false
 
 [node name="BoardMockup" type="Sprite2D" parent="."]
 z_index = -1
-texture = ExtResource("4_ojpjg")
+position = Vector2(151, 26)
+scale = Vector2(2.9, 2.9)
+texture = ExtResource("4_a8plr")
 centered = false
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(1240, 664)
+zoom = Vector2(1.1, 1.1)
 
 [editable path="GameManager"]
 [editable path="MenuManager"]
