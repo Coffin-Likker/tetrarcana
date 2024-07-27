@@ -8,10 +8,20 @@ signal go_main_menu
 @onready var options_menu: Control = $OptionsMenu
 @onready var game_over_menu: Control = $GameOverMenu
 @onready var bg_music: AudioStreamPlayer2D = $MenuMusic
-
+@onready var focus_sound: AudioStreamPlayer2D = $FocusSound
+@onready var focus_sounds: Array[AudioStreamPlayer2D] = [
+	$FocusSound,
+	$FocusSound2,
+	$FocusSound3,
+	$FocusSound4,
+	$FocusSound5,
+	$FocusSound6,
+	$FocusSound7,
+	$FocusSound8
+]
 
 var current_menu: Control = null
-
+var current_sound_index: int = 0
 
 func _ready():
 	# Hide all menus initially.
@@ -19,6 +29,7 @@ func _ready():
 	options_menu.hide()
 	game_over_menu.hide()
 	change_menu(main_menu)
+	connect_button_signals(self)
 
 
 func change_menu(menu: Control):
@@ -78,4 +89,14 @@ func _on_game_over_restart_game():
 	game_over_menu.hide()
 	emit_signal("game_started")
 
+func _on_button_focus_entered():
+	focus_sounds[current_sound_index].play()
+	current_sound_index = (current_sound_index + 1) % focus_sounds.size()
+
+func connect_button_signals(node: Node):
+	if node is Button:
+		if not node.is_connected("focus_entered", _on_button_focus_entered):
+			node.connect("focus_entered", _on_button_focus_entered)
+	for child in node.get_children():
+		connect_button_signals(child)
 
