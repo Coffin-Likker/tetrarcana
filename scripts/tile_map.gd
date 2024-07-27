@@ -164,40 +164,6 @@ func can_place_piece(map_position: Vector2i, tile: Vector2i) -> bool:
 			return false  
 	return overlaps_own_color
 
-func clear_connected_piece(start_position: Vector2i):
-	print_debug("Starting to clear connected piece from position: ", start_position)
-	var start_tile = get_cell_atlas_coords(BOARD_LAYER, start_position)
-	print_debug("Start tile atlas coords: ", start_tile)
-	if start_tile == EMPTY_TILE:
-		print_debug("Start tile is empty, returning")
-		return
-	
-	var to_clear = [start_position]
-	var checked = {}
-	
-	while not to_clear.is_empty():
-		var current_position = to_clear.pop_back()
-		print_debug("Checking tile at position: ", current_position)
-		if current_position in checked:
-			print_debug("Tile already checked, skipping")
-			continue
-		
-		checked[current_position] = true
-		var current_tile = get_cell_atlas_coords(BOARD_LAYER, current_position)
-		print_debug("Current tile atlas coords: ", current_tile)
-		if current_tile == start_tile:
-			print_debug("Clearing tile at position: ", current_position)
-			set_cell(BOARD_LAYER, current_position, 0, EMPTY_TILE)
-			for direction in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
-				var next_position = current_position + direction
-				if next_position not in checked:
-					to_clear.append(next_position)
-					print_debug("Added adjacent tile to check: ", next_position)
-		
-		# print_debug("Finished clearing connected piece")
-		# print_debug("Updating ghost pieces after clearing")
-		update_ghost_piece()
-
 func update_ghost_piece():
 	var local_position = get_local_mouse_position()
 	var map_position = local_to_map(local_position)
