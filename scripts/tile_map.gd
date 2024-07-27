@@ -61,7 +61,7 @@ var grab_bag = []
 
 signal piece_placed
 var game_manager_node = get_parent()
-
+var board_rect: Rect2i
 
 func _ready():
 	set_process_unhandled_input(true)
@@ -71,6 +71,8 @@ func _ready():
 	
 	if get_layers_count() < 2:
 		add_layer(GHOST_LAYER)
+	
+	board_rect = get_used_rect()
 
 func reset():
 	print_debug("Resetting the game board")
@@ -106,11 +108,22 @@ func reset():
 
 
 func _input(event):
-	if not event is InputEventMouseButton or not event.pressed or get_parent().game_state != GameState.PLAYING:
+	if get_parent().game_state != GameState.PLAYING:
 		return
-	
-	print_debug("Input event detected: ", event.button_index)
-	_on_tile_clicked(event.button_index)
+		
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var click_position = get_local_mouse_position()
+		var map_position = local_to_map(click_position)
+		
+		for offset in active_piece:
+			var tile_position = map_position + offset
+			if (tile_position.x < board_rect.position.x or
+				tile_position.x > board_rect.end.x or
+				tile_position.y < board_rect.position.y or
+				tile_position.y > board_rect.end.y):
+					return
+		
+		_on_tile_clicked(map_position)
 
 func _process(_delta):
 	if Input.is_action_just_pressed("rotate_clockwise"):
@@ -122,25 +135,16 @@ func _unhandled_input(event):
 	if event is InputEventMouseMotion and  get_parent().game_state == GameState.PLAYING:
 		update_ghost_piece()
 
-func _on_tile_clicked(button_index: int):
-	var base_position = local_to_map(get_local_mouse_position())
-	print_debug("Clicked tile position: ", base_position)
-	
-	match button_index:
-		MOUSE_BUTTON_LEFT:
-			print_debug("Left click detected, placing piece")
-			var player_tile = PLAYER_1_TILE if   get_parent().current_player == Player.PLAYER_1 else PLAYER_2_TILE
-			place_piece(base_position, player_tile)
-		MOUSE_BUTTON_RIGHT:
-			print_debug("Right click detected, clearing connected piece")
-			clear_connected_piece(base_position)
+func _on_tile_clicked(map_position: Vector2i):	
+		var player_tile = PLAYER_1_TILE if get_parent().current_player == Player.PLAYER_1 else PLAYER_2_TILE
+		place_piece(map_position, player_tile)
 
-func place_piece(base_position: Vector2i, tile: Vector2i):
-	print_debug("Placing piece at base position: ", base_position)
+func place_piece(map_position: Vector2i, tile: Vector2i):
+	print_debug("Placing piece at base position: ", map_position)
 	
-	if game_manager_node.turn_count < 2 or can_place_piece(base_position, tile):
+	if game_manager_node.turn_count < 2 or can_place_piece(map_position, tile):
 		for offset in active_piece:
-			var tile_position = base_position + offset
+			var tile_position = map_position + offset
 			set_cell(BOARD_LAYER, tile_position, 0, tile)
 		active_piece = get_next_piece()
 		update_ghost_piece()
@@ -148,10 +152,10 @@ func place_piece(base_position: Vector2i, tile: Vector2i):
 	else:
 		print_debug("Invalid placement")
 
-func can_place_piece(base_position: Vector2i, tile: Vector2i) -> bool:
+func can_place_piece(map_position: Vector2i, tile: Vector2i) -> bool:
 	var overlaps_own_color = false
 	for offset in active_piece:
-		var tile_position = base_position + offset
+		var tile_position = map_position + offset
 		var existing_tile = get_cell_atlas_coords(BOARD_LAYER, tile_position)
 		if existing_tile == tile:
 			overlaps_own_color = true
