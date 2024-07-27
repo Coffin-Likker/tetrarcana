@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://c6x3w78dh2e2n"]
+[gd_scene load_steps=6 format=3 uid="uid://c6x3w78dh2e2n"]
 
+[ext_resource type="Script" path="res://improover/scripts/game_manager.gd" id="1_6liq1"]
 [ext_resource type="Texture2D" uid="uid://d17ps7bij4oa2" path="res://assets/tilesheet_complete.png" id="1_secvm"]
-[ext_resource type="Script" path="res://scripts/tile_map.gd" id="2_5uci7"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_n40am"]
 resource_name = "board"
@@ -12,16 +12,294 @@ texture_region_size = Vector2i(64, 64)
 0:7/0 = 0
 16:5/0 = 0
 16:0/0 = 0
+15:0/0 = 0
+14:0/0 = 0
+13:0/0 = 0
+12:11/0 = 0
+16:9/0 = 0
+0:6/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_2umof"]
 tile_size = Vector2i(64, 64)
 uv_clipping = true
 sources/0 = SubResource("TileSetAtlasSource_n40am")
 
+[sub_resource type="GDScript" id="GDScript_bavcw"]
+script/source = "extends TileMap
+
+# Define the S-shape Tetris piece
+const S_SHAPE = [
+	Vector2i(0, 0), Vector2i(1, 0),
+	Vector2i(-1, 1), Vector2i(0, 1)
+]
+
+const I_SHAPE = [
+	Vector2i(-1,0), Vector2i(0,0),
+	Vector2i(1,0), Vector2i(2,0) 
+]
+
+const L_Shape = [
+	Vector2i(-1,0), Vector2i(0,0),
+	Vector2i(1,0), Vector2i(1,1) 
+]
+
+const J_Shape = [
+	Vector2i(-1,0), Vector2i(0,0),
+	Vector2i(1,0), Vector2i(1,1) 
+]
+
+const T_Shape = [
+	Vector2i(-1,0), Vector2i(0,0), 
+	Vector2i(1,0), Vector2i(0,1)
+]
+
+const O_SHAPE = [
+	Vector2i(0,0), Vector2i(1,0), 
+	Vector2i(0,1), Vector2i(1,1)
+]
+
+const Z_SHAPE = [
+	Vector2i(-1,0), Vector2i(0,0), 
+	Vector2i(0,1), Vector2i(1,1)
+]
+
+const ALL_SHAPES = [S_SHAPE, I_SHAPE, L_Shape, J_Shape, T_Shape, O_SHAPE, Z_SHAPE]
+# Tile IDs
+const EMPTY_TILE = Vector2i(0, 0)
+const GHOST_TILE = Vector2i(16, 0)
+const GHOST_TILE_OPPONENT = Vector2i(15, 0)
+const INVALID_GHOST_TILE = Vector2i(14, 0) 
+
+# Layer IDs
+const BOARD_LAYER = 0
+const GHOST_LAYER = 1
+
+
+enum Player { PLAYER_1, PLAYER_2 }
+enum GameState { MENU, PLAYING, GAME_OVER }
+
+# Tile IDs for each player
+const PLAYER_1_TILE = Vector2i(16, 5)
+const PLAYER_2_TILE = Vector2i(16, 6)  # Red tile
+
+var current_ghost_position = Vector2i(0, 0)
+var active_piece = []
+var grab_bag = []
+
+signal piece_placed
+
+func _ready():
+	set_process_unhandled_input(true)
+	print_debug(\"TileMap initialized. Ready to process input.\")
+	refill_grab_bag()
+	active_piece = get_next_piece()
+	
+	if get_layers_count() < 2:
+		add_layer(GHOST_LAYER)
+
+func reset():
+	print_debug(\"Resetting the game board\")
+
+	# Clear both layers of the TileMap
+	var board_size = get_used_rect().size
+	for x in range(board_size.x):
+		for y in range(board_size.y):
+			var cell_pos = Vector2i(x, y)
+			var cell_atlas_coords = get_cell_atlas_coords(BOARD_LAYER, cell_pos)
+			if cell_atlas_coords != EMPTY_TILE:
+				set_cell(BOARD_LAYER, cell_pos, 0, EMPTY_TILE)
+
+	clear_layer(GHOST_LAYER)
+
+	# Reset game-specific variables
+	current_ghost_position = Vector2i(0, 0)
+	active_piece = []
+	grab_bag = []
+
+	# Refill the grab bag and get a new active piece
+	refill_grab_bag()
+	active_piece = get_next_piece()
+
+	# Ensure there are at least two layers (BOARD_LAYER and GHOST_LAYER)
+	if get_layers_count() < 2:
+		add_layer(GHOST_LAYER)
+
+	# Update the ghost piece to reflect the new active piece
+	update_ghost_piece()
+
+	print_debug(\"Game board reset complete\")
+
+
+func _input(event):
+	if not event is InputEventMouseButton or not event.pressed or get_parent().game_state != GameState.PLAYING:
+		return
+	
+	print_debug(\"Input event detected: \", event.button_index)
+	_on_tile_clicked(event.position, event.button_index)
+
+func _process(delta):
+	if Input.is_action_just_pressed(\"rotate_clockwise\"):
+		rotate_piece(1)
+	elif Input.is_action_just_pressed(\"rotate_counterclockwise\"):
+		rotate_piece(-1)
+
+func _unhandled_input(event):
+	if event is InputEventMouseMotion and  get_parent().game_state == GameState.PLAYING:
+		update_ghost_piece()
+
+func _on_tile_clicked(click_position: Vector2, button_index: int):
+	var base_position = local_to_map(to_local(click_position))
+	print_debug(\"Clicked tile position: \", base_position)
+	
+	match button_index:
+		MOUSE_BUTTON_LEFT:
+			print_debug(\"Left click detected, placing piece\")
+			var player_tile = PLAYER_1_TILE if   get_parent().current_player == Player.PLAYER_1 else PLAYER_2_TILE
+			place_piece(base_position, player_tile)
+		MOUSE_BUTTON_RIGHT:
+			print_debug(\"Right click detected, clearing connected piece\")
+			clear_connected_piece(base_position)
+
+func place_piece(base_position: Vector2i, tile: Vector2i):
+	print_debug(\"Placing piece at base position: \", base_position)
+	var game_manager = get_parent()
+	
+	if game_manager.turn_count < 2 or can_place_piece(base_position, tile):
+		for offset in active_piece:
+			var tile_position = base_position + offset
+			set_cell(BOARD_LAYER, tile_position, 0, tile)
+		active_piece = get_next_piece()
+		update_ghost_piece()
+		emit_signal(\"piece_placed\")
+	else:
+		print_debug(\"Invalid placement\")
+
+#func update_turn_display():
+	## Update UI to show current player and turn count
+	## You'll need to implement this based on your UI setup
+	#print_debug(\"Turn \" + str(turn_count) + \" - Player \" + str(current_player + 1) + \"'s turn\")
+func can_place_piece(base_position: Vector2i, tile: Vector2i) -> bool:
+	var overlaps_own_color = false
+	for offset in active_piece:
+		var tile_position = base_position + offset
+		var existing_tile = get_cell_atlas_coords(BOARD_LAYER, tile_position)
+		if existing_tile == tile:
+			overlaps_own_color = true
+			break
+		elif existing_tile != EMPTY_TILE:
+			return false  
+	return overlaps_own_color
+
+
+func clear_connected_piece(start_position: Vector2i):
+	print_debug(\"Starting to clear connected piece from position: \", start_position)
+	var start_tile = get_cell_atlas_coords(BOARD_LAYER, start_position)
+	print_debug(\"Start tile atlas coords: \", start_tile)
+	if start_tile == EMPTY_TILE:
+		print_debug(\"Start tile is empty, returning\")
+		return
+	
+	var to_clear = [start_position]
+	var checked = {}
+	
+	while not to_clear.is_empty():
+		var current_position = to_clear.pop_back()
+		print_debug(\"Checking tile at position: \", current_position)
+		if current_position in checked:
+			print_debug(\"Tile already checked, skipping\")
+			continue
+		
+		checked[current_position] = true
+		var current_tile = get_cell_atlas_coords(BOARD_LAYER, current_position)
+		print_debug(\"Current tile atlas coords: \", current_tile)
+		if current_tile == start_tile:
+			print_debug(\"Clearing tile at position: \", current_position)
+			set_cell(BOARD_LAYER, current_position, 0, EMPTY_TILE)
+			for direction in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+				var next_position = current_position + direction
+				if next_position not in checked:
+					to_clear.append(next_position)
+					print_debug(\"Added adjacent tile to check: \", next_position)
+		
+		# print_debug(\"Finished clearing connected piece\")
+		# print_debug(\"Updating ghost pieces after clearing\")
+		update_ghost_piece()
+
+func update_ghost_piece():
+	# print_debug(\"Updating ghost piece\")
+	var mouse_position = get_global_mouse_position()
+	var base_position = local_to_map(to_local(mouse_position))
+	
+	if base_position != current_ghost_position:
+		# print_debug(\"Ghost position changed from \", current_ghost_position, \" to \", base_position)
+		current_ghost_position = base_position
+	
+	clear_layer(GHOST_LAYER)
+	
+	var game_manager = get_parent()
+	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
+	var ghost_tile = GHOST_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else GHOST_TILE_OPPONENT
+
+	var can_place = game_manager.turn_count < 2 or can_place_piece(current_ghost_position, current_player_tile)
+	ghost_tile = ghost_tile if can_place else INVALID_GHOST_TILE
+
+	for offset in active_piece:
+		var tile_position = current_ghost_position + offset
+		if get_cell_atlas_coords(BOARD_LAYER, tile_position) == EMPTY_TILE:
+			set_cell(GHOST_LAYER, tile_position, 0, ghost_tile)
+
+func rotate_piece(direction: int):
+	if can_rotate():
+		# Create a rotation matrix for 90 degrees rotation (clockwise or counterclockwise)
+		var rotation_matrix = Transform2D().rotated(direction * PI/2)
+		var new_piece = []
+		# Rotate each block of the active piece
+		for block in active_piece:
+			# Apply rotation matrix to the block
+			var rotated_position = rotation_matrix * Vector2(block)
+			# Round and store the rotated position
+			new_piece.append(Vector2i(round(rotated_position.x), round(rotated_position.y)))
+		
+		# Calculate offset to keep the rotated piece in the same general area
+		var min_x = active_piece[0].x
+		var min_y = active_piece[0].y
+		var rotated_min_x = new_piece[0].x
+		var rotated_min_y = new_piece[0].y
+		
+		for block in active_piece:
+			min_x = min(min_x, block.x)
+			min_y = min(min_y, block.y)
+		
+		for block in new_piece:
+			rotated_min_x = min(rotated_min_x, block.x)
+			rotated_min_y = min(rotated_min_y, block.y)
+
+		# Calculate the offset
+		var offset = Vector2i(min_x - rotated_min_x, min_y - rotated_min_y)
+
+		# Apply the offset to each block of the new piece
+		active_piece = new_piece.map(func(block): return block + offset)
+		update_ghost_piece()
+
+func can_rotate():
+	# Implement rotation validity check here
+	return true
+	
+func refill_grab_bag():
+	grab_bag = ALL_SHAPES.duplicate()
+	grab_bag.shuffle()
+
+func get_next_piece():
+	if grab_bag.is_empty():
+		refill_grab_bag()
+	return grab_bag.pop_back()
+"
+
 [node name="GameManager" type="Node2D"]
+script = ExtResource("1_6liq1")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_2umof")
 format = 2
 layer_0/tile_data = PackedInt32Array(0, 0, 0, 65536, 0, 0, 131072, 0, 0, 196608, 0, 0, 262144, 0, 0, 327680, 0, 0, 393216, 0, 0, 458752, 0, 0, 524288, 0, 0, 589824, 0, 0, 1, 0, 0, 65537, 0, 0, 131073, 0, 0, 196609, 0, 0, 262145, 0, 0, 327681, 0, 0, 393217, 0, 0, 458753, 0, 0, 524289, 0, 0, 589825, 0, 0, 2, 0, 0, 65538, 0, 0, 131074, 0, 0, 196610, 0, 0, 262146, 0, 0, 327682, 0, 0, 393218, 0, 0, 458754, 0, 0, 524290, 0, 0, 589826, 0, 0, 3, 0, 0, 65539, 0, 0, 131075, 0, 0, 196611, 0, 0, 262147, 0, 0, 327683, 0, 0, 393219, 0, 0, 458755, 0, 0, 524291, 0, 0, 589827, 0, 0, 4, 0, 0, 65540, 0, 0, 131076, 0, 0, 196612, 0, 0, 262148, 0, 0, 327684, 0, 0, 393220, 0, 0, 458756, 0, 0, 524292, 0, 0, 589828, 0, 0, 5, 0, 0, 65541, 0, 0, 131077, 0, 0, 196613, 0, 0, 262149, 0, 0, 327685, 0, 0, 393221, 0, 0, 458757, 0, 0, 524293, 0, 0, 589829, 0, 0, 6, 0, 0, 65542, 0, 0, 131078, 0, 0, 196614, 0, 0, 262150, 0, 0, 327686, 0, 0, 393222, 0, 0, 458758, 0, 0, 524294, 0, 0, 589830, 0, 0, 7, 0, 0, 65543, 0, 0, 131079, 0, 0, 196615, 0, 0, 262151, 0, 0, 327687, 0, 0, 393223, 0, 0, 458759, 0, 0, 524295, 0, 0, 589831, 0, 0, 8, 0, 0, 65544, 0, 0, 131080, 0, 0, 196616, 0, 0, 262152, 0, 0, 327688, 0, 0, 393224, 0, 0, 458760, 0, 0, 524296, 0, 0, 589832, 0, 0, 9, 0, 0, 65545, 0, 0, 131081, 0, 0, 196617, 0, 0, 262153, 0, 0, 327689, 0, 0, 393225, 0, 0, 458761, 0, 0, 524297, 0, 0, 589833, 0, 0, 10, 0, 0, 65546, 0, 0, 131082, 0, 0, 196618, 0, 0, 262154, 0, 0, 327690, 0, 0, 393226, 0, 0, 458762, 0, 0, 524298, 0, 0, 589834, 0, 0, 11, 0, 0, 65547, 0, 0, 131083, 0, 0, 196619, 0, 0, 262155, 0, 0, 327691, 0, 0, 393227, 0, 0, 458763, 0, 0, 524299, 0, 0, 589835, 0, 0, 12, 0, 0, 65548, 0, 0, 131084, 0, 0, 196620, 0, 0, 262156, 0, 0, 327692, 0, 0, 393228, 0, 0, 458764, 0, 0, 524300, 0, 0, 589836, 0, 0, 13, 0, 0, 65549, 0, 0, 131085, 0, 0, 196621, 0, 0, 262157, 0, 0, 327693, 0, 0, 393229, 0, 0, 458765, 0, 0, 524301, 0, 0, 589837, 0, 0, 14, 0, 0, 65550, 0, 0, 131086, 0, 0, 196622, 0, 0, 262158, 0, 0, 327694, 0, 0, 393230, 0, 0, 458766, 0, 0, 524302, 0, 0, 589838, 0, 0, 15, 0, 0, 65551, 0, 0, 131087, 0, 0, 196623, 0, 0, 262159, 0, 0, 327695, 0, 0, 393231, 0, 0, 458767, 0, 0, 524303, 0, 0, 589839, 0, 0, 16, 0, 0, 65552, 0, 0, 131088, 0, 0, 196624, 0, 0, 262160, 0, 0, 327696, 0, 0, 393232, 0, 0, 458768, 0, 0, 524304, 0, 0, 589840, 0, 0, 17, 0, 0, 65553, 0, 0, 131089, 0, 0, 196625, 0, 0, 262161, 0, 0, 327697, 0, 0, 393233, 0, 0, 458769, 0, 0, 524305, 0, 0, 589841, 0, 0)
-script = ExtResource("2_5uci7")
+script = SubResource("GDScript_bavcw")
