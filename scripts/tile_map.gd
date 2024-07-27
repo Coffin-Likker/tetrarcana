@@ -118,9 +118,9 @@ func _input(event):
 		for offset in active_piece:
 			var tile_position = map_position + offset
 			if (tile_position.x < board_rect.position.x or
-				tile_position.x > board_rect.end.x or
+				tile_position.x >= board_rect.end.x or
 				tile_position.y < board_rect.position.y or
-				tile_position.y > board_rect.end.y):
+				tile_position.y >= board_rect.end.y):
 					return
 		
 		_on_tile_clicked(map_position)
