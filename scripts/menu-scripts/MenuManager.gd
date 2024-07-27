@@ -30,6 +30,10 @@ func _ready():
 	game_over_menu.hide()
 	change_menu(main_menu)
 	connect_button_signals(self)
+	
+	setup_looping_navigation($MainMenu/VBoxContainer)
+	setup_looping_navigation($OptionsMenu/OptionsVBox)
+	setup_looping_navigation($GameOverMenu/VBoxContainer)
 
 
 func change_menu(menu: Control):
@@ -100,3 +104,20 @@ func connect_button_signals(node: Node):
 	for child in node.get_children():
 		connect_button_signals(child)
 
+func setup_looping_navigation(container: Container):
+	var buttons = []
+	for child in container.get_children():
+		if child is Button:
+			buttons.append(child)
+	
+	if buttons.size() < 2:
+		return  # Not enough buttons to create a loop
+	
+	var first_button = buttons[0]
+	var last_button = buttons[-1]
+	
+	# Set the "up" focus neighbor of the first button to the last button
+	first_button.focus_neighbor_top = last_button.get_path()
+	
+	# Set the "down" focus neighbor of the last button to the first button
+	last_button.focus_neighbor_bottom = first_button.get_path()
