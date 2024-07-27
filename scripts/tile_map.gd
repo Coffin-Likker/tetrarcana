@@ -148,10 +148,6 @@ func place_piece(base_position: Vector2i, tile: Vector2i):
 	else:
 		print_debug("Invalid placement")
 
-#func update_turn_display():
-	## Update UI to show current player and turn count
-	## You'll need to implement this based on your UI setup
-	#print_debug("Turn " + str(turn_count) + " - Player " + str(current_player + 1) + "'s turn")
 func can_place_piece(base_position: Vector2i, tile: Vector2i) -> bool:
 	var overlaps_own_color = false
 	for offset in active_piece:
@@ -163,7 +159,6 @@ func can_place_piece(base_position: Vector2i, tile: Vector2i) -> bool:
 		elif existing_tile != EMPTY_TILE:
 			return false  
 	return overlaps_own_color
-
 
 func clear_connected_piece(start_position: Vector2i):
 	print_debug("Starting to clear connected piece from position: ", start_position)
