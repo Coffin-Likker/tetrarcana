@@ -110,7 +110,7 @@ func _input(event):
 		return
 	
 	print_debug("Input event detected: ", event.button_index)
-	_on_tile_clicked(event.position, event.button_index)
+	_on_tile_clicked(event.button_index)
 
 func _process(_delta):
 	if Input.is_action_just_pressed("rotate_clockwise"):
@@ -122,8 +122,8 @@ func _unhandled_input(event):
 	if event is InputEventMouseMotion and  get_parent().game_state == GameState.PLAYING:
 		update_ghost_piece()
 
-func _on_tile_clicked(click_position: Vector2, button_index: int):
-	var base_position = local_to_map(to_local(click_position))
+func _on_tile_clicked(button_index: int):
+	var base_position = local_to_map(get_local_mouse_position())
 	print_debug("Clicked tile position: ", base_position)
 	
 	match button_index:
