@@ -15,7 +15,7 @@ separation = Vector2i(2, 0)
 
 [sub_resource type="TileSet" id="TileSet_2umof"]
 uv_clipping = true
-sources/1 = SubResource("TileSetAtlasSource_iow1l")
+sources/0 = SubResource("TileSetAtlasSource_iow1l")
 
 [sub_resource type="GDScript" id="GDScript_bavcw"]
 script/source = "extends TileMap
