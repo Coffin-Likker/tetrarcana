@@ -170,12 +170,14 @@ func _input(event):
 	if game_manager.game_state != GameState.PLAYING:
 		return
 		
+	if event is InputEventMouseMotion:
+		var map_position = local_to_map(get_local_mouse_position())
+		handle_mouse_movement(map_position)
+	
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var click_position = get_local_mouse_position()
 		var map_position = local_to_map(click_position)
-		
-		if is_valid_position(map_position):
-			_on_tile_clicked(map_position)
+		_on_tile_clicked(map_position)
 
 func handle_movement(delta):
 	for action in MOVE_DIRECTIONS:
@@ -369,3 +371,30 @@ func set_position_for_new_piece():
 	
 	update_ghost_piece()
 
+func handle_mouse_movement(map_position: Vector2i):
+	var new_position = map_position
+	var valid_position = new_position
+	
+	# Check each block of the active piece
+	for offset in active_piece:
+		var block_position = new_position + offset
+		if not is_within_board(block_position):
+			# If any block is outside, adjust the position
+			if block_position.x < board_rect.position.x:
+				valid_position.x = max(valid_position.x, board_rect.position.x - offset.x)
+			elif block_position.x >= board_rect.end.x:
+				valid_position.x = min(valid_position.x, board_rect.end.x - 1 - offset.x)
+			if block_position.y < board_rect.position.y:
+				valid_position.y = max(valid_position.y, board_rect.position.y - offset.y)
+			elif block_position.y >= board_rect.end.y:
+				valid_position.y = min(valid_position.y, board_rect.end.y - 1 - offset.y)
+	
+	if valid_position != current_ghost_position:
+		current_ghost_position = valid_position
+		update_ghost_piece()
+
+func is_within_board(position: Vector2i) -> bool:
+	return (position.x >= board_rect.position.x and
+			position.x < board_rect.end.x and
+			position.y >= board_rect.position.y and
+			position.y < board_rect.end.y)
