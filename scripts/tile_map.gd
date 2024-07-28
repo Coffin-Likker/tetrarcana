@@ -43,10 +43,10 @@ const GHOST_TILE = Vector2i(16, 0)
 const GHOST_TILE_OPPONENT = Vector2i(15, 0)
 const INVALID_GHOST_TILE = Vector2i(14, 0) 
 
-# Layer IDs
+# Layer constants
 const BOARD_LAYER = 0
 const GHOST_LAYER = 1
-
+const GHOST_LAYER_Z_INDEX = 1
 
 enum Player { PLAYER_1, PLAYER_2 }
 enum GameState { MENU, PLAYING, GAME_OVER }
@@ -71,6 +71,8 @@ func _ready():
 	
 	if get_layers_count() < 2:
 		add_layer(GHOST_LAYER)
+	
+	set_layer_z_index(GHOST_LAYER, GHOST_LAYER_Z_INDEX)
 	
 	board_rect = get_used_rect()
 
@@ -180,8 +182,7 @@ func update_ghost_piece():
 
 	for offset in active_piece:
 		var tile_position = current_ghost_position + offset
-		if get_cell_atlas_coords(BOARD_LAYER, tile_position) == EMPTY_TILE:
-			set_cell(GHOST_LAYER, tile_position, 0, ghost_tile)
+		set_cell(GHOST_LAYER, tile_position, 0, ghost_tile)
 
 func rotate_piece(direction: int):
 	if can_rotate():
