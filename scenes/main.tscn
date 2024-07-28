@@ -1,10 +1,20 @@
-[gd_scene load_steps=6 format=3 uid="uid://cuqf4g5w6qaee"]
+[gd_scene load_steps=16 format=3 uid="uid://cuqf4g5w6qaee"]
 
 [ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://scenes/game_manager.tscn" id="1_nw6i7"]
 [ext_resource type="Script" path="res://scripts/tile_map.gd" id="2_g2qi2"]
 [ext_resource type="PackedScene" uid="uid://bqwy0lc55ksab" path="res://scenes/menu-scenes/MenuManager.tscn" id="3_5h8my"]
 [ext_resource type="PackedScene" uid="uid://dxnnpkjmx71ic" path="res://scenes/ui.tscn" id="4_l7ylu"]
+[ext_resource type="AudioStream" uid="uid://bsgbnig6a5at6" path="res://assets/sfx/options/8bitmelody2_1.wav" id="4_pt58o"]
 [ext_resource type="Texture2D" uid="uid://ctqil11mpfnrn" path="res://assets/backboard_final.png" id="5_4b1q4"]
+[ext_resource type="AudioStream" uid="uid://ufkvsfl3gx4j" path="res://assets/sfx/options/8bitmelody2_2.wav" id="5_lqfon"]
+[ext_resource type="AudioStream" uid="uid://on5nwbtnx5ak" path="res://assets/sfx/options/8bitmelody2_3.wav" id="6_fiwq6"]
+[ext_resource type="AudioStream" uid="uid://p4lye24smaiy" path="res://assets/sfx/options/8bitmelody2_4.wav" id="7_uqsw5"]
+[ext_resource type="AudioStream" uid="uid://be3av81g7y744" path="res://assets/sfx/options/8bitmelody2_5.wav" id="8_8ualc"]
+[ext_resource type="AudioStream" uid="uid://djrahri7m8bps" path="res://assets/sfx/options/8bitmelody2_6.wav" id="9_b645p"]
+[ext_resource type="AudioStream" uid="uid://dvhkb43u3mj8h" path="res://assets/sfx/options/8bitmelody2_7.wav" id="10_4e4sk"]
+[ext_resource type="AudioStream" uid="uid://dhidvhemisqag" path="res://assets/sfx/options/8bitmelody2_8.wav" id="11_vm8vs"]
+[ext_resource type="AudioStream" uid="uid://c7a68758j08d6" path="res://assets/sfx/options/8bitmelody2_9.wav" id="12_aj5x4"]
+[ext_resource type="AudioStream" uid="uid://dbbjf23wsqfim" path="res://assets/sfx/options/8bitmelody2_10.wav" id="13_nvkww"]
 
 [node name="Main" type="Node2D"]
 
@@ -19,6 +29,46 @@ offset_left = 1186.0
 offset_top = 547.0
 offset_right = 1186.0
 offset_bottom = 547.0
+
+[node name="FocusSound" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("4_pt58o")
+volume_db = -10.0
+
+[node name="FocusSound2" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("5_lqfon")
+volume_db = -10.0
+
+[node name="FocusSound3" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("6_fiwq6")
+volume_db = -10.0
+
+[node name="FocusSound4" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("7_uqsw5")
+volume_db = -10.0
+
+[node name="FocusSound5" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("8_8ualc")
+volume_db = -10.0
+
+[node name="FocusSound6" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("9_b645p")
+volume_db = -10.0
+
+[node name="FocusSound7" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("10_4e4sk")
+volume_db = -10.0
+
+[node name="FocusSound8" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("11_vm8vs")
+volume_db = -10.0
+
+[node name="FocusSound9" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("12_aj5x4")
+volume_db = -10.0
+
+[node name="FocusSound10" type="AudioStreamPlayer" parent="MenuManager"]
+stream = ExtResource("13_nvkww")
+volume_db = -10.0
 
 [node name="ui" parent="." instance=ExtResource("4_l7ylu")]
 visible = false

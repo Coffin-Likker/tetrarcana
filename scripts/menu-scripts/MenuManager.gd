@@ -8,8 +8,7 @@ signal go_main_menu
 @onready var options_menu: Control = $OptionsMenu
 @onready var game_over_menu: Control = $GameOverMenu
 @onready var bg_music: AudioStreamPlayer2D = $MenuMusic
-@onready var focus_sound: AudioStreamPlayer2D = $FocusSound
-@onready var focus_sounds: Array[AudioStreamPlayer2D] = [
+@onready var focus_sounds: Array[AudioStreamPlayer] = [
 	$FocusSound,
 	$FocusSound2,
 	$FocusSound3,
@@ -17,7 +16,9 @@ signal go_main_menu
 	$FocusSound5,
 	$FocusSound6,
 	$FocusSound7,
-	$FocusSound8
+	$FocusSound8,
+	$FocusSound9,
+	$FocusSound10
 ]
 
 var current_menu: Control = null
