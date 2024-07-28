@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cuqf4g5w6qaee"]
+[gd_scene load_steps=18 format=3 uid="uid://cuqf4g5w6qaee"]
 
 [ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://scenes/game_manager.tscn" id="1_nw6i7"]
 [ext_resource type="PackedScene" uid="uid://bqwy0lc55ksab" path="res://scenes/menu-scenes/MenuManager.tscn" id="3_5h8my"]
@@ -15,6 +15,8 @@
 [ext_resource type="AudioStream" uid="uid://dbbjf23wsqfim" path="res://assets/sfx/options/8bitmelody2_10.wav" id="13_nvkww"]
 [ext_resource type="AudioStream" uid="uid://dp2qd45elv2x7" path="res://assets/sfx/pieces/LightPlacing.wav" id="13_tffuc"]
 [ext_resource type="AudioStream" uid="uid://dc8c45vhdd05x" path="res://assets/sfx/pieces/ShadowPlacing.wav" id="14_al88k"]
+[ext_resource type="PackedScene" uid="uid://dlse6r7aq1lot" path="res://scenes/characters/light_character.tscn" id="15_haxvt"]
+[ext_resource type="PackedScene" uid="uid://bnbcv3jlm2pxd" path="res://scenes/characters/shadow_character.tscn" id="16_bky40"]
 
 [node name="Main" type="Node2D"]
 
@@ -117,6 +119,14 @@ volume_db = -10.0
 [node name="FocusSound10" type="AudioStreamPlayer" parent="MenuManager"]
 stream = ExtResource("13_nvkww")
 volume_db = -10.0
+
+[node name="LightCharacter" parent="." instance=ExtResource("15_haxvt")]
+position = Vector2(482, 275)
+scale = Vector2(2.7, 2.7)
+
+[node name="ShadowCharacter" parent="." instance=ExtResource("16_bky40")]
+position = Vector2(63, 271)
+scale = Vector2(2.7, 2.7)
 
 [node name="BoardMockup" type="Sprite2D" parent="."]
 z_index = -1
