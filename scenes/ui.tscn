@@ -1,9 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://dxnnpkjmx71ic"]
 
-[ext_resource type="Script" path="res://improover/scripts/ui.gd" id="1_bbje1"]
+[ext_resource type="Script" path="res://scripts/ui.gd" id="1_25cgw"]
 
 [node name="ui" type="CanvasLayer"]
-script = ExtResource("1_bbje1")
+script = ExtResource("1_25cgw")
 
 [node name="game_over_screen" type="Node2D" parent="."]
 
