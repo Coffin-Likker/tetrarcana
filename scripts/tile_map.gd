@@ -38,10 +38,14 @@ const Z_SHAPE = [
 
 const ALL_SHAPES = [S_SHAPE, I_SHAPE, L_Shape, J_Shape, T_Shape, O_SHAPE, Z_SHAPE]
 # Tile IDs
-const EMPTY_TILE = Vector2i(0, 0)
-const GHOST_TILE = Vector2i(16, 0)
-const GHOST_TILE_OPPONENT = Vector2i(15, 0)
-const INVALID_GHOST_TILE = Vector2i(14, 0) 
+
+# Tile IDs for each player
+const PLAYER_1_TILE = Vector2i(0, 0)
+const PLAYER_2_TILE = Vector2i(2, 0)  # Red tile
+const EMPTY_TILE = Vector2i(4, 0)
+const GHOST_TILE = Vector2i(0, 0)
+const GHOST_TILE_OPPONENT = Vector2i(2, 0)
+const INVALID_GHOST_TILE = Vector2i(2, 0) 
 
 # Layer constants
 const BOARD_LAYER = 0
@@ -50,10 +54,6 @@ const GHOST_LAYER_Z_INDEX = 1
 
 enum Player { PLAYER_1, PLAYER_2 }
 enum GameState { MENU, PLAYING, GAME_OVER }
-
-# Tile IDs for each player
-const PLAYER_1_TILE = Vector2i(16, 5)
-const PLAYER_2_TILE = Vector2i(16, 6)  # Red tile
 
 var current_ghost_position = Vector2i(0, 0)
 var active_piece = []

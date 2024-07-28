@@ -19,16 +19,17 @@
 [node name="Main" type="Node2D"]
 
 [node name="GameManager" parent="." instance=ExtResource("1_nw6i7")]
+position = Vector2(-1, 0)
 
 [node name="TileMap" parent="GameManager" index="0"]
-position = Vector2(648, 244.426)
+position = Vector2(129, 57)
 script = ExtResource("2_g2qi2")
 
 [node name="MenuManager" parent="." instance=ExtResource("3_5h8my")]
-offset_left = 1186.0
-offset_top = 547.0
-offset_right = 1186.0
-offset_bottom = 547.0
+offset_left = 243.0
+offset_top = 135.0
+offset_right = 243.0
+offset_bottom = 135.0
 
 [node name="FocusSound" type="AudioStreamPlayer" parent="MenuManager"]
 stream = ExtResource("4_pt58o")
@@ -75,14 +76,14 @@ visible = false
 
 [node name="BoardMockup" type="Sprite2D" parent="."]
 z_index = -1
-position = Vector2(151, 26)
-scale = Vector2(2.9, 2.9)
+position = Vector2(2, 2)
+scale = Vector2(0.73, 0.73)
 texture = ExtResource("5_4b1q4")
 centered = false
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(1240, 664)
-zoom = Vector2(1.1, 1.1)
+position = Vector2(276, 162)
+zoom = Vector2(4.37, 4.37)
 
 [editable path="GameManager"]
 [editable path="MenuManager"]
