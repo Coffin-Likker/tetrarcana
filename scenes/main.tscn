@@ -1,9 +1,7 @@
-[gd_scene load_steps=16 format=3 uid="uid://cuqf4g5w6qaee"]
+[gd_scene load_steps=14 format=3 uid="uid://cuqf4g5w6qaee"]
 
 [ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://scenes/game_manager.tscn" id="1_nw6i7"]
-[ext_resource type="Script" path="res://scripts/tile_map.gd" id="2_g2qi2"]
 [ext_resource type="PackedScene" uid="uid://bqwy0lc55ksab" path="res://scenes/menu-scenes/MenuManager.tscn" id="3_5h8my"]
-[ext_resource type="PackedScene" uid="uid://dxnnpkjmx71ic" path="res://scenes/ui.tscn" id="4_l7ylu"]
 [ext_resource type="AudioStream" uid="uid://bsgbnig6a5at6" path="res://assets/sfx/options/8bitmelody2_1.wav" id="4_pt58o"]
 [ext_resource type="Texture2D" uid="uid://ctqil11mpfnrn" path="res://assets/backboard_final.png" id="5_4b1q4"]
 [ext_resource type="AudioStream" uid="uid://ufkvsfl3gx4j" path="res://assets/sfx/options/8bitmelody2_2.wav" id="5_lqfon"]
@@ -23,7 +21,6 @@ position = Vector2(-1, 0)
 
 [node name="TileMap" parent="GameManager" index="0"]
 position = Vector2(129, 57)
-script = ExtResource("2_g2qi2")
 
 [node name="MenuManager" parent="." instance=ExtResource("3_5h8my")]
 offset_left = 243.0
@@ -71,9 +68,6 @@ volume_db = -10.0
 stream = ExtResource("13_nvkww")
 volume_db = -10.0
 
-[node name="ui" parent="." instance=ExtResource("4_l7ylu")]
-visible = false
-
 [node name="BoardMockup" type="Sprite2D" parent="."]
 z_index = -1
 position = Vector2(2, 2)
@@ -90,4 +84,3 @@ zoom = Vector2(4.37, 4.37)
 [editable path="MenuManager/MainMenu"]
 [editable path="MenuManager/OptionsMenu"]
 [editable path="MenuManager/GameOverMenu"]
-[editable path="ui"]

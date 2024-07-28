@@ -60,7 +60,7 @@ var active_piece = []
 var grab_bag = []
 
 signal piece_placed
-var game_manager_node = get_parent()
+
 var board_rect: Rect2i
 
 func _ready():
@@ -110,7 +110,8 @@ func reset():
 
 
 func _input(event):
-	if get_parent().game_state != GameState.PLAYING:
+	var game_manager = get_parent()
+	if game_manager.game_state != GameState.PLAYING:
 		return
 		
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -134,17 +135,20 @@ func _process(_delta):
 		rotate_piece(-1)
 
 func _unhandled_input(event):
-	if event is InputEventMouseMotion and  get_parent().game_state == GameState.PLAYING:
+	var game_manager = get_parent()
+	if event is InputEventMouseMotion and  game_manager.game_state == GameState.PLAYING:
 		update_ghost_piece()
 
 func _on_tile_clicked(map_position: Vector2i):	
-		var player_tile = PLAYER_1_TILE if get_parent().current_player == Player.PLAYER_1 else PLAYER_2_TILE
-		place_piece(map_position, player_tile)
+	var game_manager = get_parent()
+	var player_tile = PLAYER_1_TILE if game_manager.current_player == Player.PLAYER_1 else PLAYER_2_TILE
+	place_piece(map_position, player_tile)
 
 func place_piece(map_position: Vector2i, tile: Vector2i):
+	var game_manager = get_parent()
 	print_debug("Placing piece at base position: ", map_position)
 	
-	if game_manager_node.turn_count < 2 or can_place_piece(map_position, tile):
+	if game_manager.turn_count < 2 or can_place_piece(map_position, tile):
 		for offset in active_piece:
 			var tile_position = map_position + offset
 			set_cell(BOARD_LAYER, tile_position, 0, tile)
@@ -173,11 +177,11 @@ func update_ghost_piece():
 		current_ghost_position = map_position
 
 	clear_layer(GHOST_LAYER)
-	
-	var current_player_tile = PLAYER_1_TILE if game_manager_node.current_player == game_manager_node.Player.PLAYER_1 else PLAYER_2_TILE
-	var ghost_tile = GHOST_TILE if game_manager_node.current_player == game_manager_node.Player.PLAYER_1 else GHOST_TILE_OPPONENT
+	var game_manager = get_parent()
+	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
+	var ghost_tile = GHOST_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else GHOST_TILE_OPPONENT
 
-	var can_place = game_manager_node.turn_count < 2 or can_place_piece(current_ghost_position, current_player_tile)
+	var can_place = game_manager.turn_count < 2 or can_place_piece(current_ghost_position, current_player_tile)
 	ghost_tile = ghost_tile if can_place else INVALID_GHOST_TILE
 
 	for offset in active_piece:
