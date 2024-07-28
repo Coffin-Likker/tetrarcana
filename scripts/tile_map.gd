@@ -123,7 +123,10 @@ func _ready():
 	set_layer_z_index(GHOST_LAYER, GHOST_LAYER_Z_INDEX)
 	
 	board_rect = get_used_rect()
-	current_ghost_position = Vector2i(board_rect.size.x / 2, 0)
+	current_ghost_position = Vector2i(
+		board_rect.position.x + 1,  # One column from the left edge
+		board_rect.end.y - 3        # Three rows from the bottom
+	)
 	
 	
 func reset():
@@ -244,7 +247,7 @@ func place_piece(map_position: Vector2i, tile: Vector2i):
 		active_piece = get_next_piece()
 		current_sound_index = 0
 		play_placing_sound()
-		#set_position_for_new_piece()
+		set_position_for_new_piece()
 		update_ghost_piece()
 		emit_signal("piece_placed")
 	else:
@@ -323,22 +326,42 @@ func get_next_piece():
 	
 func set_position_for_new_piece():
 	var board_size = board_rect.size
+	var game_manager = get_parent()
 	
-	if get_parent().current_player == Player.PLAYER_2:
+	if game_manager.current_player == Player.PLAYER_2:
 		# Set position to bottom left for Player 2
 		current_ghost_position = Vector2i(
-			PLAYER_1_START_OFFSET.x,
-			board_size.y + PLAYER_1_START_OFFSET.y
+			board_rect.position.x + 1,  # One column from the left edge
+			board_rect.end.y - 3		# Three rows from the bottom
 		)
 	else:
 		# Set position to bottom right for Player 1
 		current_ghost_position = Vector2i(
-			board_size.x + PLAYER_2_START_OFFSET.x,
-			board_size.y + PLAYER_2_START_OFFSET.y
+			board_rect.end.x - 2,  # Two columns from the right edge
+			board_rect.end.y - 3   # Three rows from the bottom
 		)
 	
 	# Ensure the piece is within the valid board area
 	while not is_valid_position(current_ghost_position):
 		current_ghost_position.y -= 1
+		
+		# If we've moved the piece all the way to the top and it's still not valid,
+		# try shifting it horizontally towards the center
+		if current_ghost_position.y < board_rect.position.y:
+			current_ghost_position.y = board_rect.end.y - 1
+			if game_manager.current_player == Player.PLAYER_2:
+				current_ghost_position.x += 1
+			else:
+				current_ghost_position.x -= 1
+				
+		# If we've exhausted all positions, place it in the center of the board
+		if (current_ghost_position.x < board_rect.position.x or 
+			current_ghost_position.x >= board_rect.end.x):
+			current_ghost_position = Vector2i(
+				board_rect.position.x + board_size.x / 2,
+				board_rect.position.y + board_size.y / 2
+			)
+			break
 	
 	update_ghost_piece()
+
