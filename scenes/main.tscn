@@ -74,16 +74,16 @@ volume_db = -10.0
 [node name="ui" parent="." instance=ExtResource("4_l7ylu")]
 visible = false
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(274, 166)
-zoom = Vector2(4.37, 4.37)
-
 [node name="BoardMockup" type="Sprite2D" parent="."]
 z_index = -1
 position = Vector2(1032, 359)
 scale = Vector2(0.73, 0.73)
 texture = ExtResource("5_4b1q4")
 centered = false
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(276, 162)
+zoom = Vector2(4.37, 4.37)
 
 [editable path="GameManager"]
 [editable path="MenuManager"]
