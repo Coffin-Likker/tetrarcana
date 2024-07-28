@@ -40,11 +40,17 @@ const ALL_SHAPES = [S_SHAPE, I_SHAPE, L_Shape, J_Shape, T_Shape, O_SHAPE, Z_SHAP
 # Tile IDs
 
 # Tile IDs for each player
+# THIS NEEDS FIXING 
+# we neeed Player 1 and 2 color, that's also going to be used when it's respective piece CAN BE PLACED.
+# and then we need the Obscure version of Player 1 and 2 color, that symbolize when it's noot possible to place a piece 
+# and empty tile, so 5 in total 
+# I think refactoring as to be done where the INVALID_GHOST_TILE becomes INVALID_GHOST_TILE_PLAYER_1 and INVALID_GHOST_TILE_PLAYER_2
+# OR refact the Ghost tiles temselves and remove INVALID_GHOST_TILE from the code
 const PLAYER_1_TILE = Vector2i(0, 0)
 const PLAYER_2_TILE = Vector2i(2, 0)  # Red tile
 const EMPTY_TILE = Vector2i(4, 0)
-const GHOST_TILE = Vector2i(0, 0)
-const GHOST_TILE_OPPONENT = Vector2i(2, 0)
+const GHOST_TILE = Vector2i(1, 0)
+const GHOST_TILE_OPPONENT = Vector2i(3, 0)
 const INVALID_GHOST_TILE = Vector2i(2, 0) 
 
 # Layer constants
