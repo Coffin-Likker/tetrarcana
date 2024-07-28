@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://bqwy0lc55ksab"]
 
-[ext_resource type="Script" path="res://scripts/MenuManager.gd" id="1_qcj65"]
+[ext_resource type="Script" path="res://scripts/menu-scripts/MenuManager.gd" id="1_qcj65"]
 [ext_resource type="AudioStream" uid="uid://cebhn3co8nfvv" path="res://assets/main_menu.wav" id="2_1d223"]
-[ext_resource type="PackedScene" uid="uid://bts3l1tbe6g7j" path="res://menus/MainMenu.tscn" id="3_ebugh"]
-[ext_resource type="PackedScene" uid="uid://wan2isystoxp" path="res://menus/OptionsMenu.tscn" id="4_qi2jo"]
-[ext_resource type="PackedScene" uid="uid://bdrku4cijohn3" path="res://menus/GameOverMenu.tscn" id="5_j36pj"]
+[ext_resource type="PackedScene" uid="uid://bts3l1tbe6g7j" path="res://scenes/menu-scenes/MainMenu.tscn" id="3_yqfju"]
+[ext_resource type="PackedScene" uid="uid://wan2isystoxp" path="res://scenes/menu-scenes/OptionsMenu.tscn" id="4_qi2jo"]
+[ext_resource type="PackedScene" uid="uid://bdrku4cijohn3" path="res://scenes/menu-scenes/GameOverMenu.tscn" id="5_qhptl"]
 
 [node name="MenuManager" type="Container"]
 script = ExtResource("1_qcj65")
@@ -14,7 +14,7 @@ stream = ExtResource("2_1d223")
 autoplay = true
 bus = &"Music"
 
-[node name="MainMenu" parent="." instance=ExtResource("3_ebugh")]
+[node name="MainMenu" parent="." instance=ExtResource("3_yqfju")]
 visible = false
 layout_mode = 2
 
@@ -22,7 +22,7 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
-[node name="GameOverMenu" parent="." instance=ExtResource("5_j36pj")]
+[node name="GameOverMenu" parent="." instance=ExtResource("5_qhptl")]
 layout_mode = 2
 
 [connection signal="quit_game" from="MainMenu" to="." method="_on_main_menu_quit_game"]
