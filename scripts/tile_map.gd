@@ -88,8 +88,8 @@ var move_timers = {}
 	$MovePieceSound10
 ]
 
-@onready var light_place_sound = $LightPlaceSound
-@onready var shadow_place_sound = $ShadowPlaceSound
+@onready var player_2_place_sound = $LightPlaceSound
+@onready var player_1_place_sound = $ShadowPlaceSound
 
 
 var current_sound_index: int = 0
@@ -102,7 +102,7 @@ const MOVE_DIRECTIONS = {
 }
 
 func play_placing_sound():
-	var sound = light_place_sound if get_parent().current_player == Player.PLAYER_1 else shadow_place_sound
+	var sound = player_2_place_sound if get_parent().current_player == Player.PLAYER_1 else player_1_place_sound
 	sound.play()
 	
 func initialize_move_timers():
@@ -247,7 +247,6 @@ func place_piece(map_position: Vector2i, tile: Vector2i):
 		active_piece = get_next_piece()
 		current_sound_index = 0
 		play_placing_sound()
-		set_position_for_new_piece()
 		update_ghost_piece()
 		emit_signal("piece_placed")
 	else:
@@ -324,11 +323,16 @@ func get_next_piece():
 		refill_grab_bag()
 	return grab_bag.pop_back()
 	
+func update_for_new_turn(new_player: game_manager.Player):
+	active_piece = get_next_piece()
+	set_position_for_new_piece()
+	update_ghost_piece()
+	
 func set_position_for_new_piece():
 	var board_size = board_rect.size
 	var game_manager = get_parent()
 	
-	if game_manager.current_player == Player.PLAYER_2:
+	if game_manager.current_player == Player.PLAYER_1:
 		# Set position to bottom left for Player 2
 		current_ghost_position = Vector2i(
 			board_rect.position.x + 1,  # One column from the left edge
@@ -349,7 +353,7 @@ func set_position_for_new_piece():
 		# try shifting it horizontally towards the center
 		if current_ghost_position.y < board_rect.position.y:
 			current_ghost_position.y = board_rect.end.y - 1
-			if game_manager.current_player == Player.PLAYER_2:
+			if game_manager.current_player == Player.PLAYER_1:
 				current_ghost_position.x += 1
 			else:
 				current_ghost_position.x -= 1

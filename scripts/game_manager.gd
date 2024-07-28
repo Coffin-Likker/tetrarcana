@@ -35,6 +35,8 @@ func game_started():
 	print_debug("game_started", current_player)
 	turn_count = 0
 	tile_map.reset()
+	tile_map.update_for_new_turn(current_player)
+
 
 func end_game():
 	game_state = GameState.GAME_OVER
@@ -66,8 +68,9 @@ func end_turn():
 		end_game()
 	else:
 		switch_player()
+		tile_map.update_for_new_turn(current_player)
 		print_debug("Turn " + str(turn_count + 1) + " - Player " + str(current_player + 1) + "'s turn")
-
+		
 func switch_player():
 	current_player = Player.PLAYER_2 if current_player == Player.PLAYER_1 else Player.PLAYER_1
 
