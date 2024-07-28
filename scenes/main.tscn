@@ -13,6 +13,8 @@
 [ext_resource type="AudioStream" uid="uid://dhidvhemisqag" path="res://assets/sfx/options/8bitmelody2_8.wav" id="11_vm8vs"]
 [ext_resource type="AudioStream" uid="uid://c7a68758j08d6" path="res://assets/sfx/options/8bitmelody2_9.wav" id="12_aj5x4"]
 [ext_resource type="AudioStream" uid="uid://dbbjf23wsqfim" path="res://assets/sfx/options/8bitmelody2_10.wav" id="13_nvkww"]
+[ext_resource type="AudioStream" uid="uid://dp2qd45elv2x7" path="res://assets/sfx/pieces/LightPlacing.wav" id="13_tffuc"]
+[ext_resource type="AudioStream" uid="uid://dc8c45vhdd05x" path="res://assets/sfx/pieces/ShadowPlacing.wav" id="14_al88k"]
 
 [node name="Main" type="Node2D"]
 
@@ -21,6 +23,54 @@ position = Vector2(-1, 0)
 
 [node name="TileMap" parent="GameManager" index="0"]
 position = Vector2(129, 57)
+
+[node name="MovePieceSound" type="AudioStreamPlayer" parent="GameManager/TileMap" index="0"]
+stream = ExtResource("4_pt58o")
+volume_db = -20.0
+
+[node name="MovePieceSound2" type="AudioStreamPlayer" parent="GameManager/TileMap" index="1"]
+stream = ExtResource("5_lqfon")
+volume_db = -20.0
+
+[node name="MovePieceSound3" type="AudioStreamPlayer" parent="GameManager/TileMap" index="2"]
+stream = ExtResource("6_fiwq6")
+volume_db = -20.0
+
+[node name="MovePieceSound4" type="AudioStreamPlayer" parent="GameManager/TileMap" index="3"]
+stream = ExtResource("7_uqsw5")
+volume_db = -20.0
+
+[node name="MovePieceSound5" type="AudioStreamPlayer" parent="GameManager/TileMap" index="4"]
+stream = ExtResource("8_8ualc")
+volume_db = -20.0
+
+[node name="MovePieceSound6" type="AudioStreamPlayer" parent="GameManager/TileMap" index="5"]
+stream = ExtResource("9_b645p")
+volume_db = -20.0
+
+[node name="MovePieceSound7" type="AudioStreamPlayer" parent="GameManager/TileMap" index="6"]
+stream = ExtResource("10_4e4sk")
+volume_db = -20.0
+
+[node name="MovePieceSound8" type="AudioStreamPlayer" parent="GameManager/TileMap" index="7"]
+stream = ExtResource("11_vm8vs")
+volume_db = -20.0
+
+[node name="MovePieceSound9" type="AudioStreamPlayer" parent="GameManager/TileMap" index="8"]
+stream = ExtResource("12_aj5x4")
+volume_db = -20.0
+
+[node name="MovePieceSound10" type="AudioStreamPlayer" parent="GameManager/TileMap" index="9"]
+stream = ExtResource("13_nvkww")
+volume_db = -20.0
+
+[node name="LightPlaceSound" type="AudioStreamPlayer" parent="GameManager/TileMap" index="10"]
+stream = ExtResource("13_tffuc")
+volume_db = -10.0
+
+[node name="ShadowPlaceSound" type="AudioStreamPlayer" parent="GameManager/TileMap" index="11"]
+stream = ExtResource("14_al88k")
+volume_db = -10.0
 
 [node name="MenuManager" parent="." instance=ExtResource("3_5h8my")]
 offset_left = 243.0

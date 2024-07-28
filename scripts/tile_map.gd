@@ -54,6 +54,10 @@ const GHOST_TILE_OPPONENT = Vector2i(2, 0)
 const INVALID_GHOST_TILE = Vector2i(1, 0) 
 const INVALID_GHOST_TILE_OPPONENT = Vector2i(3,0)
 
+# Starting position constants
+const PLAYER_1_START_OFFSET = Vector2i(1, -2)  # Bottom left, 2 rows from bottom
+const PLAYER_2_START_OFFSET = Vector2i(-2, -2) # Bottom right, 2 rows from bottom
+
 # Layer constants
 const BOARD_LAYER = 0
 const GHOST_LAYER = 1
@@ -69,12 +73,49 @@ var grab_bag = []
 signal piece_placed
 
 var board_rect: Rect2i
+var move_cooldown = 0.1  # Time in seconds between moves when key is held
+var move_timers = {}
+@onready var move_sounds: Array[AudioStreamPlayer] = [
+	$MovePieceSound,
+	$MovePieceSound2,
+	$MovePieceSound3,
+	$MovePieceSound4,
+	$MovePieceSound5,
+	$MovePieceSound6,
+	$MovePieceSound7,
+	$MovePieceSound8,
+	$MovePieceSound9,
+	$MovePieceSound10
+]
+
+@onready var light_place_sound = $LightPlaceSound
+@onready var shadow_place_sound = $ShadowPlaceSound
+
+
+var current_sound_index: int = 0
+
+const MOVE_DIRECTIONS = {
+	"ui_left": Vector2i(-1, 0),
+	"ui_right": Vector2i(1, 0),
+	"ui_down": Vector2i(0, 1),
+	"ui_up": Vector2i(0, -1)
+}
+
+func play_placing_sound():
+	var sound = light_place_sound if get_parent().current_player == Player.PLAYER_1 else shadow_place_sound
+	sound.play()
+	
+func initialize_move_timers():
+	for action in MOVE_DIRECTIONS.keys():
+		move_timers[action] = 0.0
 
 func _ready():
+	InputMap.load_from_project_settings()
 	set_process_unhandled_input(true)
 	print_debug("TileMap initialized. Ready to process input.")
-	refill_grab_bag()
 	active_piece = get_next_piece()
+	
+	initialize_move_timers()
 	
 	if get_layers_count() < 2:
 		add_layer(GHOST_LAYER)
@@ -82,7 +123,9 @@ func _ready():
 	set_layer_z_index(GHOST_LAYER, GHOST_LAYER_Z_INDEX)
 	
 	board_rect = get_used_rect()
-
+	current_ghost_position = Vector2i(board_rect.size.x / 2, 0)
+	
+	
 func reset():
 	print_debug("Resetting the game board")
 
@@ -115,6 +158,9 @@ func reset():
 
 	print_debug("Game board reset complete")
 
+func play_move_sound():
+	move_sounds[current_sound_index].play()
+	current_sound_index = (current_sound_index + 1) % move_sounds.size()
 
 func _input(event):
 	var game_manager = get_parent()
@@ -125,26 +171,62 @@ func _input(event):
 		var click_position = get_local_mouse_position()
 		var map_position = local_to_map(click_position)
 		
-		for offset in active_piece:
-			var tile_position = map_position + offset
-			if (tile_position.x < board_rect.position.x or
-				tile_position.x >= board_rect.end.x or
-				tile_position.y < board_rect.position.y or
-				tile_position.y >= board_rect.end.y):
-					return
-		
-		_on_tile_clicked(map_position)
+		if is_valid_position(map_position):
+			_on_tile_clicked(map_position)
 
-func _process(_delta):
+func handle_movement(delta):
+	for action in MOVE_DIRECTIONS:
+		if Input.is_action_pressed(action):
+			move_timers[action] += delta
+			if move_timers[action] >= move_cooldown:
+				play_move_sound()
+				move_piece(MOVE_DIRECTIONS[action])
+				current_sound_index
+				move_timers[action] = 0
+		else:
+			move_timers[action] = move_cooldown
+
+func _process(delta):
+	if get_parent().game_state != GameState.PLAYING:
+		return
+		
 	if Input.is_action_just_pressed("rotate_clockwise"):
+		play_move_sound()
 		rotate_piece(1)
 	elif Input.is_action_just_pressed("rotate_counterclockwise"):
+		play_move_sound()		
 		rotate_piece(-1)
+		
+	handle_movement(delta)
+
+	if Input.is_action_just_pressed("place_piece"):
+		_on_tile_clicked(current_ghost_position)
+		
+func move_piece(direction: Vector2i):
+	var new_position = current_ghost_position + direction
+	if is_valid_position(new_position):
+		current_ghost_position = new_position
+		update_ghost_piece()
+
+
+func is_valid_position(position: Vector2i) -> bool:
+	for offset in active_piece:
+		var tile_position = position + offset
+		if (tile_position.x < board_rect.position.x or
+			tile_position.x >= board_rect.end.x or
+			tile_position.y < board_rect.position.y or
+			tile_position.y >= board_rect.end.y):
+				return false	
+	return true
 
 func _unhandled_input(event):
 	var game_manager = get_parent()
-	if event is InputEventMouseMotion and  game_manager.game_state == GameState.PLAYING:
-		update_ghost_piece()
+	
+	if event is InputEventMouseMotion and game_manager.game_state == GameState.PLAYING:
+		var map_position = local_to_map(get_local_mouse_position())
+		if is_valid_position(map_position):
+			current_ghost_position = map_position
+			update_ghost_piece()
 
 func _on_tile_clicked(map_position: Vector2i):	
 	var game_manager = get_parent()
@@ -160,6 +242,9 @@ func place_piece(map_position: Vector2i, tile: Vector2i):
 			var tile_position = map_position + offset
 			set_cell(BOARD_LAYER, tile_position, 0, tile)
 		active_piece = get_next_piece()
+		current_sound_index = 0
+		play_placing_sound()
+		#set_position_for_new_piece()
 		update_ghost_piece()
 		emit_signal("piece_placed")
 	else:
@@ -176,13 +261,6 @@ func can_place_piece(map_position: Vector2i, tile: Vector2i) -> bool:
 	return overlaps_own_color
 
 func update_ghost_piece():
-	var local_position = get_local_mouse_position()
-	var map_position = local_to_map(local_position)
-
-
-	if map_position != current_ghost_position:
-		current_ghost_position = map_position
-
 	clear_layer(GHOST_LAYER)
 	var game_manager = get_parent()
 	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
@@ -242,3 +320,25 @@ func get_next_piece():
 	if grab_bag.is_empty():
 		refill_grab_bag()
 	return grab_bag.pop_back()
+	
+func set_position_for_new_piece():
+	var board_size = board_rect.size
+	
+	if get_parent().current_player == Player.PLAYER_2:
+		# Set position to bottom left for Player 2
+		current_ghost_position = Vector2i(
+			PLAYER_1_START_OFFSET.x,
+			board_size.y + PLAYER_1_START_OFFSET.y
+		)
+	else:
+		# Set position to bottom right for Player 1
+		current_ghost_position = Vector2i(
+			board_size.x + PLAYER_2_START_OFFSET.x,
+			board_size.y + PLAYER_2_START_OFFSET.y
+		)
+	
+	# Ensure the piece is within the valid board area
+	while not is_valid_position(current_ghost_position):
+		current_ghost_position.y -= 1
+	
+	update_ghost_piece()
