@@ -160,8 +160,6 @@ func can_place_piece(map_position: Vector2i, tile: Vector2i) -> bool:
 		if existing_tile == tile:
 			overlaps_own_color = true
 			break
-		elif existing_tile != EMPTY_TILE:
-			return false  
 	return overlaps_own_color
 
 func update_ghost_piece():
