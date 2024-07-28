@@ -1,11 +1,11 @@
 extends TileMap
 
-const TILESET_SOURCE_ID = 3  # Make sure this matches your tileset source ID
+const TILESET_SOURCE_ID = 0  # Make sure this matches your tileset source ID
 
-const EMPTY_TILE = Vector2i(0, 0)  # Changed to represent no tile
-const PLAYER_TILE = Vector2i(12, 11)  
-const GHOST_TILE = Vector2i(13, 0)
-const INVALID_GHOST_TILE = Vector2i(14, 0) 
+const EMPTY_TILE = Vector2i(4, 0)  # Changed to represent no tile
+const PLAYER_TILE = Vector2i(0, 0)  
+const GHOST_TILE = Vector2i(1, 0)
+const INVALID_GHOST_TILE = Vector2i(3, 0) 
 
 # Board constants
 const BOARD_WIDTH = 7
@@ -39,21 +39,25 @@ func _ready():
 	print("Combination map ready")
 	active_piece = get_random_piece()
 	update_ghost_piece()
-	reset_game()
+	reset()
 
-func reset_game():
+func reset():
 	for piece in placed_pieces:
 		for tile in piece:
 			set_cell(BOARD_LAYER, tile, TILESET_SOURCE_ID, EMPTY_TILE)
 	clear_layer(GHOST_LAYER)
 	placed_pieces = []
 	active_piece = get_random_piece()
+	current_ghost_position = Vector2i(0, 0)
 	update_ghost_piece()
 	print("Combination map reset")
 
+func _on_combination_complete(combined_piece):
+	emit_signal("combination_complete", combined_piece)
+	reset()
+
 func get_random_piece():
 	return ALL_SHAPES[randi() % ALL_SHAPES.size()]
-
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
@@ -119,7 +123,7 @@ func place_piece(base_position: Vector2i):
 			if placed_pieces.size() == 2:
 				var result_piece = combine_pieces()
 				print_debug("Combination complete. Result: ", result_piece)
-				emit_signal("combination_complete", result_piece)
+				_on_combination_complete(result_piece)
 			else:
 				active_piece = get_random_piece()
 				print_debug("New active piece: ", active_piece)

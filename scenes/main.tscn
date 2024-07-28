@@ -140,6 +140,8 @@ position = Vector2(276, 162)
 zoom = Vector2(4.37, 4.37)
 
 [editable path="GameManager"]
+[editable path="GameManager/CombinationBoardP2"]
+[editable path="GameManager/CombinationBoardP1"]
 [editable path="MenuManager"]
 [editable path="MenuManager/MainMenu"]
 [editable path="MenuManager/OptionsMenu"]

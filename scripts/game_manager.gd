@@ -2,7 +2,7 @@ extends Node2D
 
 class_name game_manager
 
-enum GameState { MENU, PLAYING, GAME_OVER }
+enum GameState { MENU, COMBINING, PLACING, GAME_OVER }
 enum Player { PLAYER_1, PLAYER_2 }
 enum WinResult { PLAYER_1_WIN, PLAYER_2_WIN, TIE }
 
@@ -14,29 +14,53 @@ var winner: WinResult
 var winner_message: String
 
 @onready var tile_map: TileMap = $TileMap
+@onready var combination_board_p1 : Control = $CombinationBoardP1
+@onready var combination_board_p2 : Control= $CombinationBoardP2
 @onready var game_manager = $"."
-@onready var ui = $"../ui"
-@onready var menu_manager = $"../MenuManager"
+@onready var menu_manager_node = $"../MenuManager"
 
 func _ready():
 	tile_map.connect("piece_placed", Callable(self, "_on_piece_placed"))
-	#ui.connect("game_started", Callable(self, "game_started"))
-	menu_manager.connect("go_main_menu", Callable(self, "go_main_menu"))
-	#ui.connect("restart_game", Callable(self, "game_started"))
-	menu_manager.connect("game_started", Callable(self, "game_started"))
-	#menu_manager.connect("go_main_menu", Callable(self, "go_main_menu"))
-	#menu_manager.connect("restart_game", Callable(self, "game_started"))
+	menu_manager_node.connect("go_main_menu", Callable(self, "go_main_menu"))
+	menu_manager_node.connect("game_started", Callable(self, "game_started"))
+	combination_board_p1.connect("combination_complete", Callable(self, "on_combination_complete"))
+	combination_board_p2.connect("combination_complete", Callable(self, "on_combination_complete"))
 	game_state = GameState.MENU
+	hide_combination_boards()
 
 func game_started():
-	game_state = GameState.PLAYING
+	game_state = GameState.COMBINING
 	print_debug("game_started", game_state)
 	current_player = Player.PLAYER_1
 	print_debug("game_started", current_player)
 	turn_count = 0
 	tile_map.reset()
-	tile_map.update_for_new_turn(current_player)
+	show_combination_board(current_player)
+	
+func hide_combination_boards():
+	combination_board_p1.hide_board()
+	combination_board_p2.hide_board()
 
+func show_combination_board(player: Player):
+	hide_combination_boards()
+	if player == Player.PLAYER_1:
+		combination_board_p1.show_board()
+		combination_board_p1.get_node("CombinationMap").reset()
+	else:
+		combination_board_p2.show_board()
+		combination_board_p2.get_node("CombinationMap").reset()
+	game_state = GameState.COMBINING
+
+
+func on_combination_complete(combined_piece):
+	game_state = GameState.PLACING
+	tile_map.set_active_piece(combined_piece)
+	hide_combination_boards()
+
+func _on_piece_placed():
+	if game_state != GameState.PLACING:
+		return
+	end_turn()
 
 func end_game():
 	game_state = GameState.GAME_OVER
@@ -50,16 +74,11 @@ func end_game():
 			winner_message = "Game Over! It's a tie!"
 	print_debug(winner_message)
 	#ui.on_game_over(winner_message)
-	menu_manager.on_game_over(winner_message)
+	menu_manager_node.on_game_over(winner_message)
 
 func go_main_menu():
+	hide_combination_boards()
 	game_state = GameState.MENU
-
-func _on_piece_placed():
-	print_debug("printing the game state", game_state)
-	if game_state != GameState.PLAYING:
-		return
-	end_turn()
 
 func end_turn():
 	turn_count += 1
@@ -68,9 +87,11 @@ func end_turn():
 		end_game()
 	else:
 		switch_player()
+		game_state = GameState.COMBINING
+		show_combination_board(current_player)
 		tile_map.update_for_new_turn(current_player)
 		print_debug("Turn " + str(turn_count + 1) + " - Player " + str(current_player + 1) + "'s turn")
-		
+
 func switch_player():
 	current_player = Player.PLAYER_2 if current_player == Player.PLAYER_1 else Player.PLAYER_1
 
