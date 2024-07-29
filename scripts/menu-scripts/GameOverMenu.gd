@@ -6,12 +6,23 @@ signal go_main_menu
 @onready var winner_label = $VBoxContainer/winner_label
 @onready var main_menu_button = $VBoxContainer/main_menu_button
 @onready var restart_button = $VBoxContainer/restart_button
+@onready var Player_1_wins = $Player_1_wins
+@onready var Player_2_wins = $Player_2_wins
 
 func _ready():
 	hide()
 
 func on_game_over(winner: String):
 	winner_label.text = winner
+	if winner == "Game Over! Player 1 wins!":
+		Player_1_wins.show()
+		Player_2_wins.hide()
+	elif winner == "Game Over! Player 2 wins!":
+		Player_1_wins.hide()
+		Player_2_wins.show()
+	else:
+		Player_1_wins.hide()
+		Player_2_wins.hide()
 	# Reset the opacity and disable buttons before showing the menu
 	modulate.a = 0
 	main_menu_button.disabled = true

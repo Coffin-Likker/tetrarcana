@@ -8,8 +8,8 @@ const GHOST_TILE = Vector2i(1, 0)
 const INVALID_GHOST_TILE = Vector2i(3, 0) 
 
 # Board constants
-const BOARD_WIDTH = 7
-const BOARD_HEIGHT = 7
+const BOARD_WIDTH = 6
+const BOARD_HEIGHT = 6
 const BOARD_OFFSET = Vector2i(0, 0)  # Adjust this if your board isn't at (0,0)
 
 

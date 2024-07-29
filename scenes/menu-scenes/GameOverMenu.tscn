@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bdrku4cijohn3"]
+[gd_scene load_steps=4 format=3 uid="uid://bdrku4cijohn3"]
 
 [ext_resource type="Script" path="res://scripts/menu-scripts/GameOverMenu.gd" id="1_c6jgj"]
+[ext_resource type="Texture2D" uid="uid://d3c6hn4uvqv3y" path="res://assets/finalwinner_shadow_layout.png" id="2_2qjr1"]
+[ext_resource type="Texture2D" uid="uid://cxhalqm2oyqoi" path="res://assets/finalwinner_light_layout.png" id="3_qule2"]
 
 [node name="GameOver" type="Control"]
 layout_mode = 3
@@ -38,6 +40,24 @@ text = "Restart"
 [node name="main_menu_button" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Go to main menu"
+
+[node name="Player_1_wins" type="TextureRect" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 976.0
+offset_top = 436.0
+offset_right = 1476.0
+offset_bottom = 733.0
+texture = ExtResource("2_2qjr1")
+
+[node name="Player_2_wins" type="TextureRect" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 976.0
+offset_top = 440.0
+offset_right = 1476.0
+offset_bottom = 737.0
+texture = ExtResource("3_qule2")
 
 [connection signal="pressed" from="VBoxContainer/restart_button" to="." method="_on_restart_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/main_menu_button" to="." method="_on_main_menu_button_pressed"]
