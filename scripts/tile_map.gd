@@ -1,6 +1,6 @@
 extends TileMap
 
-const TILESET_SOURCE_ID = 1  # Make sure this matches your tileset source ID
+const TILESET_SOURCE_ID = 0  # Make sure this matches your tileset source ID
 
 # Tile IDs for each player
 # THIS NEEDS FIXING 

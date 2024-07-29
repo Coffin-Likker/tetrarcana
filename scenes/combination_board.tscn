@@ -3,21 +3,24 @@
 [ext_resource type="Script" path="res://scripts/combination_board.gd" id="1_3o7wy"]
 [ext_resource type="Script" path="res://scripts/CombinationMap.gd" id="2_fo75o"]
 [ext_resource type="Texture2D" uid="uid://cf7g0y1upuf6c" path="res://assets/light__scroll.png" id="2_lltnc"]
-[ext_resource type="Texture2D" uid="uid://brhvpr15k0nvv" path="res://assets/newtile_sheet.png" id="2_m1i0k"]
+[ext_resource type="Texture2D" uid="uid://boq8fputfekr5" path="res://assets/tiles_sheet_circles.png" id="3_42wwt"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bv23n"]
-texture = ExtResource("2_m1i0k")
-margins = Vector2i(1, 1)
-separation = Vector2i(2, 0)
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_erkii"]
+texture = ExtResource("3_42wwt")
 0:0/0 = 0
+0:1/0 = 0
+2:1/0 = 0
 1:0/0 = 0
+1:1/0 = 0
 2:0/0 = 0
 3:0/0 = 0
+3:1/0 = 0
+4:1/0 = 0
 4:0/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_civh4"]
 uv_clipping = true
-sources/0 = SubResource("TileSetAtlasSource_bv23n")
+sources/1 = SubResource("TileSetAtlasSource_erkii")
 
 [node name="CombinationBoard" type="Control"]
 layout_mode = 3
@@ -37,5 +40,5 @@ texture = ExtResource("2_lltnc")
 [node name="CombinationMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_civh4")
 format = 2
-layer_0/tile_data = PackedInt32Array(0, 262144, 0, 65536, 262144, 0, 131072, 262144, 0, 196608, 262144, 0, 262144, 262144, 0, 327680, 262144, 0, 1, 262144, 0, 65537, 262144, 0, 131073, 262144, 0, 196609, 262144, 0, 262145, 262144, 0, 327681, 262144, 0, 2, 262144, 0, 65538, 262144, 0, 131074, 262144, 0, 196610, 262144, 0, 262146, 262144, 0, 327682, 262144, 0, 3, 262144, 0, 65539, 262144, 0, 131075, 262144, 0, 196611, 262144, 0, 262147, 262144, 0, 327683, 262144, 0, 4, 262144, 0, 65540, 262144, 0, 131076, 262144, 0, 196612, 262144, 0, 262148, 262144, 0, 327684, 262144, 0, 5, 262144, 0, 65541, 262144, 0, 131077, 262144, 0, 196613, 262144, 0, 262149, 262144, 0, 327685, 262144, 0)
+layer_0/tile_data = PackedInt32Array(0, 262145, 0, 65536, 262145, 0, 131072, 262145, 0, 196608, 262145, 0, 262144, 262145, 0, 327680, 262145, 0, 1, 262145, 0, 65537, 262145, 0, 131073, 262145, 0, 196609, 262145, 0, 262145, 262145, 0, 327681, 262145, 0, 2, 262145, 0, 65538, 262145, 0, 131074, 262145, 0, 196610, 262145, 0, 262146, 262145, 0, 327682, 262145, 0, 3, 262145, 0, 65539, 262145, 0, 131075, 262145, 0, 196611, 262145, 0, 262147, 262145, 0, 327683, 262145, 0, 4, 262145, 0, 65540, 262145, 0, 131076, 262145, 0, 196612, 262145, 0, 262148, 262145, 0, 327684, 262145, 0, 5, 262145, 0, 65541, 262145, 0, 131077, 262145, 0, 196613, 262145, 0, 262149, 262145, 0, 327685, 262145, 0)
 script = ExtResource("2_fo75o")
