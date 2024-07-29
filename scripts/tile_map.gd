@@ -71,6 +71,7 @@ func initialize_move_timers():
 		move_timers[action] = 0.0
 
 func set_active_piece(piece):
+	clear_ghost_piece()
 	var local_position = get_local_mouse_position()
 	var map_position = local_to_map(local_position)
 	active_piece = piece
@@ -90,10 +91,10 @@ func _ready():
 	set_layer_z_index(GHOST_LAYER, GHOST_LAYER_Z_INDEX)
 	
 	board_rect = get_used_rect()
-	current_ghost_position = Vector2i(
-		board_rect.position.x + 1,  # One column from the left edge
-		board_rect.end.y - 3        # Three rows from the bottom
-	)
+	#current_ghost_position = Vector2i(
+		#board_rect.position.x + 1,  # One column from the left edge
+		#board_rect.end.y - 3        # Three rows from the bottom
+	#)
 	
 
 func reset():
@@ -125,25 +126,20 @@ func reset():
 
 	print_debug("Game board reset complete")
 
-func play_move_sound():
-	move_sounds[current_sound_index].play()
-	current_sound_index = (current_sound_index + 1) % move_sounds.size()
+#func play_move_sound():
+	#move_sounds[current_sound_index].play()
+	#current_sound_index = (current_sound_index + 1) % move_sounds.size()
 
 func _input(event):
 	if get_parent().game_state != get_parent().GameState.PLACING:
+		clear_ghost_piece()
 		return
-
-	# if event is InputEventMouseMotion:
-	# 	var map_position = local_to_map(get_local_mouse_position())
-	# 	handle_mouse_movement(map_position)
 
 	if event is InputEventMouseMotion:
 		var local_position = get_local_mouse_position()
 		var map_position = local_to_map(local_position)
 		if get_used_rect().has_point(map_position):
 			update_ghost_piece(map_position)
-		else:
-			clear_layer(GHOST_LAYER)
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var click_position = get_local_mouse_position()
@@ -151,30 +147,31 @@ func _input(event):
 		if get_used_rect().has_point(map_position):
 			_on_tile_clicked(map_position)
 
-func handle_movement(delta):
-	for action in MOVE_DIRECTIONS:
-		if Input.is_action_pressed(action):
-			move_timers[action] += delta
-			if move_timers[action] >= move_cooldown:
-				play_move_sound()
-				move_piece(MOVE_DIRECTIONS[action])
-				current_sound_index
-				move_timers[action] = 0
-		else:
-			move_timers[action] = move_cooldown
+
+#func handle_movement(delta):
+	#for action in MOVE_DIRECTIONS:
+		#if Input.is_action_pressed(action):
+			#move_timers[action] += delta
+			#if move_timers[action] >= move_cooldown:
+				#play_move_sound()
+				#move_piece(MOVE_DIRECTIONS[action])
+				#current_sound_index
+				#move_timers[action] = 0
+		#else:
+			#move_timers[action] = move_cooldown
 
 #FIX ROTATION BY COPYING IT IDENTICALLY FROM COMBINATION BOARD
 func _process(delta):
 	if get_parent().game_state != get_parent().GameState.PLACING:
 		return
 	if Input.is_action_just_pressed("rotate_clockwise"):
-		play_move_sound()
+		#play_move_sound()
 		rotate_piece(1)
 	elif Input.is_action_just_pressed("rotate_counterclockwise"):
-		play_move_sound()
+		#play_move_sound()
 		rotate_piece(-1)
 	
-	handle_movement(delta)
+	#handle_movement(delta)
 
 	# if Input.is_action_just_pressed("place_piece"):
 	# 	_on_tile_clicked(current_ghost_position)
@@ -188,23 +185,23 @@ func _unhandled_input(event):
 		if is_valid_position(map_position):
 			update_ghost_piece(map_position)
 
-func move_piece(direction: Vector2i):
-	# var local_position = get_local_mouse_position()
-	# var map_position = local_to_map(local_position)
-	var new_position = current_ghost_position + direction
-	if is_valid_position(new_position):
-		current_ghost_position = new_position
-		update_ghost_piece(new_position)
+#func move_piece(direction: Vector2i):
+	## var local_position = get_local_mouse_position()
+	## var map_position = local_to_map(local_position)
+	#var new_position = current_ghost_position + direction
+	#if is_valid_position(new_position):
+		#current_ghost_position = new_position
+		#update_ghost_piece(new_position)
 
-func is_valid_position(position: Vector2i) -> bool:
-	for offset in active_piece:
-		var tile_position = position + offset
-		if (tile_position.x < board_rect.position.x or
-			tile_position.x >= board_rect.end.x or
-			tile_position.y < board_rect.position.y or
-			tile_position.y >= board_rect.end.y):
-				return false	
-	return true
+#func is_valid_position(position: Vector2i) -> bool:
+	#for offset in active_piece:
+		#var tile_position = position + offset
+		#if (tile_position.x < board_rect.position.x or
+			#tile_position.x >= board_rect.end.x or
+			#tile_position.y < board_rect.position.y or
+			#tile_position.y >= board_rect.end.y):
+				#return false	
+	#return true
 
 #func _input(event):
 	#var game_manager = get_parent()
@@ -235,11 +232,15 @@ func place_piece(map_position: Vector2i, tile: Vector2i):
 	var game_manager = get_parent()
 	print_debug("Placing piece at base position: ", map_position)
 	
+	if not is_valid_position(map_position):
+		print_debug("Invalid placement: out of bounds")
+		return
+	
 	if game_manager.turn_count < 2 or can_place_piece(map_position, tile):
 		for offset in active_piece:
 			var tile_position = map_position + offset
 			set_cell(BOARD_LAYER, tile_position, TILESET_SOURCE_ID, tile)
-		update_ghost_piece(map_position)
+		clear_ghost_piece()  # Clear the ghost piece after placing
 		current_sound_index = 0
 		play_placing_sound()
 		emit_signal("piece_placed")
@@ -258,18 +259,24 @@ func can_place_piece(map_position: Vector2i, tile: Vector2i) -> bool:
 
 func update_ghost_piece(map_position: Vector2i):
 	clear_layer(GHOST_LAYER)
+	var game_manager = get_parent()
+	if game_manager.game_state != game_manager.GameState.PLACING:
+		clear_ghost_piece()
+		return
 
 	if active_piece.is_empty():
 		return
 
+	#if not is_valid_position(map_position):
+		#return
+
 	if map_position != current_ghost_position:
 		current_ghost_position = map_position
 
-	var game_manager = get_parent()
 	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
+	var ghost_tile 
 
 	var can_place = get_parent().game_state == get_parent().GameState.PLACING and (game_manager.turn_count < 2 or can_place_piece(current_ghost_position, current_player_tile))
-	var ghost_tile
 
 	if game_manager.current_player == game_manager.Player.PLAYER_1:
 		ghost_tile = GHOST_TILE if can_place else INVALID_GHOST_TILE
@@ -316,48 +323,48 @@ func rotate_piece(direction: int):
 		active_piece = new_piece.map(func(block): return block + offset)
 		update_ghost_piece(map_position)
 
-func set_position_for_new_piece():
-	var local_position = get_local_mouse_position()
-	var map_position = local_to_map(local_position)
-	var board_size = board_rect.size
-	var game_manager = get_parent()
-	
-	if game_manager.current_player == Player.PLAYER_1:
-		# Set position to bottom left for Player 2
-		current_ghost_position = Vector2i(
-			board_rect.position.x + 1,  # One column from the left edge
-			board_rect.end.y - 3		# Three rows from the bottom
-		)
-	else:
-		# Set position to bottom right for Player 1
-		current_ghost_position = Vector2i(
-			board_rect.end.x - 2,  # Two columns from the right edge
-			board_rect.end.y - 3   # Three rows from the bottom
-		)
-	
-	# Ensure the piece is within the valid board area
-	while not is_valid_position(current_ghost_position):
-		current_ghost_position.y -= 1
-		
-		# If we've moved the piece all the way to the top and it's still not valid,
-		# try shifting it horizontally towards the center
-		if current_ghost_position.y < board_rect.position.y:
-			current_ghost_position.y = board_rect.end.y - 1
-			if game_manager.current_player == Player.PLAYER_1:
-				current_ghost_position.x += 1
-			else:
-				current_ghost_position.x -= 1
-				
-		# If we've exhausted all positions, place it in the center of the board
-		if (current_ghost_position.x < board_rect.position.x or 
-			current_ghost_position.x >= board_rect.end.x):
-			current_ghost_position = Vector2i(
-				board_rect.position.x + board_size.x / 2,
-				board_rect.position.y + board_size.y / 2
-			)
-			break
-	
-	update_ghost_piece(map_position)
+#func set_position_for_new_piece():
+	#var local_position = get_local_mouse_position()
+	#var map_position = local_to_map(local_position)
+	#var board_size = board_rect.size
+	#var game_manager = get_parent()
+	#
+	#if game_manager.current_player == Player.PLAYER_1:
+		## Set position to bottom left for Player 2
+		#current_ghost_position = Vector2i(
+			#board_rect.position.x + 1,  # One column from the left edge
+			#board_rect.end.y - 3		# Three rows from the bottom
+		#)
+	#else:
+		## Set position to bottom right for Player 1
+		#current_ghost_position = Vector2i(
+			#board_rect.end.x - 2,  # Two columns from the right edge
+			#board_rect.end.y - 3   # Three rows from the bottom
+		#)
+	#
+	## Ensure the piece is within the valid board area
+	#while not is_valid_position(current_ghost_position):
+		#current_ghost_position.y -= 1
+		#
+		## If we've moved the piece all the way to the top and it's still not valid,
+		## try shifting it horizontally towards the center
+		#if current_ghost_position.y < board_rect.position.y:
+			#current_ghost_position.y = board_rect.end.y - 1
+			#if game_manager.current_player == Player.PLAYER_1:
+				#current_ghost_position.x += 1
+			#else:
+				#current_ghost_position.x -= 1
+				#
+		## If we've exhausted all positions, place it in the center of the board
+		#if (current_ghost_position.x < board_rect.position.x or 
+			#current_ghost_position.x >= board_rect.end.x):
+			#current_ghost_position = Vector2i(
+				#board_rect.position.x + board_size.x / 2,
+				#board_rect.position.y + board_size.y / 2
+			#)
+			#break
+	#
+	#update_ghost_piece(map_position)
 
 func can_rotate():
 	return true
@@ -365,34 +372,15 @@ func can_rotate():
 func update_for_new_turn(new_player: Player):
 	var local_position = get_local_mouse_position()
 	var map_position = local_to_map(local_position)
-	set_position_for_new_piece()
+	clear_ghost_piece()  # Clear the ghost piece at the start of a new turn
 	update_ghost_piece(map_position)
 	
+func clear_ghost_piece():
+	clear_layer(GHOST_LAYER)
 
-func handle_mouse_movement(map_position: Vector2i):
-	var new_position = map_position
-	var valid_position = new_position
-	
-	# Check each block of the active piece
+func is_valid_position(position: Vector2i) -> bool:
 	for offset in active_piece:
-		var block_position = new_position + offset
-		if not is_within_board(block_position):
-			# If any block is outside, adjust the position
-			if block_position.x < board_rect.position.x:
-				valid_position.x = max(valid_position.x, board_rect.position.x - offset.x)
-			elif block_position.x >= board_rect.end.x:
-				valid_position.x = min(valid_position.x, board_rect.end.x - 1 - offset.x)
-			if block_position.y < board_rect.position.y:
-				valid_position.y = max(valid_position.y, board_rect.position.y - offset.y)
-			elif block_position.y >= board_rect.end.y:
-				valid_position.y = min(valid_position.y, board_rect.end.y - 1 - offset.y)
-	
-	if valid_position != current_ghost_position:
-		current_ghost_position = valid_position
-		update_ghost_piece(valid_position)
-
-func is_within_board(position: Vector2i) -> bool:
-	return (position.x >= board_rect.position.x and
-			position.x < board_rect.end.x and
-			position.y >= board_rect.position.y and
-			position.y < board_rect.end.y)
+		var tile_position = position + offset
+		if not get_used_rect().has_point(tile_position):
+			return false
+	return true

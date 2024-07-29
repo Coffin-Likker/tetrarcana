@@ -3,12 +3,10 @@
 [ext_resource type="Script" path="res://scripts/combination_board.gd" id="1_3o7wy"]
 [ext_resource type="Script" path="res://scripts/CombinationMap.gd" id="2_fo75o"]
 [ext_resource type="Texture2D" uid="uid://cf7g0y1upuf6c" path="res://assets/light__scroll.png" id="2_lltnc"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_5sbfl"]
-load_path = "res://.godot/imported/newtile_sheet.png-ffbf5630ab1db9cf621fcdd226684196.ctex"
+[ext_resource type="Texture2D" uid="uid://brhvpr15k0nvv" path="res://assets/newtile_sheet.png" id="2_m1i0k"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bv23n"]
-texture = SubResource("CompressedTexture2D_5sbfl")
+texture = ExtResource("2_m1i0k")
 margins = Vector2i(1, 1)
 separation = Vector2i(2, 0)
 0:0/0 = 0
