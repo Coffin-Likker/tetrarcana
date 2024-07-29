@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxhalqm2oyqoi"
-path="res://.godot/imported/finalwinner_light_layout.png-3dee0ef789ee45cecc4cf82661606fff.ctex"
+uid="uid://b8df65nbk4wa4"
+path="res://.godot/imported/finalwinner_lightcropped.png-f786cae07e5d235465e59639edfe5b1c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/finalwinner_light_layout.png"
-dest_files=["res://.godot/imported/finalwinner_light_layout.png-3dee0ef789ee45cecc4cf82661606fff.ctex"]
+source_file="res://assets/finalwinner_lightcropped.png"
+dest_files=["res://.godot/imported/finalwinner_lightcropped.png-f786cae07e5d235465e59639edfe5b1c.ctex"]
 
 [params]
 

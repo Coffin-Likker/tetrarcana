@@ -29,10 +29,10 @@ offset_bottom = 334.0
 texture = ExtResource("1_ipjdu")
 
 [node name="Moss" type="TextureRect" parent="Background"]
-offset_left = 85.0
-offset_top = 33.0
-offset_right = 485.0
-offset_bottom = 271.0
+offset_left = 40.0
+offset_top = 8.0
+offset_right = 532.0
+offset_bottom = 280.0
 scale = Vector2(1, 0.97)
 texture = ExtResource("2_ppq26")
 
@@ -40,7 +40,8 @@ texture = ExtResource("2_ppq26")
 position = Vector2(-1, 0)
 
 [node name="TileMap" parent="GameManager" index="0"]
-position = Vector2(174, 74)
+position = Vector2(151, 52)
+scale = Vector2(1.2, 1.2)
 
 [node name="MovePieceSound" type="AudioStreamPlayer" parent="GameManager/TileMap" index="0"]
 stream = ExtResource("4_pt58o")
@@ -109,28 +110,37 @@ position = Vector2(34, 62)
 flip_h = true
 
 [node name="MenuManager" parent="." instance=ExtResource("3_5h8my")]
-offset_left = 243.0
-offset_top = 135.0
-offset_right = 243.0
-offset_bottom = 135.0
+offset_left = 290.0
+offset_top = 127.0
+offset_right = 290.0
+offset_bottom = 127.0
+
+[node name="MainMenu" parent="MenuManager" index="1"]
+visible = true
+
+[node name="QuitToDesktop" parent="MenuManager/MainMenu/VBoxContainer" index="2"]
+visible = false
+
+[node name="GameOverMenu" parent="MenuManager" index="3"]
+visible = false
 
 [node name="VBoxContainer" parent="MenuManager/GameOverMenu" index="0"]
-offset_left = -70.0
-offset_top = 49.0
-offset_right = 122.0
-offset_bottom = 142.0
+offset_left = -100.0
+offset_top = 48.0
+offset_right = 92.0
+offset_bottom = 141.0
 
 [node name="Player_1_wins" parent="MenuManager/GameOverMenu" index="1"]
-offset_left = -219.0
-offset_top = -140.0
-offset_right = 281.0
-offset_bottom = 157.0
+offset_left = -149.0
+offset_top = -79.0
+offset_right = 146.0
+offset_bottom = 65.0
 
 [node name="Player_2_wins" parent="MenuManager/GameOverMenu" index="2"]
-offset_left = -217.0
-offset_top = -140.0
-offset_right = 283.0
-offset_bottom = 157.0
+offset_left = -151.0
+offset_top = -74.0
+offset_right = 137.0
+offset_bottom = 68.0
 
 [node name="FocusSound" type="AudioStreamPlayer" parent="MenuManager"]
 stream = ExtResource("4_pt58o")

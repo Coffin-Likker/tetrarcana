@@ -15,12 +15,15 @@ func _ready():
 func on_game_over(winner: String):
 	winner_label.text = winner
 	if winner == "Game Over! Player 1 wins!":
+		winner_label.hide()
 		Player_1_wins.show()
 		Player_2_wins.hide()
 	elif winner == "Game Over! Player 2 wins!":
+		winner_label.hide()
 		Player_1_wins.hide()
 		Player_2_wins.show()
 	else:
+		winner_label.show()
 		Player_1_wins.hide()
 		Player_2_wins.hide()
 	# Reset the opacity and disable buttons before showing the menu

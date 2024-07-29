@@ -9,7 +9,7 @@ enum WinResult { PLAYER_1_WIN, PLAYER_2_WIN, TIE }
 var game_state: GameState 
 var current_player: Player 
 var turn_count: int = 0
-@export var MAX_TURNS: int = 16
+@export var MAX_TURNS: int = 2
 var winner: WinResult
 var winner_message: String
 

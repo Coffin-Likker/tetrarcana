@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3c6hn4uvqv3y"
-path="res://.godot/imported/finalwinner_shadow_layout.png-13253c31cc905358f1ebdd02017ab81e.ctex"
+uid="uid://cg2dxxpd64uyy"
+path="res://.godot/imported/finalwinner_shadowcropped.png-5e303d122233d270e21b9163a357ce50.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/finalwinner_shadow_layout.png"
-dest_files=["res://.godot/imported/finalwinner_shadow_layout.png-13253c31cc905358f1ebdd02017ab81e.ctex"]
+source_file="res://assets/finalwinner_shadowcropped.png"
+dest_files=["res://.godot/imported/finalwinner_shadowcropped.png-5e303d122233d270e21b9163a357ce50.ctex"]
 
 [params]
 
