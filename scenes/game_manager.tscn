@@ -2,22 +2,25 @@
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_ko4jb"]
 [ext_resource type="PackedScene" uid="uid://do0fobsnwpl66" path="res://scenes/combination_board.tscn" id="2_hdvyb"]
+[ext_resource type="Texture2D" uid="uid://boq8fputfekr5" path="res://assets/tiles_sheet_circles.png" id="2_xwqbi"]
 [ext_resource type="Script" path="res://scripts/tile_map.gd" id="3_l56uk"]
-[ext_resource type="Texture2D" uid="uid://brhvpr15k0nvv" path="res://assets/newtile_sheet.png" id="3_lufse"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jg1vs"]
-texture = ExtResource("3_lufse")
-margins = Vector2i(1, 1)
-separation = Vector2i(2, 0)
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fj6xl"]
+texture = ExtResource("2_xwqbi")
 0:0/0 = 0
 1:0/0 = 0
-3:0/0 = 0
 2:0/0 = 0
+3:0/0 = 0
 4:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_2umof"]
 uv_clipping = true
-sources/1 = SubResource("TileSetAtlasSource_jg1vs")
+sources/1 = SubResource("TileSetAtlasSource_fj6xl")
 
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_ko4jb")

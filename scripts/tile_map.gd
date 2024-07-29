@@ -14,7 +14,8 @@ const PLAYER_2_TILE = Vector2i(2, 0)  # Red tile
 const EMPTY_TILE = Vector2i(4, 0)
 const GHOST_TILE = Vector2i(1, 0)
 const GHOST_TILE_OPPONENT = Vector2i(3, 0)
-const INVALID_GHOST_TILE = Vector2i(2, 0) 
+const INVALID_GHOST_TILE = Vector2i(1, 1)
+const INVALID_GHOST_TILE_PLAYER_2 = Vector2i(3, 1) 
 
 # Layer constants
 const BOARD_LAYER = 0
@@ -266,15 +267,14 @@ func update_ghost_piece(map_position: Vector2i):
 
 	var game_manager = get_parent()
 	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
-	var ghost_tile 
 
 	var can_place = get_parent().game_state == get_parent().GameState.PLACING and (game_manager.turn_count < 2 or can_place_piece(current_ghost_position, current_player_tile))
-	ghost_tile = ghost_tile if can_place else INVALID_GHOST_TILE
+	var ghost_tile
 
 	if game_manager.current_player == game_manager.Player.PLAYER_1:
 		ghost_tile = GHOST_TILE if can_place else INVALID_GHOST_TILE
 	else:
-		ghost_tile = GHOST_TILE_OPPONENT if can_place else INVALID_GHOST_TILE
+		ghost_tile = GHOST_TILE_OPPONENT if can_place else INVALID_GHOST_TILE_PLAYER_2
 
 	for offset in active_piece:
 		var tile_position = map_position + offset
