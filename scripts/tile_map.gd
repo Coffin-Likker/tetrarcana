@@ -289,8 +289,6 @@ func can_place_piece(map_position: Vector2i, tile: Vector2i) -> bool:
 	return overlaps_own_color
 
 func update_ghost_piece(map_position: Vector2i):
-	if map_position == Vector2i.ZERO:
-		map_position = current_ghost_position
 	clear_layer(GHOST_LAYER)
 	var game_manager = get_parent()
 	if game_manager.game_state != game_manager.GameState.PLACING:
