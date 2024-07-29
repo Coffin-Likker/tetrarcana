@@ -72,10 +72,11 @@ func initialize_move_timers():
 
 func set_active_piece(piece):
 	clear_ghost_piece()
-	var local_position = get_local_mouse_position()
-	var map_position = local_to_map(local_position)
+	#var local_position = get_local_mouse_position()
+	#var map_position = local_to_map(local_position)
 	active_piece = piece
-	update_ghost_piece(map_position)
+	current_ghost_position = Vector2i(board_rect.position.x + board_rect.size.x / 2, board_rect.position.y + board_rect.size.y / 2)
+	update_ghost_piece(current_ghost_position)
 	print_debug("Active piece set: ", active_piece)
 
 func _ready():
@@ -91,11 +92,7 @@ func _ready():
 	set_layer_z_index(GHOST_LAYER, GHOST_LAYER_Z_INDEX)
 	
 	board_rect = get_used_rect()
-	#current_ghost_position = Vector2i(
-		#board_rect.position.x + 1,  # One column from the left edge
-		#board_rect.end.y - 3        # Three rows from the bottom
-	#)
-	
+	current_ghost_position = Vector2i(board_rect.position.x + board_rect.size.x / 2, board_rect.position.y + board_rect.size.y / 2)
 
 func reset():
 	var local_position = get_local_mouse_position()
@@ -146,6 +143,31 @@ func _input(event):
 		var map_position = local_to_map(click_position)
 		if get_used_rect().has_point(map_position):
 			_on_tile_clicked(map_position)
+			
+	elif event is InputEventKey and event.pressed:
+		handle_keyboard_input(event.keycode)
+
+
+func handle_keyboard_input(keycode):
+	match keycode:
+		KEY_LEFT:
+			move_piece(Vector2i(-1, 0))
+		KEY_RIGHT:
+			move_piece(Vector2i(1, 0))
+		KEY_UP:
+			move_piece(Vector2i(0, -1))
+		KEY_DOWN:
+			move_piece(Vector2i(0, 1))
+		KEY_ENTER:
+			_on_tile_clicked(current_ghost_position)
+		KEY_R:
+			rotate_piece(1)
+
+func move_piece(direction: Vector2i):
+	var new_position = current_ghost_position + direction
+	if is_valid_position(new_position):
+		current_ghost_position = new_position
+		update_ghost_piece(current_ghost_position)
 
 
 #func handle_movement(delta):
@@ -258,6 +280,8 @@ func can_place_piece(map_position: Vector2i, tile: Vector2i) -> bool:
 	return overlaps_own_color
 
 func update_ghost_piece(map_position: Vector2i):
+	if map_position == Vector2i.ZERO:
+		map_position = current_ghost_position
 	clear_layer(GHOST_LAYER)
 	var game_manager = get_parent()
 	if game_manager.game_state != game_manager.GameState.PLACING:
