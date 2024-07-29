@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://do0fobsnwpl66"]
+[gd_scene load_steps=7 format=3 uid="uid://do0fobsnwpl66"]
 
 [ext_resource type="Script" path="res://scripts/combination_board.gd" id="1_3o7wy"]
 [ext_resource type="Script" path="res://scripts/CombinationMap.gd" id="2_fo75o"]
+[ext_resource type="Texture2D" uid="uid://cf7g0y1upuf6c" path="res://assets/light__scroll.png" id="2_lltnc"]
 [ext_resource type="Texture2D" uid="uid://brhvpr15k0nvv" path="res://assets/newtile_sheet.png" id="2_m1i0k"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bv23n"]
@@ -27,6 +28,11 @@ offset_top = 1.0
 offset_right = 0.599991
 offset_bottom = -0.400002
 script = ExtResource("1_3o7wy")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(77, 72)
+scale = Vector2(3, 3)
+texture = ExtResource("2_lltnc")
 
 [node name="CombinationMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_civh4")

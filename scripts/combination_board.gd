@@ -18,13 +18,13 @@ func _ready():
 
 func show_board():
 	show()
-	var tween = create_tween()
-	tween.tween_property(self, "position", target_position, animation_duration).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	#var tween = create_tween()
+	#tween.tween_property(self, "position", target_position, animation_duration).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 
 func hide_board():
 	hide()
-	var tween = create_tween()
-	tween.tween_property(self, "position", start_position, animation_duration).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
+	#var tween = create_tween()
+	#tween.tween_property(self, "position", start_position, animation_duration).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
 
 func _on_combination_complete(combined_piece):
 	emit_signal("combination_complete", combined_piece)

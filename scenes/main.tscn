@@ -74,6 +74,22 @@ volume_db = -10.0
 stream = ExtResource("14_al88k")
 volume_db = -10.0
 
+[node name="CombinationBoardP1" parent="GameManager" index="1"]
+offset_left = 107.0
+offset_top = 206.0
+offset_right = 107.0
+offset_bottom = 206.0
+
+[node name="CombinationBoardP2" parent="GameManager" index="2"]
+offset_left = 336.0
+offset_top = 207.0
+offset_right = 337.6
+offset_bottom = 207.0
+
+[node name="Sprite2D" parent="GameManager/CombinationBoardP2" index="0"]
+position = Vector2(35, 72)
+flip_h = true
+
 [node name="MenuManager" parent="." instance=ExtResource("3_5h8my")]
 offset_left = 243.0
 offset_top = 135.0
@@ -121,11 +137,11 @@ stream = ExtResource("13_nvkww")
 volume_db = -10.0
 
 [node name="LightCharacter" parent="." instance=ExtResource("15_haxvt")]
-position = Vector2(482, 275)
+position = Vector2(507, 274)
 scale = Vector2(2.7, 2.7)
 
 [node name="ShadowCharacter" parent="." instance=ExtResource("16_bky40")]
-position = Vector2(63, 271)
+position = Vector2(50, 272)
 scale = Vector2(2.7, 2.7)
 
 [node name="BoardMockup" type="Sprite2D" parent="."]
@@ -137,11 +153,11 @@ centered = false
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(276, 162)
-zoom = Vector2(4.37, 4.37)
+zoom = Vector2(4.4, 4.4)
 
 [editable path="GameManager"]
-[editable path="GameManager/CombinationBoardP2"]
 [editable path="GameManager/CombinationBoardP1"]
+[editable path="GameManager/CombinationBoardP2"]
 [editable path="MenuManager"]
 [editable path="MenuManager/MainMenu"]
 [editable path="MenuManager/OptionsMenu"]
