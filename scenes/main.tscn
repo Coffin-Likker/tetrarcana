@@ -187,7 +187,7 @@ position = Vector2(515, 282)
 scale = Vector2(2.7, 2.7)
 
 [node name="ShadowCharacter" parent="." instance=ExtResource("16_bky40")]
-position = Vector2(50, 276)
+position = Vector2(50, 278)
 scale = Vector2(2.7, 2.7)
 
 [node name="Camera2D" type="Camera2D" parent="."]
