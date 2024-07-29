@@ -267,7 +267,7 @@ func place_piece(map_position: Vector2i, tile: Vector2i):
 		print_debug("Invalid placement: out of bounds")
 		return
 	
-	if game_manager.turn_count < 2 or can_place_piece(map_position, tile):
+	if can_place_piece(map_position, tile):
 		for offset in active_piece:
 			var tile_position = map_position + offset
 			set_cell(BOARD_LAYER, tile_position, TILESET_SOURCE_ID, tile)
@@ -309,7 +309,7 @@ func update_ghost_piece(map_position: Vector2i):
 	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
 	var ghost_tile 
 
-	var can_place = get_parent().game_state == get_parent().GameState.PLACING and (game_manager.turn_count < 2 or can_place_piece(current_ghost_position, current_player_tile))
+	var can_place = get_parent().game_state == get_parent().GameState.PLACING and can_place_piece(current_ghost_position, current_player_tile)
 
 	if game_manager.current_player == game_manager.Player.PLAYER_1:
 		ghost_tile = GHOST_TILE if can_place else INVALID_GHOST_TILE
