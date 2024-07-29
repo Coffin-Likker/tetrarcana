@@ -107,6 +107,15 @@ func reset():
 			var cell_atlas_coords = get_cell_atlas_coords(BOARD_LAYER, cell_pos)
 			if cell_atlas_coords != EMPTY_TILE:
 				set_cell(BOARD_LAYER, cell_pos, TILESET_SOURCE_ID, EMPTY_TILE)
+	
+	# Create starting columns for each player
+	# TODO: Would be nice to have these fill out one-by-one with a sound.
+	for y in range(board_size.y):
+		var player_1_cell_pos = Vector2i(0, y)
+		set_cell(BOARD_LAYER, player_1_cell_pos, TILESET_SOURCE_ID, PLAYER_1_TILE)
+
+		var player_2_cell_pos = Vector2i(board_size.x - 1, y)
+		set_cell(BOARD_LAYER, player_2_cell_pos, TILESET_SOURCE_ID, PLAYER_2_TILE)
 
 	clear_layer(GHOST_LAYER)
 
