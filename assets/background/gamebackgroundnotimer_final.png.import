@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://7nl6ihqdq2a"
-path="res://.godot/imported/board_mockup.jpg-dfff28a72b23ff7735809a6197fb49e7.ctex"
+uid="uid://b53hxhtmdyc4e"
+path="res://.godot/imported/gamebackgroundnotimer_final.png-b2b332a279cd8c7025db664d6a4ef426.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/board_mockup.jpg"
-dest_files=["res://.godot/imported/board_mockup.jpg-dfff28a72b23ff7735809a6197fb49e7.ctex"]
+source_file="res://assets/background/gamebackgroundnotimer_final.png"
+dest_files=["res://.godot/imported/gamebackgroundnotimer_final.png-b2b332a279cd8c7025db664d6a4ef426.ctex"]
 
 [params]
 

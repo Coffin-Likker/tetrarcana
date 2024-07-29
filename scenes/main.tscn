@@ -1,9 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://cuqf4g5w6qaee"]
+[gd_scene load_steps=19 format=3 uid="uid://cuqf4g5w6qaee"]
 
+[ext_resource type="Texture2D" uid="uid://b53hxhtmdyc4e" path="res://assets/background/gamebackgroundnotimer_final.png" id="1_ipjdu"]
 [ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://scenes/game_manager.tscn" id="1_nw6i7"]
+[ext_resource type="Texture2D" uid="uid://ceovmdofy75v6" path="res://assets/background/gamemossframe_final.png" id="2_ppq26"]
 [ext_resource type="PackedScene" uid="uid://bqwy0lc55ksab" path="res://scenes/menu-scenes/MenuManager.tscn" id="3_5h8my"]
 [ext_resource type="AudioStream" uid="uid://bsgbnig6a5at6" path="res://assets/sfx/options/8bitmelody2_1.wav" id="4_pt58o"]
-[ext_resource type="Texture2D" uid="uid://ctqil11mpfnrn" path="res://assets/backboard_final.png" id="5_4b1q4"]
 [ext_resource type="AudioStream" uid="uid://ufkvsfl3gx4j" path="res://assets/sfx/options/8bitmelody2_2.wav" id="5_lqfon"]
 [ext_resource type="AudioStream" uid="uid://on5nwbtnx5ak" path="res://assets/sfx/options/8bitmelody2_3.wav" id="6_fiwq6"]
 [ext_resource type="AudioStream" uid="uid://p4lye24smaiy" path="res://assets/sfx/options/8bitmelody2_4.wav" id="7_uqsw5"]
@@ -20,11 +21,26 @@
 
 [node name="Main" type="Node2D"]
 
+[node name="Background" type="Node2D" parent="."]
+
+[node name="Wall-shelves-floor" type="TextureRect" parent="Background"]
+offset_right = 570.0
+offset_bottom = 334.0
+texture = ExtResource("1_ipjdu")
+
+[node name="Moss" type="TextureRect" parent="Background"]
+offset_left = 85.0
+offset_top = 33.0
+offset_right = 485.0
+offset_bottom = 271.0
+scale = Vector2(1, 0.97)
+texture = ExtResource("2_ppq26")
+
 [node name="GameManager" parent="." instance=ExtResource("1_nw6i7")]
 position = Vector2(-1, 0)
 
 [node name="TileMap" parent="GameManager" index="0"]
-position = Vector2(148, 66)
+position = Vector2(174, 74)
 
 [node name="MovePieceSound" type="AudioStreamPlayer" parent="GameManager/TileMap" index="0"]
 stream = ExtResource("4_pt58o")
@@ -75,18 +91,18 @@ stream = ExtResource("14_al88k")
 volume_db = -10.0
 
 [node name="CombinationBoardP1" parent="GameManager" index="1"]
-offset_left = 111.0
+offset_left = 133.0
 offset_top = 216.0
-offset_right = 111.0
+offset_right = 133.0
 offset_bottom = 216.0
-scale = Vector2(0.8, 0.8)
+scale = Vector2(0.7, 0.7)
 
 [node name="CombinationBoardP2" parent="GameManager" index="2"]
-offset_left = 339.0
-offset_top = 216.0
-offset_right = 340.6
-offset_bottom = 216.0
-scale = Vector2(0.8, 0.8)
+offset_left = 370.0
+offset_top = 218.0
+offset_right = 370.0
+offset_bottom = 218.0
+scale = Vector2(0.7, 0.7)
 
 [node name="Sprite2D" parent="GameManager/CombinationBoardP2" index="0"]
 position = Vector2(34, 62)
@@ -157,23 +173,16 @@ stream = ExtResource("13_nvkww")
 volume_db = -10.0
 
 [node name="LightCharacter" parent="." instance=ExtResource("15_haxvt")]
-position = Vector2(480, 275)
+position = Vector2(515, 282)
 scale = Vector2(2.7, 2.7)
 
 [node name="ShadowCharacter" parent="." instance=ExtResource("16_bky40")]
-position = Vector2(50, 272)
+position = Vector2(50, 276)
 scale = Vector2(2.7, 2.7)
 
-[node name="BoardMockup" type="Sprite2D" parent="."]
-z_index = -1
-position = Vector2(2, 2)
-scale = Vector2(0.73, 0.73)
-texture = ExtResource("5_4b1q4")
-centered = false
-
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(277, 168)
-zoom = Vector2(4.4, 4.4)
+position = Vector2(286, 167)
+zoom = Vector2(4.2, 4.2)
 
 [editable path="GameManager"]
 [editable path="GameManager/CombinationBoardP1"]

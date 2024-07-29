@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ctqil11mpfnrn"
-path="res://.godot/imported/backboard_final.png-b87514cf325f07c8977ec1557e650be0.ctex"
+uid="uid://ceovmdofy75v6"
+path="res://.godot/imported/gamemossframe_final.png-43cd9e6bc6b2017ff2bbdcd21dddc66a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/backboard_final.png"
-dest_files=["res://.godot/imported/backboard_final.png-b87514cf325f07c8977ec1557e650be0.ctex"]
+source_file="res://assets/background/gamemossframe_final.png"
+dest_files=["res://.godot/imported/gamemossframe_final.png-43cd9e6bc6b2017ff2bbdcd21dddc66a.ctex"]
 
 [params]
 
