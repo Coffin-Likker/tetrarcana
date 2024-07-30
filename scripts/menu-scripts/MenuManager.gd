@@ -4,6 +4,7 @@ class_name menu_manager
 signal game_started
 signal go_main_menu
 
+@onready var splash_screen = $"../SplashScreen"
 @onready var main_menu: Control = $MainMenu
 @onready var options_menu: Control = $OptionsMenu
 @onready var game_over_menu: Control = $GameOverMenu
@@ -26,6 +27,7 @@ var current_sound_index: int = 0
 
 func _ready():
 	# Hide all menus initially.
+	splash_screen.connect("go_main_menu", Callable(self, "show_main_menu"))
 	main_menu.hide()
 	options_menu.hide()
 	game_over_menu.hide()
@@ -36,6 +38,8 @@ func _ready():
 	setup_looping_navigation($OptionsMenu/OptionsVBox)
 	setup_looping_navigation($GameOverMenu/VBoxContainer)
 
+func show_main_menu():
+	change_menu(main_menu)
 
 func change_menu(menu: Control):
 	if current_menu:

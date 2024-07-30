@@ -17,6 +17,7 @@ var winner_message: String
 @onready var combination_board_p2 : Control= $CombinationBoardP2
 @onready var game_manager = $"."
 @onready var menu_manager_node = $"../MenuManager"
+@onready var splash_screen = $"../SplashScreen"
 @onready var progress_bar: ProgressBar = $ProgressBar
 
 var total_tiles: int
@@ -24,6 +25,7 @@ var filled_tiles: int
 
 func _ready():
 	tile_map.connect("piece_placed", Callable(self, "_on_piece_placed"))
+	splash_screen.connect("go_main_menu", Callable(self, "go_main_menu"))
 	menu_manager_node.connect("go_main_menu", Callable(self, "go_main_menu"))
 	menu_manager_node.connect("game_started", Callable(self, "game_started"))
 	combination_board_p1.connect("combination_complete", Callable(self, "on_combination_complete"))
