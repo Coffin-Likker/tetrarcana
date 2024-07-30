@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bejmuskp8qi1j"]
+[gd_scene load_steps=6 format=3 uid="uid://bejmuskp8qi1j"]
 
 [ext_resource type="Script" path="res://scripts/SplashScreen.gd" id="1_0qkp8"]
 [ext_resource type="Texture2D" uid="uid://cv4elc0m0xoc3" path="res://assets/button_dark.png" id="2_75ljb"]
+[ext_resource type="Texture2D" uid="uid://dd87wxji4o3p5" path="res://assets/Ui_background.png" id="2_oydig"]
 [ext_resource type="FontFile" uid="uid://b0xg1nmmprt38" path="res://assets/fonts/RUBBBB__.TTF" id="2_t7hxe"]
 [ext_resource type="FontFile" uid="uid://7pq2pwxvjmxw" path="res://assets/fonts/TMT-Paint-Regular.woff" id="4_24wkd"]
 
@@ -14,14 +15,13 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_0qkp8")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.133333, 0.133333, 0.133333, 1)
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 438.0
+offset_top = 254.0
+offset_right = 2050.0
+offset_bottom = 1142.0
+texture = ExtResource("2_oydig")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
