@@ -32,7 +32,7 @@ var move_timers = {}
 @onready var move_sounds: Array[AudioStreamPlayer] = [
 	$MovePieceSound,
 	$MovePieceSound2,
-	$MovePieceSound3,
+	$MovePieceSound3,	
 	$MovePieceSound4,
 	$MovePieceSound5,
 	$MovePieceSound6,
@@ -77,7 +77,7 @@ func _ready():
 	print_debug("TileMap initialized. Ready to process input.")
 	
 	initialize_move_timers()
-
+	set_process_unhandled_input(true)
 	if get_layers_count() < 2:
 		add_layer(GHOST_LAYER)
 	
@@ -124,9 +124,9 @@ func reset():
 
 	print_debug("Game board reset complete")
 
-#func play_move_sound():
-	#move_sounds[current_sound_index].play()
-	#current_sound_index = (current_sound_index + 1) % move_sounds.size()
+func play_move_sound():
+	move_sounds[current_sound_index].play()
+	current_sound_index = (current_sound_index + 1) % move_sounds.size()
 
 func _input(event):
 	if get_parent().game_state != get_parent().GameState.PLACING:
@@ -136,7 +136,7 @@ func _input(event):
 	if event is InputEventMouseMotion:
 		var local_position = get_local_mouse_position()
 		var map_position = local_to_map(local_position)
-		if is_valid_position(map_position):
+		if get_used_rect().has_point(map_position):
 			update_ghost_piece(map_position)
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -176,11 +176,37 @@ func _process(delta):
 	if get_parent().game_state != get_parent().GameState.PLACING:
 		return
 	if Input.is_action_just_pressed("rotate_clockwise"):
-		#play_move_sound()
+		play_move_sound()
 		rotate_piece(1)
 	elif Input.is_action_just_pressed("rotate_counterclockwise"):
-		#play_move_sound()
+		play_move_sound()
 		rotate_piece(-1)
+	update_ghost_piece_position()
+
+func update_ghost_piece_position():
+	var game_manager = get_parent()
+	if game_manager.game_state != game_manager.GameState.PLACING:
+		clear_ghost_piece()
+		return
+
+	var mouse_position = get_global_mouse_position()
+	var map_position = local_to_map(to_local(mouse_position))
+
+	# Clamp the position to the board boundaries
+	map_position.x = clamp(map_position.x, board_rect.position.x, board_rect.end.x - 1)
+	map_position.y = clamp(map_position.y, board_rect.position.y, board_rect.end.y - 1)
+
+	if map_position != current_ghost_position:
+		current_ghost_position = map_position
+		update_ghost_piece(current_ghost_position)
+
+func _unhandled_input(event):
+	var local_position = get_local_mouse_position()
+	var map_position = local_to_map(local_position)
+	var game_manager = get_parent()
+	if event is InputEventMouseMotion and  game_manager.game_state == GameState.PLACING:
+		if is_valid_position(map_position):
+			update_ghost_piece(map_position)
 
 func _on_tile_clicked(map_position: Vector2i):	
 	var game_manager = get_parent()
