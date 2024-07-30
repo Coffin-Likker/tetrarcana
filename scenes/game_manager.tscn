@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c6x3w78dh2e2n"]
+[gd_scene load_steps=15 format=3 uid="uid://c6x3w78dh2e2n"]
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_ko4jb"]
 [ext_resource type="PackedScene" uid="uid://do0fobsnwpl66" path="res://scenes/combination_board.tscn" id="2_hdvyb"]
@@ -6,6 +6,12 @@
 [ext_resource type="Script" path="res://scripts/tile_map.gd" id="3_l56uk"]
 [ext_resource type="Texture2D" uid="uid://cg4wyhhsav40l" path="res://assets/potions/potionsfull_nobubbles1.png" id="5_iwn32"]
 [ext_resource type="Texture2D" uid="uid://dpoagbkier73k" path="res://assets/potions/potionsfull_bubbles1.png" id="6_1nvub"]
+[ext_resource type="Texture2D" uid="uid://cky0tlwxgvphn" path="res://assets/potions/finalpotion2_empty.png" id="7_7p1xy"]
+[ext_resource type="Texture2D" uid="uid://tlsll5o16gv4" path="res://assets/potions/finalpotion2_filled.png" id="8_figqx"]
+[ext_resource type="Texture2D" uid="uid://bxt5c0lvk5gkk" path="res://assets/potions/finalpotion3_empty.png" id="9_koeom"]
+[ext_resource type="Texture2D" uid="uid://yg4317qgsu3a" path="res://assets/potions/finalpotion3_filled.png" id="10_tce8m"]
+[ext_resource type="Texture2D" uid="uid://bql0mcq1fkpsn" path="res://assets/potions/finalpotion4_empty.png" id="11_0bxmr"]
+[ext_resource type="Texture2D" uid="uid://bmtag1n3qawhd" path="res://assets/potions/finalpotion4_filled.png" id="12_qx1rf"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_n654h"]
 texture = ExtResource("2_xwqbi")
@@ -45,21 +51,14 @@ offset_top = 172.0
 offset_right = 181.6
 offset_bottom = 172.0
 
-[node name="ProgressBar" type="ProgressBar" parent="."]
-offset_left = 135.0
-offset_top = 33.0
-offset_right = 435.0
-offset_bottom = 49.0
-max_value = 1.0
-show_percentage = false
-
 [node name="Potion1" type="TextureProgressBar" parent="."]
 offset_left = 317.0
 offset_top = 94.0
 offset_right = 357.0
 offset_bottom = 134.0
 max_value = 0.8
-step = 0.01
+step = 0.2
+allow_greater = true
 fill_mode = 3
 texture_under = ExtResource("5_iwn32")
 texture_progress = ExtResource("6_1nvub")
@@ -67,14 +66,71 @@ texture_progress = ExtResource("6_1nvub")
 [node name="Potion2" type="TextureProgressBar" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
+max_value = 0.8
+step = 0.3
+fill_mode = 3
+texture_under = ExtResource("7_7p1xy")
+texture_progress = ExtResource("8_figqx")
 
 [node name="Potion3" type="TextureProgressBar" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
+scale = Vector2(1.1, 1.1)
+max_value = 0.8
+step = 0.3
+fill_mode = 3
+texture_under = ExtResource("9_koeom")
+texture_progress = ExtResource("10_tce8m")
 
 [node name="Potion4" type="TextureProgressBar" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
+max_value = 0.8
+step = 0.3
+fill_mode = 3
+texture_under = ExtResource("11_0bxmr")
+texture_progress = ExtResource("12_qx1rf")
+
+[node name="Potion5" type="TextureProgressBar" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(1.1, 1.1)
+max_value = 0.8
+step = 0.3
+fill_mode = 3
+texture_under = ExtResource("7_7p1xy")
+texture_progress = ExtResource("8_figqx")
+
+[node name="Potion6" type="TextureProgressBar" parent="."]
+offset_left = 256.0
+offset_top = 16.0
+offset_right = 296.0
+offset_bottom = 56.0
+scale = Vector2(1.2, 1.2)
+max_value = 0.8
+step = 0.3
+fill_mode = 3
+texture_under = ExtResource("5_iwn32")
+texture_progress = ExtResource("6_1nvub")
+
+[node name="Potion7" type="TextureProgressBar" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+max_value = 0.8
+step = 0.3
+fill_mode = 3
+texture_under = ExtResource("5_iwn32")
+texture_progress = ExtResource("6_1nvub")
+
+[node name="Potion8" type="TextureProgressBar" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(1.2, 1.2)
+max_value = 0.8
+step = 0.3
+fill_mode = 3
+texture_under = ExtResource("9_koeom")
+texture_progress = ExtResource("10_tce8m")
 
 [editable path="CombinationBoardP1"]
 [editable path="CombinationBoardP2"]
