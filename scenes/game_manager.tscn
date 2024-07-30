@@ -43,5 +43,13 @@ offset_top = 172.0
 offset_right = 181.6
 offset_bottom = 172.0
 
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = 135.0
+offset_top = 33.0
+offset_right = 435.0
+offset_bottom = 49.0
+max_value = 1.0
+show_percentage = false
+
 [editable path="CombinationBoardP1"]
 [editable path="CombinationBoardP2"]
