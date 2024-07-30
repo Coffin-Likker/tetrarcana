@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bts3l1tbe6g7j"]
+[gd_scene load_steps=3 format=3 uid="uid://bts3l1tbe6g7j"]
 
 [ext_resource type="Script" path="res://scripts/menu-scripts/MainMenu.gd" id="1_tm1ue"]
+[ext_resource type="Texture2D" uid="uid://cv4elc0m0xoc3" path="res://assets/button_dark.png" id="2_d7c7i"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -24,16 +25,43 @@ grow_vertical = 2
 alignment = 1
 metadata/_edit_group_ = true
 
-[node name="Start" type="Button" parent="VBoxContainer"]
+[node name="Start" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
+texture_normal = ExtResource("2_d7c7i")
+stretch_mode = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/Start"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 3.0
+offset_right = 118.0
+offset_bottom = 26.0
 text = "Start"
 
-[node name="Options" type="Button" parent="VBoxContainer"]
+[node name="Options" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
+texture_normal = ExtResource("2_d7c7i")
+stretch_mode = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/Options"]
+layout_mode = 0
+offset_left = 65.0
+offset_top = 3.0
+offset_right = 127.0
+offset_bottom = 26.0
 text = "Options"
 
-[node name="QuitToDesktop" type="Button" parent="VBoxContainer"]
+[node name="QuitToDesktop" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
+texture_normal = ExtResource("2_d7c7i")
+stretch_mode = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/QuitToDesktop"]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 3.0
+offset_right = 116.0
+offset_bottom = 26.0
 text = "Quit"
 
 [connection signal="pressed" from="VBoxContainer/Start" to="." method="_on_start_pressed"]
