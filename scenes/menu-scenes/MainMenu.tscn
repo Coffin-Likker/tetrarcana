@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bts3l1tbe6g7j"]
+[gd_scene load_steps=4 format=3 uid="uid://bts3l1tbe6g7j"]
 
 [ext_resource type="Script" path="res://scripts/menu-scripts/MainMenu.gd" id="1_tm1ue"]
 [ext_resource type="Texture2D" uid="uid://cv4elc0m0xoc3" path="res://assets/button_dark.png" id="2_d7c7i"]
+[ext_resource type="FontFile" uid="uid://7pq2pwxvjmxw" path="res://assets/fonts/TMT-Paint-Regular.woff" id="3_buuic"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -32,10 +33,11 @@ stretch_mode = 3
 
 [node name="Label" type="Label" parent="VBoxContainer/Start"]
 layout_mode = 0
-offset_left = 78.0
-offset_top = 3.0
-offset_right = 118.0
-offset_bottom = 26.0
+offset_left = 65.0
+offset_top = 7.0
+offset_right = 125.0
+offset_bottom = 30.0
+theme_override_fonts/font = ExtResource("3_buuic")
 text = "Start"
 
 [node name="Options" type="TextureButton" parent="VBoxContainer"]
@@ -45,10 +47,11 @@ stretch_mode = 3
 
 [node name="Label" type="Label" parent="VBoxContainer/Options"]
 layout_mode = 0
-offset_left = 65.0
-offset_top = 3.0
-offset_right = 127.0
-offset_bottom = 26.0
+offset_left = 54.0
+offset_top = 7.0
+offset_right = 138.0
+offset_bottom = 30.0
+theme_override_fonts/font = ExtResource("3_buuic")
 text = "Options"
 
 [node name="QuitToDesktop" type="TextureButton" parent="VBoxContainer"]
@@ -58,10 +61,11 @@ stretch_mode = 3
 
 [node name="Label" type="Label" parent="VBoxContainer/QuitToDesktop"]
 layout_mode = 0
-offset_left = 76.0
-offset_top = 3.0
-offset_right = 116.0
-offset_bottom = 26.0
+offset_left = 72.0
+offset_top = 7.0
+offset_right = 117.0
+offset_bottom = 30.0
+theme_override_fonts/font = ExtResource("3_buuic")
 text = "Quit"
 
 [connection signal="pressed" from="VBoxContainer/Start" to="." method="_on_start_pressed"]

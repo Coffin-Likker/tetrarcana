@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bejmuskp8qi1j"]
+[gd_scene load_steps=5 format=3 uid="uid://bejmuskp8qi1j"]
 
 [ext_resource type="Script" path="res://scripts/SplashScreen.gd" id="1_0qkp8"]
 [ext_resource type="Texture2D" uid="uid://cv4elc0m0xoc3" path="res://assets/button_dark.png" id="2_75ljb"]
+[ext_resource type="FontFile" uid="uid://b0xg1nmmprt38" path="res://assets/fonts/RUBBBB__.TTF" id="2_t7hxe"]
+[ext_resource type="FontFile" uid="uid://7pq2pwxvjmxw" path="res://assets/fonts/TMT-Paint-Regular.woff" id="4_24wkd"]
 
 [node name="SplashScreen" type="Control"]
 layout_mode = 3
@@ -37,6 +39,7 @@ grow_vertical = 2
 
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_t7hxe")
 theme_override_font_sizes/font_size = 32
 text = "TETRARCANA"
 horizontal_alignment = 1
@@ -44,6 +47,7 @@ horizontal_alignment = 1
 [node name="TutorialText" type="RichTextLabel" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_fonts/normal_font = ExtResource("4_24wkd")
 text = "Your tutorial text goes here. Explain how to play the game."
 fit_content = true
 
@@ -58,10 +62,12 @@ stretch_mode = 3
 
 [node name="Label" type="Label" parent="MainMenuButton"]
 layout_mode = 0
-offset_left = 1.0
-offset_top = -1.0
-offset_right = 122.0
-offset_bottom = 30.0
+offset_left = 14.0
+offset_top = 3.0
+offset_right = 135.0
+offset_bottom = 34.0
+scale = Vector2(0.8, 0.8)
+theme_override_fonts/font = ExtResource("4_24wkd")
 text = "Start Game"
 horizontal_alignment = 1
 vertical_alignment = 1
