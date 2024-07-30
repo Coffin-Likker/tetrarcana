@@ -78,7 +78,7 @@ func _on_piece_placed():
 	filled_tiles += tile_map.active_piece.size()
 	update_progress_bar()
 	
-	if (filled_tiles / float(total_tiles)) >= 0.8:
+	if (filled_tiles / float(total_tiles)) >= 0.9:
 		end_game()
 	else:
 		end_turn()
@@ -95,6 +95,14 @@ func update_progress_bar():
 	potion_8.value = fill_percentage
 	
 func end_game():
+	potion_1.value = 1.1
+	potion_2.value = 1.1
+	potion_3.value = 1.1
+	potion_4.value = 1.1
+	potion_5.value = 1.1
+	potion_6.value = 1.1
+	potion_7.value = 1.1
+	potion_8.value = 1.1
 	game_state = GameState.GAME_OVER
 	winner = determine_winner()
 	match winner:
