@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bdrku4cijohn3"]
+[gd_scene load_steps=5 format=3 uid="uid://bdrku4cijohn3"]
 
 [ext_resource type="Script" path="res://scripts/menu-scripts/GameOverMenu.gd" id="1_c6jgj"]
 [ext_resource type="Texture2D" uid="uid://cg2dxxpd64uyy" path="res://assets/finalwinner_shadowcropped.png" id="2_arktw"]
+[ext_resource type="Texture2D" uid="uid://cv4elc0m0xoc3" path="res://assets/button_dark.png" id="2_kp7jt"]
 [ext_resource type="Texture2D" uid="uid://b8df65nbk4wa4" path="res://assets/finalwinner_lightcropped.png" id="3_gjwj4"]
 
 [node name="GameOver" type="Control"]
@@ -33,13 +34,32 @@ layout_mode = 2
 text = "winner_message"
 horizontal_alignment = 1
 
-[node name="restart_button" type="Button" parent="VBoxContainer"]
+[node name="restart_button" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
-text = "Restart"
+texture_normal = ExtResource("2_kp7jt")
+stretch_mode = 3
 
-[node name="main_menu_button" type="Button" parent="VBoxContainer"]
+[node name="Label" type="Label" parent="VBoxContainer/restart_button"]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 2.0
+offset_right = 125.0
+offset_bottom = 25.0
+text = "Restart"
+horizontal_alignment = 1
+
+[node name="main_menu_button" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
-text = "Go to main menu"
+texture_normal = ExtResource("2_kp7jt")
+stretch_mode = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/main_menu_button"]
+layout_mode = 0
+offset_left = 52.0
+offset_top = 4.0
+offset_right = 140.0
+offset_bottom = 27.0
+text = "Main Menu"
 
 [node name="Player_1_wins" type="TextureRect" parent="."]
 layout_mode = 0

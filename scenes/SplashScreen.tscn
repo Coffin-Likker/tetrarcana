@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bejmuskp8qi1j"]
+[gd_scene load_steps=3 format=3 uid="uid://bejmuskp8qi1j"]
 
 [ext_resource type="Script" path="res://scripts/SplashScreen.gd" id="1_0qkp8"]
+[ext_resource type="Texture2D" uid="uid://cv4elc0m0xoc3" path="res://assets/button_dark.png" id="2_75ljb"]
 
 [node name="SplashScreen" type="Control"]
 layout_mode = 3
@@ -46,8 +47,21 @@ size_flags_vertical = 3
 text = "Your tutorial text goes here. Explain how to play the game."
 fit_content = true
 
-[node name="MainMenuButton" type="Button" parent="VBoxContainer"]
+[node name="MainMenuButton" type="TextureButton" parent="."]
 layout_mode = 2
-text = "Go To Main Menu"
+offset_left = 1130.0
+offset_top = 814.0
+offset_right = 1252.0
+offset_bottom = 850.0
+texture_normal = ExtResource("2_75ljb")
+stretch_mode = 3
 
-[connection signal="pressed" from="VBoxContainer/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
+[node name="Label" type="Label" parent="MainMenuButton"]
+layout_mode = 0
+offset_right = 121.0
+offset_bottom = 31.0
+text = "Start Game"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="MainMenuButton" to="." method="_on_main_menu_button_pressed"]

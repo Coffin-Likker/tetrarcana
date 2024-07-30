@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://wan2isystoxp"]
+[gd_scene load_steps=3 format=3 uid="uid://wan2isystoxp"]
 
 [ext_resource type="Script" path="res://scripts/menu-scripts/OptionsMenu.gd" id="1_3e25c"]
+[ext_resource type="Texture2D" uid="uid://cv4elc0m0xoc3" path="res://assets/button_dark.png" id="2_ndo03"]
 
 [node name="OptionsMenu" type="Control"]
 layout_mode = 3
@@ -67,9 +68,17 @@ layout_mode = 2
 max_value = 1.0
 step = 0.1
 
-[node name="Back" type="Button" parent="OptionsVBox"]
+[node name="Back" type="TextureButton" parent="OptionsVBox"]
 layout_mode = 2
-size_flags_vertical = 6
+texture_normal = ExtResource("2_ndo03")
+stretch_mode = 3
+
+[node name="Label" type="Label" parent="OptionsVBox/Back"]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 3.0
+offset_right = 206.0
+offset_bottom = 26.0
 text = "Back"
 
 [connection signal="value_changed" from="OptionsVBox/MasterVolume/MasterHSlider" to="." method="_on_master_volume_changed"]

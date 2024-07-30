@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://c6x3w78dh2e2n"]
+[gd_scene load_steps=9 format=3 uid="uid://c6x3w78dh2e2n"]
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_ko4jb"]
 [ext_resource type="PackedScene" uid="uid://do0fobsnwpl66" path="res://scenes/combination_board.tscn" id="2_hdvyb"]
 [ext_resource type="Texture2D" uid="uid://boq8fputfekr5" path="res://assets/tiles_sheet_circles.png" id="2_xwqbi"]
 [ext_resource type="Script" path="res://scripts/tile_map.gd" id="3_l56uk"]
+[ext_resource type="Texture2D" uid="uid://cg4wyhhsav40l" path="res://assets/potions/potionsfull_nobubbles1.png" id="5_iwn32"]
+[ext_resource type="Texture2D" uid="uid://dpoagbkier73k" path="res://assets/potions/potionsfull_bubbles1.png" id="6_1nvub"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_n654h"]
 texture = ExtResource("2_xwqbi")
@@ -50,6 +52,29 @@ offset_right = 435.0
 offset_bottom = 49.0
 max_value = 1.0
 show_percentage = false
+
+[node name="Potion1" type="TextureProgressBar" parent="."]
+offset_left = 317.0
+offset_top = 94.0
+offset_right = 357.0
+offset_bottom = 134.0
+max_value = 0.8
+step = 0.01
+fill_mode = 3
+texture_under = ExtResource("5_iwn32")
+texture_progress = ExtResource("6_1nvub")
+
+[node name="Potion2" type="TextureProgressBar" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Potion3" type="TextureProgressBar" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Potion4" type="TextureProgressBar" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
 
 [editable path="CombinationBoardP1"]
 [editable path="CombinationBoardP2"]

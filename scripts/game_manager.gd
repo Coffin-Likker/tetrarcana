@@ -19,6 +19,11 @@ var winner_message: String
 @onready var menu_manager_node = $"../MenuManager"
 @onready var splash_screen = $"../SplashScreen"
 @onready var progress_bar: ProgressBar = $ProgressBar
+@onready var potion_1: TextureProgressBar = $Potion1
+@onready var potion_2: TextureProgressBar = $Potion2
+@onready var potion_3: TextureProgressBar = $Potion3
+@onready var potion_4: TextureProgressBar = $Potion4
+
 
 var total_tiles: int
 var filled_tiles: int
@@ -78,6 +83,7 @@ func _on_piece_placed():
 func update_progress_bar():
 	var fill_percentage = filled_tiles / float(total_tiles)
 	progress_bar.value = fill_percentage
+	potion_1.value = fill_percentage
 
 func end_game():
 	game_state = GameState.GAME_OVER
