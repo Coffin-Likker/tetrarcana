@@ -1,10 +1,11 @@
-[gd_scene load_steps=21 format=3 uid="uid://cuqf4g5w6qaee"]
+[gd_scene load_steps=22 format=3 uid="uid://cuqf4g5w6qaee"]
 
 [ext_resource type="Texture2D" uid="uid://b53hxhtmdyc4e" path="res://assets/background/gamebackgroundnotimer_final.png" id="1_ipjdu"]
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_m4hak"]
 [ext_resource type="PackedScene" uid="uid://c6x3w78dh2e2n" path="res://scenes/game_manager.tscn" id="1_nw6i7"]
 [ext_resource type="Texture2D" uid="uid://ceovmdofy75v6" path="res://assets/background/gamemossframe_final.png" id="2_ppq26"]
 [ext_resource type="PackedScene" uid="uid://bqwy0lc55ksab" path="res://scenes/menu-scenes/MenuManager.tscn" id="3_5h8my"]
+[ext_resource type="Texture2D" uid="uid://purnt1opfpqg" path="res://assets/background/gamechainsshadow_final.png" id="4_imjwu"]
 [ext_resource type="AudioStream" uid="uid://bsgbnig6a5at6" path="res://assets/sfx/options/8bitmelody2_1.wav" id="4_pt58o"]
 [ext_resource type="AudioStream" uid="uid://ufkvsfl3gx4j" path="res://assets/sfx/options/8bitmelody2_2.wav" id="5_lqfon"]
 [ext_resource type="AudioStream" uid="uid://on5nwbtnx5ak" path="res://assets/sfx/options/8bitmelody2_3.wav" id="6_fiwq6"]
@@ -33,11 +34,18 @@ texture = ExtResource("1_ipjdu")
 
 [node name="Moss" type="TextureRect" parent="Background"]
 offset_left = 40.0
-offset_top = 8.0
+offset_top = 20.0
 offset_right = 532.0
-offset_bottom = 280.0
+offset_bottom = 292.0
 scale = Vector2(1, 0.97)
 texture = ExtResource("2_ppq26")
+
+[node name="Chains" type="TextureRect" parent="Background"]
+offset_left = -1.0
+offset_top = -2.0
+offset_right = 568.0
+offset_bottom = 333.0
+texture = ExtResource("4_imjwu")
 
 [node name="LightCharacter" parent="." instance=ExtResource("15_haxvt")]
 position = Vector2(515, 282)
@@ -60,17 +68,23 @@ offset_top = -395.0
 offset_right = 789.0
 offset_bottom = 493.0
 
+[node name="VBoxContainer" parent="SplashScreen" index="1"]
+offset_left = -241.0
+offset_top = -159.0
+offset_right = 254.0
+offset_bottom = 166.0
+
 [node name="MainMenuButton" parent="SplashScreen" index="2"]
 offset_left = -68.0
-offset_top = 119.0
-offset_right = 54.0
-offset_bottom = 155.0
+offset_top = 125.0
+offset_right = 57.0
+offset_bottom = 161.0
 
 [node name="GameManager" parent="." instance=ExtResource("1_nw6i7")]
 position = Vector2(-1, 0)
 
 [node name="TileMap" parent="GameManager" index="0"]
-position = Vector2(151, 52)
+position = Vector2(153, 62)
 scale = Vector2(1.2, 1.2)
 
 [node name="MovePieceSound" type="AudioStreamPlayer" parent="GameManager/TileMap" index="0"]
@@ -211,26 +225,23 @@ offset_top = -81.0
 offset_right = 176.0
 offset_bottom = 78.0
 
-[node name="GameOverMenu" parent="MenuManager" index="3"]
-visible = false
-
 [node name="VBoxContainer" parent="MenuManager/GameOverMenu" index="0"]
-offset_left = -100.0
-offset_top = 48.0
-offset_right = 92.0
-offset_bottom = 141.0
+offset_left = -99.0
+offset_top = 74.0
+offset_right = 93.0
+offset_bottom = 171.0
 
 [node name="Player_1_wins" parent="MenuManager/GameOverMenu" index="1"]
-offset_left = -149.0
-offset_top = -79.0
-offset_right = 146.0
-offset_bottom = 65.0
+offset_left = -157.0
+offset_top = -71.0
+offset_right = 156.0
+offset_bottom = 81.0
 
 [node name="Player_2_wins" parent="MenuManager/GameOverMenu" index="2"]
-offset_left = -151.0
-offset_top = -74.0
-offset_right = 137.0
-offset_bottom = 68.0
+offset_left = -156.0
+offset_top = -66.0
+offset_right = 153.0
+offset_bottom = 81.0
 
 [node name="FocusSound" type="AudioStreamPlayer" parent="MenuManager"]
 stream = ExtResource("4_pt58o")
