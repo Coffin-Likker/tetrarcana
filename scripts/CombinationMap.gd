@@ -148,38 +148,38 @@ func update_ghost_piece():
 	var map_position = local_to_map(local_position)
 	clear_layer(GHOST_LAYER)
 	var game_manager = get_parent().get_parent()
-	if is_within_bounds(map_position):
+	#if is_within_bounds(map_position):
 
-		map_position.x = clamp(map_position.x, BOARD_OFFSET.x, BOARD_OFFSET.x + BOARD_WIDTH - 1)
-		map_position.y = clamp(map_position.y, BOARD_OFFSET.y, BOARD_OFFSET.y + BOARD_HEIGHT - 1)
+	map_position.x = clamp(map_position.x, BOARD_OFFSET.x, BOARD_OFFSET.x + BOARD_WIDTH - 1)
+	map_position.y = clamp(map_position.y, BOARD_OFFSET.y, BOARD_OFFSET.y + BOARD_HEIGHT - 1)
 
 
-		if map_position != current_ghost_position:
-			current_ghost_position = map_position
+	if map_position != current_ghost_position:
+		current_ghost_position = map_position
 
-		var can_place = can_place_piece(current_ghost_position)
-		var all_tiles_in_bounds = true
+	var can_place = can_place_piece(current_ghost_position)
+	var all_tiles_in_bounds = true
+	
+	var ghost_tile 
 		
-		var ghost_tile 
-			
-		for offset in active_piece:
-			var tile_position = current_ghost_position + offset
-			if not is_within_bounds(tile_position):
-				all_tiles_in_bounds = false
-				break
+	for offset in active_piece:
+		var tile_position = current_ghost_position + offset
+		if not is_within_bounds(tile_position):
+			all_tiles_in_bounds = false
+			break
 
-		if game_manager.current_player == game_manager.Player.PLAYER_1:
-			ghost_tile = GHOST_TILE if  (can_place and all_tiles_in_bounds) else INVALID_GHOST_TILE
-		else:
-			ghost_tile = GHOST_TILE_OPPONENT if  (can_place and all_tiles_in_bounds) else INVALID_GHOST_TILE_PLAYER_2
-
-		for offset in active_piece:
-			var tile_position = current_ghost_position + offset
-			if is_within_bounds(tile_position):
-				set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
+	if game_manager.current_player == game_manager.Player.PLAYER_1:
+		ghost_tile = GHOST_TILE if  (can_place and all_tiles_in_bounds) else INVALID_GHOST_TILE
 	else:
-		# If the mouse is outside the board, clear the current_ghost_position
-		current_ghost_position = Vector2i(0, 0)
+		ghost_tile = GHOST_TILE_OPPONENT if  (can_place and all_tiles_in_bounds) else INVALID_GHOST_TILE_PLAYER_2
+
+	for offset in active_piece:
+		var tile_position = current_ghost_position + offset
+		if is_within_bounds(tile_position):
+			set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
+	#else:
+		## If the mouse is outside the board, clear the current_ghost_position
+		#current_ghost_position = Vector2i(0, 0)
 
 func combine_pieces() -> Array:
 	var all_tiles = []
