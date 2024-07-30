@@ -143,9 +143,20 @@ func place_piece(base_position: Vector2i, tile: Vector2i):
 	else:
 		print_debug("Cannot place piece at ", base_position)
 
+func is_valid_position(position: Vector2i) -> bool:
+	for offset in active_piece:
+		var tile_position = position + offset
+		if not get_used_rect().has_point(tile_position):
+			return false
+	return true
+	
 func update_ghost_piece():
 	var local_position = get_local_mouse_position()
 	var map_position = local_to_map(local_position)
+	
+	if not is_valid_position(map_position):
+		return
+	
 	clear_layer(GHOST_LAYER)
 	var game_manager = get_parent().get_parent()
 	#if is_within_bounds(map_position):
