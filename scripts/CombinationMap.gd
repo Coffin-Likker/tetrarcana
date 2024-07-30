@@ -36,15 +36,61 @@ var current_ghost_position = Vector2i(0, 0)
 const BOARD_LAYER = 0
 const GHOST_LAYER = 1
 
+
+var move_cooldown = 0.1  
+var move_timers = {}
+
+const MOVE_DIRECTIONS = {
+	"ui_left": Vector2i(-1, 0),
+	"ui_right": Vector2i(1, 0),
+	"ui_down": Vector2i(0, 1),
+	"ui_up": Vector2i(0, -1)
+}
+
 signal combination_complete(result_piece)
 
 func _ready():
+	# initialize_move_timers()
 	if get_layers_count() < 2:
 		add_layer(GHOST_LAYER)  # Add ghost layer if it doesn't exist
 	print("Combination map ready")
 	active_piece = get_random_piece()
 	update_ghost_piece()
 	reset()
+
+# WORKING KEYBOARD SUPPORT BUT BREAKS MOUSE INPUT
+# func initialize_move_timers():
+# 	for action in MOVE_DIRECTIONS.keys():
+# 		move_timers[action] = 0.0
+
+# func _process(delta):
+# 	handle_keyboard_input(delta)	
+
+# func handle_keyboard_input(delta):
+# 	for action in MOVE_DIRECTIONS.keys():
+# 		if Input.is_action_pressed(action):
+# 			move_timers[action] += delta
+# 			if move_timers[action] >= move_cooldown:
+# 				move_piece(MOVE_DIRECTIONS[action])
+# 				move_timers[action] = 0.0
+# 		else:
+# 			move_timers[action] = move_cooldown  # Reset timer when key is released
+
+# 	if Input.is_action_just_pressed("ui_accept"):
+# 		_on_tile_clicked(current_ghost_position)
+# 	elif Input.is_action_just_pressed("rotate_clockwise"):
+# 		rotate_piece(current_ghost_position)
+# 	elif Input.is_action_just_pressed("rotate_counterclockwise"):
+# 		rotate_piece(current_ghost_position)
+
+# func move_piece(direction: Vector2i):
+# 	var new_position = current_ghost_position + direction
+# 	new_position.x = clamp(new_position.x, BOARD_OFFSET.x, BOARD_OFFSET.x + BOARD_WIDTH - 1)
+# 	new_position.y = clamp(new_position.y, BOARD_OFFSET.y, BOARD_OFFSET.y + BOARD_HEIGHT - 1)
+# 	if new_position != current_ghost_position:
+# 		current_ghost_position = new_position
+# 		update_ghost_piece()
+
 
 func reset():
 	for piece in placed_pieces:
@@ -64,17 +110,27 @@ func _on_combination_complete(combined_piece):
 func get_random_piece():
 	return ALL_SHAPES[randi() % ALL_SHAPES.size()]
 
+# func _unhandled_input(event):
+# 	if event is InputEventMouseButton and event.pressed:
+# 		var map_position = local_to_map(get_local_mouse_position())
+# 		if event.button_index == MOUSE_BUTTON_LEFT:
+# 			_on_tile_clicked(map_position)
+# 			print("Attempt to place piece at ", map_position)
+# 		elif event.button_index == MOUSE_BUTTON_RIGHT:
+# 			rotate_piece(map_position)
+# 			print("Attempt to rotate piece at ", map_position)
+# 	elif event is InputEventMouseMotion:
+# 		update_ghost_piece()
+
 func _unhandled_input(event):
-	if event is InputEventMouseButton and event.pressed:
+	if event is InputEventMouseMotion:
+		update_ghost_piece()
+	elif event is InputEventMouseButton and event.pressed:
 		var map_position = local_to_map(get_local_mouse_position())
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			_on_tile_clicked(map_position)
-			print("Attempt to place piece at ", map_position)
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			rotate_piece(map_position)
-			print("Attempt to rotate piece at ", map_position)
-	elif event is InputEventMouseMotion:
-		update_ghost_piece()
 
 func is_within_bounds(position: Vector2i) -> bool:
 	return (position.x >= BOARD_OFFSET.x and position.x < BOARD_OFFSET.x + BOARD_WIDTH and
@@ -168,6 +224,7 @@ func update_ghost_piece():
 			all_tiles_in_bounds = false
 			break
 
+
 	if game_manager.current_player == game_manager.Player.PLAYER_1:
 		ghost_tile = GHOST_TILE if  (can_place and all_tiles_in_bounds) else INVALID_GHOST_TILE
 	else:
@@ -177,9 +234,6 @@ func update_ghost_piece():
 		var tile_position = current_ghost_position + offset
 		if is_within_bounds(tile_position):
 			set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
-	#else:
-		## If the mouse is outside the board, clear the current_ghost_position
-		#current_ghost_position = Vector2i(0, 0)
 
 func combine_pieces() -> Array:
 	var all_tiles = []
