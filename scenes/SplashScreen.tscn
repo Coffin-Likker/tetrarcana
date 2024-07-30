@@ -58,8 +58,10 @@ stretch_mode = 3
 
 [node name="Label" type="Label" parent="MainMenuButton"]
 layout_mode = 0
-offset_right = 121.0
-offset_bottom = 31.0
+offset_left = 1.0
+offset_top = -1.0
+offset_right = 122.0
+offset_bottom = 30.0
 text = "Start Game"
 horizontal_alignment = 1
 vertical_alignment = 1

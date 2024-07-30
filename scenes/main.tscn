@@ -141,6 +141,12 @@ offset_bottom = 127.0
 [node name="MainMenu" parent="MenuManager" index="1"]
 visible = true
 
+[node name="VBoxContainer" parent="MenuManager/MainMenu" index="0"]
+offset_left = -105.0
+offset_top = -38.0
+offset_right = 87.0
+offset_bottom = 38.0
+
 [node name="QuitToDesktop" parent="MenuManager/MainMenu/VBoxContainer" index="2"]
 visible = false
 
