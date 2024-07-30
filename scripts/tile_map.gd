@@ -145,7 +145,8 @@ func _input(event):
 		var map_position = local_to_map(click_position)
 		if get_used_rect().has_point(map_position):
 			_on_tile_clicked(map_position)
-			
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+		rotate_piece(1)
 	elif event is InputEventKey and event.pressed:
 		handle_keyboard_input(event.keycode)
 
