@@ -74,7 +74,6 @@ func set_active_piece(piece):
 
 func _ready():
 	InputMap.load_from_project_settings()
-	set_process_unhandled_input(true)
 	print_debug("TileMap initialized. Ready to process input.")
 	
 	initialize_move_timers()
@@ -137,7 +136,7 @@ func _input(event):
 	if event is InputEventMouseMotion:
 		var local_position = get_local_mouse_position()
 		var map_position = local_to_map(local_position)
-		if get_used_rect().has_point(map_position):
+		if is_valid_position(map_position):
 			update_ghost_piece(map_position)
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -183,14 +182,6 @@ func _process(delta):
 		#play_move_sound()
 		rotate_piece(-1)
 
-func _unhandled_input(event):
-	var local_position = get_local_mouse_position()
-	var map_position = local_to_map(local_position)
-	var game_manager = get_parent()
-	if event is InputEventMouseMotion and  game_manager.game_state == GameState.PLACING:
-		if is_valid_position(map_position):
-			update_ghost_piece(map_position)
-
 func _on_tile_clicked(map_position: Vector2i):	
 	var game_manager = get_parent()
 	var player_tile = PLAYER_1_TILE if game_manager.current_player == Player.PLAYER_1 else PLAYER_2_TILE
@@ -234,9 +225,6 @@ func update_ghost_piece(map_position: Vector2i):
 
 	if active_piece.is_empty():
 		return
-
-	#if not is_valid_position(map_position):
-		#return
 
 	if map_position != current_ghost_position:
 		current_ghost_position = map_position
