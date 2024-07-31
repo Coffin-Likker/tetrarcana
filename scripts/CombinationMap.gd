@@ -40,6 +40,9 @@ const GHOST_LAYER = 1
 var move_cooldown = 0.1  
 var move_timers = {}
 
+@onready var sound_manager = get_node("../../GameSoundManager")
+
+
 const MOVE_DIRECTIONS = {
 	"ui_left": Vector2i(-1, 0),
 	"ui_right": Vector2i(1, 0),
@@ -176,7 +179,7 @@ func place_piece(base_position: Vector2i, tile: Vector2i):
 			if not is_within_bounds(tile_position):
 				all_tiles_in_bounds = false
 				break
-			
+		
 		if all_tiles_in_bounds:
 			for offset in active_piece:
 				var tile_position = base_position + offset
@@ -189,9 +192,15 @@ func place_piece(base_position: Vector2i, tile: Vector2i):
 			if placed_pieces.size() == 2:
 				var result_piece = combine_pieces()
 				print_debug("Combination complete. Result: ", result_piece)
+				var game_manager = get_parent().get_parent()
+				var sound = "shadow" if game_manager.current_player == game_manager.Player.PLAYER_1 else "light"
+				sound_manager.play_combine_sound(sound)  # Add this line
 				_on_combination_complete(result_piece)
 			else:
 				active_piece = get_random_piece()
+				var game_manager = get_parent().get_parent()
+				var sound = "shadow" if game_manager.current_player == game_manager.Player.PLAYER_1 else "light"
+				sound_manager.play_place_sound(sound)  # Add this line				
 				print_debug("New active piece: ", active_piece)
 			update_ghost_piece()
 		else:

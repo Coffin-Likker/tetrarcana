@@ -27,26 +27,10 @@ var board_rect: Rect2i
 
 var is_mouse_over_board = false
 
+@onready var sound_manager = get_node("../GameSoundManager")
+
 var move_cooldown = 0.1  # Time in seconds between moves when key is held
 var move_timers = {}
-@onready var move_sounds: Array[AudioStreamPlayer] = [
-	$MovePieceSound,
-	$MovePieceSound2,
-	$MovePieceSound3,	
-	$MovePieceSound4,
-	$MovePieceSound5,
-	$MovePieceSound6,
-	$MovePieceSound7,
-	$MovePieceSound8,
-	$MovePieceSound9,
-	$MovePieceSound10
-]
-
-@onready var player_2_place_sound = $LightPlaceSound
-@onready var player_1_place_sound = $ShadowPlaceSound
-
-
-var current_sound_index: int = 0
 
 const MOVE_DIRECTIONS = {
 	"ui_left": Vector2i(-1, 0),
@@ -56,8 +40,8 @@ const MOVE_DIRECTIONS = {
 }
 
 func play_placing_sound():
-	var sound = player_2_place_sound if get_parent().current_player == Player.PLAYER_1 else player_1_place_sound
-	sound.play()
+	var sound = "shadow" if get_parent().current_player == Player.PLAYER_1 else "light"
+	sound_manager.play_place_sound(sound)
 	
 func initialize_move_timers():
 	for action in MOVE_DIRECTIONS.keys():
@@ -125,8 +109,7 @@ func reset():
 	print_debug("Game board reset complete")
 
 func play_move_sound():
-	move_sounds[current_sound_index].play()
-	current_sound_index = (current_sound_index + 1) % move_sounds.size()
+	sound_manager.play_move_sound()
 
 func _input(event):
 	if get_parent().game_state != get_parent().GameState.PLACING:
@@ -176,10 +159,8 @@ func _process(delta):
 	if get_parent().game_state != get_parent().GameState.PLACING:
 		return
 	if Input.is_action_just_pressed("rotate_clockwise"):
-		play_move_sound()
 		rotate_piece(1)
 	elif Input.is_action_just_pressed("rotate_counterclockwise"):
-		play_move_sound()
 		rotate_piece(-1)
 	update_ghost_piece_position()
 
@@ -218,6 +199,7 @@ func place_piece(map_position: Vector2i, tile: Vector2i):
 	print_debug("Placing piece at base position: ", map_position)
 	
 	if not is_valid_position(map_position):
+		sound_manager.play_cant_place_sound()
 		print_debug("Invalid placement: out of bounds")
 		return
 	
@@ -226,10 +208,10 @@ func place_piece(map_position: Vector2i, tile: Vector2i):
 			var tile_position = map_position + offset
 			set_cell(BOARD_LAYER, tile_position, TILESET_SOURCE_ID, tile)
 		clear_ghost_piece()  # Clear the ghost piece after placing
-		current_sound_index = 0
 		play_placing_sound()
 		emit_signal("piece_placed")
 	else:
+		sound_manager.play_cant_place_sound()  # Add this line
 		print_debug("Invalid placement")
 
 func can_place_piece(map_position: Vector2i, tile: Vector2i) -> bool:
@@ -303,6 +285,7 @@ func rotate_piece(direction: int):
 
 		# Apply the offset to each block of the new piece
 		active_piece = new_piece.map(func(block): return block + offset)
+		sound_manager.play_rotate_sound()
 		update_ghost_piece(map_position)
 
 func can_rotate():
