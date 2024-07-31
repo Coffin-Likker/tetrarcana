@@ -26,8 +26,9 @@ AudioManager="*res://scripts/AudioManager.gd"
 
 [display]
 
-window/size/viewport_width=2400
-window/size/viewport_height=1400
+window/size/viewport_width=2048
+window/size/viewport_height=1195
+window/stretch/mode="viewport"
 
 [editor]
 

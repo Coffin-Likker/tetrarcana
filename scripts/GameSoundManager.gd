@@ -43,7 +43,7 @@ func _ready():
 	var light_sound = AudioStreamPlayer.new()
 	light_sound.stream = load("res://assets/audio/placing/LightPlacing(Short).wav")  # Adjust the path
 	light_sound.bus = AudioManager.SFX_BUS_NAME
-	light_sound.volume_db = INITIAL_VOLUME_DB  # Set initial volume	
+	light_sound.volume_db = -15  # Set initial volume	
 	
 	add_child(light_sound)
 	place_sounds["light"] = light_sound
@@ -51,7 +51,7 @@ func _ready():
 	var shadow_sound = AudioStreamPlayer.new()
 	shadow_sound.stream = load("res://assets/audio/placing/ShadowPlacing(short).wav")  # Adjust the path
 	shadow_sound.bus = AudioManager.SFX_BUS_NAME
-	shadow_sound.volume_db = INITIAL_VOLUME_DB  # Set initial volume	
+	shadow_sound.volume_db = -15  # Set initial volume	
 	
 	add_child(shadow_sound)
 	place_sounds["shadow"] = shadow_sound
@@ -73,14 +73,14 @@ func _ready():
 	var light_combine_sound = AudioStreamPlayer.new()
 	light_combine_sound.stream = load("res://assets/audio/placing/LightCombining.wav")  # Adjust the path
 	light_combine_sound.bus = AudioManager.SFX_BUS_NAME
-	light_combine_sound.volume_db = INITIAL_VOLUME_DB  # Set initial volume
+	light_combine_sound.volume_db = -15  # Set initial volume
 	add_child(light_combine_sound)
 	combine_sounds["light"] = light_combine_sound
 	
 	var shadow_combine_sound = AudioStreamPlayer.new()
 	shadow_combine_sound.stream = load("res://assets/audio/placing/ShadowCombining.wav")  # Adjust the path
 	shadow_combine_sound.bus = AudioManager.SFX_BUS_NAME
-	shadow_combine_sound.volume_db = INITIAL_VOLUME_DB  # Set initial volume	
+	shadow_combine_sound.volume_db = -15  # Set initial volume	
 	add_child(shadow_combine_sound)
 	combine_sounds["shadow"] = shadow_combine_sound
 	
