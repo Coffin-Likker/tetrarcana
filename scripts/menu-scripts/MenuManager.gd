@@ -1,6 +1,6 @@
 extends Container
-
 class_name menu_manager
+
 signal game_started
 signal go_main_menu
 
@@ -40,6 +40,7 @@ func _ready():
 
 func show_main_menu():
 	change_menu(main_menu)
+	start_menu_music()
 
 func change_menu(menu: Control):
 	if current_menu:
@@ -47,30 +48,27 @@ func change_menu(menu: Control):
 	menu.show()
 	current_menu = menu
 	focus_first_control(menu)
-	
+	start_menu_music()
+
 func focus_first_control(node: Node):
 	var focusable_controls = get_focusable_controls(node)
 	if focusable_controls.size() > 0:
 		focusable_controls[0].grab_focus()
 		return true
 	return false
-	
+
 func _unhandled_input(event):	
 	if event.is_action_pressed("ui_cancel") and current_menu != main_menu:
 		change_menu(main_menu)
 
-
 func set_music_volume(value: float):
 	bg_music.volume_db = linear_to_db(value)
-
 
 func _on_main_menu_quit_game():
 	get_tree().quit()
 
-
 func _on_options_menu_go_back():
 	change_menu(main_menu)
-
 
 func _on_main_menu_show_options():
 	change_menu(options_menu)
@@ -83,6 +81,7 @@ func _on_main_menu_start_game():
 	main_menu.hide()
 	options_menu.hide()
 	game_over_menu.hide()
+	stop_menu_music()
 	emit_signal("game_started")
 
 func _on_game_over_go_main_menu():
@@ -94,6 +93,7 @@ func _on_game_over_restart_game():
 	main_menu.hide()
 	options_menu.hide()
 	game_over_menu.hide()
+	stop_menu_music()
 	emit_signal("game_started")
 
 func on_control_focus_entered():
@@ -111,20 +111,16 @@ func setup_looping_navigation(menu: Control):
 	var focusable_controls = get_focusable_controls(menu)
 	if focusable_controls.size() < 2:
 		return
-
 	var first_control = focusable_controls[0]
 	var last_control = focusable_controls[-1]
-
 	# Set up looping for the first and last controls
 	first_control.focus_neighbor_top = last_control.get_path()
 	last_control.focus_neighbor_bottom = first_control.get_path()
-
 	# Set up navigation between adjacent controls
 	for i in range(focusable_controls.size()):
 		var current = focusable_controls[i]
 		var next = focusable_controls[(i + 1) % focusable_controls.size()]
 		var prev = focusable_controls[(i - 1 + focusable_controls.size()) % focusable_controls.size()]
-
 		current.focus_neighbor_bottom = next.get_path()
 		current.focus_neighbor_top = prev.get_path()
 
@@ -135,3 +131,10 @@ func get_focusable_controls(node: Node) -> Array:
 	for child in node.get_children():
 		focusables += get_focusable_controls(child)
 	return focusables
+
+func start_menu_music():
+	if not bg_music.playing:
+		bg_music.play()
+
+func stop_menu_music():
+	bg_music.stop()

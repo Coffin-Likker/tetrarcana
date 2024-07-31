@@ -26,7 +26,7 @@ var winner_message: String
 @onready var potion_6: TextureProgressBar = $Potion6
 @onready var potion_7: TextureProgressBar = $Potion7
 @onready var potion_8: TextureProgressBar = $Potion8
-
+@onready var sound_manager = $GameSoundManager
 
 var total_tiles: int
 var filled_tiles: int
@@ -51,6 +51,7 @@ func game_started():
 	tile_map.reset()
 	filled_tiles = 0
 	update_progress_bar()
+	sound_manager.start_game_music()
 	show_combination_board(current_player)
 
 func hide_combination_boards():
@@ -66,6 +67,7 @@ func show_combination_board(player: Player):
 		combination_board_p2.show_board()
 		combination_board_p2.get_node("CombinationMap").reset()
 	game_state = GameState.COMBINING
+	sound_manager.play_parchment_sound()  # Play parchment sound when showing combination board
 
 func on_combination_complete(combined_piece):
 	game_state = GameState.PLACING
@@ -108,10 +110,13 @@ func end_game():
 	match winner:
 		WinResult.PLAYER_1_WIN:
 			winner_message = "Game Over! Player 1 wins!"
+			sound_manager.play_win_sound("shadow")  # Assuming Player 1 is shadow
 		WinResult.PLAYER_2_WIN:
 			winner_message = "Game Over! Player 2 wins!"
+			sound_manager.play_win_sound("light")  # Assuming Player 2 is light
 		WinResult.TIE:
 			winner_message = "Game Over! It's a tie!"
+			sound_manager.play_win_sound("shadow")  # Play any win sound for a tie
 	print_debug(winner_message)
 	menu_manager_node.on_game_over(winner_message)
 
