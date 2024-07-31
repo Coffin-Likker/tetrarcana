@@ -21,7 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://dlse6r7aq1lot" path="res://scenes/characters/light_character.tscn" id="15_haxvt"]
 [ext_resource type="PackedScene" uid="uid://bnbcv3jlm2pxd" path="res://scenes/characters/shadow_character.tscn" id="16_bky40"]
 [ext_resource type="Script" path="res://scripts/GameSoundManager.gd" id="20_hoo7l"]
-[ext_resource type="PackedScene" uid="uid://c3ncci78mw6ol" path="res://scenes/SplashScreen.tscn" id="20_mj83k"]
+[ext_resource type="PackedScene" uid="uid://bejmuskp8qi1j" path="res://scenes/SplashScreen.tscn" id="20_mj83k"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_m4hak")
