@@ -40,7 +40,7 @@ grow_vertical = 2
 [node name="Title" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_t7hxe")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 28
 text = "TETRARCANA"
 horizontal_alignment = 1
 
@@ -56,26 +56,29 @@ text = "	Welcome to TETRARCANA!
 	Tetrarcana is all about combining tetrominoes by
 	overlapping their tiles.
 
-	1. Combine two pieces on your scroll by placing the first
+	1. Place pieces with left click, rotate with right click.
+
+	2. Combine two pieces on your scroll by placing the first
 	and then overlapping at least one tile with the second
 
-	2. Place the combined piece on the main board by
+	3. Place the combined piece on the main board by
 	overlapping one of your colour's tiles
 
-	3. Fill 90% of the board to end the game (keep an eye on 
+	4. Fill 90% of the board to end the game (keep an eye on 
 	the potions to see how far along you are)
 
-	4. The player with the most tiles wins!
+	5. The player with the most tiles wins!
 	
 	Click 'Start Game' to begin!"
 fit_content = true
+tab_size = 2
 
 [node name="MainMenuButton" type="TextureButton" parent="."]
 layout_mode = 2
-offset_left = 1130.0
-offset_top = 814.0
-offset_right = 1252.0
-offset_bottom = 850.0
+offset_left = 1128.0
+offset_top = 840.0
+offset_right = 1253.0
+offset_bottom = 876.0
 texture_normal = ExtResource("2_75ljb")
 stretch_mode = 3
 
