@@ -160,8 +160,8 @@ func _process(delta):
 		return
 	if Input.is_action_just_pressed("rotate_clockwise"):
 		rotate_piece(1)
-	elif Input.is_action_just_pressed("rotate_counterclockwise"):
-		rotate_piece(-1)
+#	elif Input.is_action_just_pressed("rotate_counterclockwise"):
+#		rotate_piece(-1)
 	update_ghost_piece_position()
 
 func update_ghost_piece_position():

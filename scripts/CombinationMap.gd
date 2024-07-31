@@ -134,6 +134,9 @@ func _unhandled_input(event):
 			_on_tile_clicked(map_position)
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			rotate_piece(map_position)
+	if Input.is_action_just_pressed("rotate_clockwise"):
+		var map_position = local_to_map(get_local_mouse_position())
+		rotate_piece(map_position)
 
 func is_within_bounds(position: Vector2i) -> bool:
 	return (position.x >= BOARD_OFFSET.x and position.x < BOARD_OFFSET.x + BOARD_WIDTH and
