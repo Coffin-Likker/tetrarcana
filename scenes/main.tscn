@@ -56,7 +56,6 @@ position = Vector2(50, 278)
 scale = Vector2(2.7, 2.7)
 
 [node name="SplashScreen" parent="." instance=ExtResource("20_mj83k")]
-visible = false
 offset_left = 285.0
 offset_top = 166.0
 offset_right = 285.0
@@ -70,15 +69,15 @@ offset_bottom = 493.0
 
 [node name="VBoxContainer" parent="SplashScreen" index="1"]
 offset_left = -241.0
-offset_top = -159.0
+offset_top = -165.0
 offset_right = 254.0
-offset_bottom = 166.0
+offset_bottom = 160.0
 
 [node name="MainMenuButton" parent="SplashScreen" index="2"]
-offset_left = -68.0
-offset_top = 125.0
-offset_right = 57.0
-offset_bottom = 161.0
+offset_left = -69.0
+offset_top = 133.0
+offset_right = 56.0
+offset_bottom = 169.0
 
 [node name="GameManager" parent="." instance=ExtResource("1_nw6i7")]
 position = Vector2(-1, 0)
@@ -202,6 +201,7 @@ offset_right = 544.0
 offset_bottom = 216.0
 
 [node name="MenuManager" parent="." instance=ExtResource("3_5h8my")]
+visible = false
 offset_left = 290.0
 offset_top = 127.0
 offset_right = 290.0
