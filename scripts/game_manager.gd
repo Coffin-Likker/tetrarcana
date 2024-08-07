@@ -31,11 +31,16 @@ var winner_message: String
 var total_tiles: int
 var filled_tiles: int
 
+enum GameMode { MULTIPLAYER, SINGLE_PLAYER }
+var game_mode = GameMode.MULTIPLAYER
+var ai_player
+
 func _ready():
 	tile_map.connect("piece_placed", Callable(self, "_on_piece_placed"))
 	splash_screen.connect("go_main_menu", Callable(self, "go_main_menu"))
 	menu_manager_node.connect("go_main_menu", Callable(self, "go_main_menu"))
 	menu_manager_node.connect("game_started", Callable(self, "game_started"))
+	menu_manager_node.connect("single_player_game_started", Callable(self, "single_player_game_started"))
 	combination_board_p1.connect("combination_complete", Callable(self, "on_combination_complete"))
 	combination_board_p2.connect("combination_complete", Callable(self, "on_combination_complete"))
 	game_state = GameState.MENU
@@ -53,6 +58,11 @@ func game_started():
 	update_progress_bar()
 	sound_manager.start_game_music()
 	show_combination_board(current_player)
+	
+func single_player_game_started():
+	game_mode = GameMode.SINGLE_PLAYER
+	ai_player = load("res://scripts/AIPlayer.gd").new(self, combination_board_p2, tile_map)
+	game_started()
 
 func hide_combination_boards():
 	combination_board_p1.hide_board()
@@ -60,11 +70,14 @@ func hide_combination_boards():
 
 func show_combination_board(player: Player):
 	hide_combination_boards()
+	var is_ai_turn = game_mode == GameMode.SINGLE_PLAYER and player == Player.PLAYER_2
 	if player == Player.PLAYER_1:
 		combination_board_p1.show_board()
+		combination_board_p1.get_node("CombinationMap").set_ai_turn(false)
 		combination_board_p1.get_node("CombinationMap").reset()
 	else:
 		combination_board_p2.show_board()
+		combination_board_p1.get_node("CombinationMap").set_ai_turn(is_ai_turn)
 		combination_board_p2.get_node("CombinationMap").reset()
 	game_state = GameState.COMBINING
 	sound_manager.play_parchment_sound()  # Play parchment sound when showing combination board
@@ -125,6 +138,7 @@ func go_main_menu():
 	game_state = GameState.MENU
 
 func end_turn():
+
 	turn_count += 1
 	print_debug("Turn " + str(turn_count) + " completed")
 	switch_player()
@@ -132,6 +146,19 @@ func end_turn():
 	show_combination_board(current_player)
 	tile_map.update_for_new_turn(current_player)
 	print_debug("Turn " + str(turn_count + 1) + " - Player " + str(current_player + 1) + "'s turn")
+	if game_mode == GameMode.SINGLE_PLAYER and current_player == Player.PLAYER_2:
+		ai_turn()
+
+func ai_turn():
+	show_combination_board(Player.PLAYER_2)
+	await get_tree().create_timer(1.0).timeout  
+	ai_player.make_combination()
+	await get_tree().create_timer(1.0).timeout  
+	hide_combination_boards()
+	await get_tree().create_timer(0.5).timeout  
+	ai_player.place_piece()
+	await get_tree().create_timer(0.5).timeout  
+	end_turn()
 
 func switch_player():
 	current_player = Player.PLAYER_2 if current_player == Player.PLAYER_1 else Player.PLAYER_1

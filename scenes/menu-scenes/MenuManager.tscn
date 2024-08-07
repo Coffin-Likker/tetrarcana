@@ -15,19 +15,23 @@ autoplay = true
 bus = &"Music"
 
 [node name="MainMenu" parent="." instance=ExtResource("3_yqfju")]
-visible = false
 layout_mode = 2
+
+[node name="Label" parent="MainMenu/VBoxContainer/SinglePlayer" index="0"]
+layout_mode = 0
 
 [node name="OptionsMenu" parent="." instance=ExtResource("4_qi2jo")]
 visible = false
 layout_mode = 2
 
 [node name="GameOverMenu" parent="." instance=ExtResource("5_qhptl")]
+visible = false
 layout_mode = 2
 
 [connection signal="quit_game" from="MainMenu" to="." method="_on_main_menu_quit_game"]
 [connection signal="show_options" from="MainMenu" to="." method="_on_main_menu_show_options"]
 [connection signal="start_game" from="MainMenu" to="." method="_on_main_menu_start_game"]
+[connection signal="start_single_player_game" from="MainMenu" to="." method="_on_main_menu_start_single_player_game"]
 [connection signal="go_back" from="OptionsMenu" to="." method="_on_options_menu_go_back"]
 [connection signal="go_main_menu" from="GameOverMenu" to="." method="_on_game_over_go_main_menu"]
 [connection signal="restart_game" from="GameOverMenu" to="." method="_on_game_over_restart_game"]

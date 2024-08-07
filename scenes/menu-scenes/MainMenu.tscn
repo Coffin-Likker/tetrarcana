@@ -26,6 +26,19 @@ grow_vertical = 2
 alignment = 1
 metadata/_edit_group_ = true
 
+[node name="SinglePlayer" type="TextureButton" parent="VBoxContainer"]
+layout_mode = 2
+texture_normal = ExtResource("2_d7c7i")
+stretch_mode = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/SinglePlayer"]
+offset_left = 27.0
+offset_top = 8.0
+offset_right = 175.0
+offset_bottom = 31.0
+theme_override_fonts/font = ExtResource("3_buuic")
+text = "Single Player"
+
 [node name="Start" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
 texture_normal = ExtResource("2_d7c7i")
@@ -33,12 +46,12 @@ stretch_mode = 3
 
 [node name="Label" type="Label" parent="VBoxContainer/Start"]
 layout_mode = 0
-offset_left = 65.0
-offset_top = 7.0
-offset_right = 125.0
-offset_bottom = 30.0
+offset_left = 34.0
+offset_top = 6.0
+offset_right = 166.0
+offset_bottom = 29.0
 theme_override_fonts/font = ExtResource("3_buuic")
-text = "Start"
+text = "Multi Player"
 
 [node name="Options" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
@@ -68,6 +81,7 @@ offset_bottom = 30.0
 theme_override_fonts/font = ExtResource("3_buuic")
 text = "Quit"
 
+[connection signal="pressed" from="VBoxContainer/SinglePlayer" to="." method="_on_single_player_pressed"]
 [connection signal="pressed" from="VBoxContainer/Start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="VBoxContainer/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="VBoxContainer/QuitToDesktop" to="." method="_on_quit_to_desktop_pressed"]

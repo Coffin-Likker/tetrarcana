@@ -2,6 +2,7 @@ extends Container
 class_name menu_manager
 
 signal game_started
+signal single_player_game_started 
 signal go_main_menu
 
 @onready var splash_screen = $"../SplashScreen"
@@ -33,7 +34,6 @@ func _ready():
 	game_over_menu.hide()
 	change_menu(main_menu)
 	connect_focus_signals(self)
-	
 	setup_looping_navigation($MainMenu/VBoxContainer)
 	setup_looping_navigation($OptionsMenu/OptionsVBox)
 	setup_looping_navigation($GameOverMenu/VBoxContainer)
@@ -83,6 +83,13 @@ func _on_main_menu_start_game():
 	game_over_menu.hide()
 	stop_menu_music()
 	emit_signal("game_started")
+
+func _on_main_menu_start_single_player_game():
+	main_menu.hide()
+	options_menu.hide()
+	game_over_menu.hide()
+	stop_menu_music()
+	emit_signal("single_player_game_started")
 
 func _on_game_over_go_main_menu():
 	game_over_menu.hide()
@@ -138,3 +145,5 @@ func start_menu_music():
 
 func stop_menu_music():
 	bg_music.stop()
+
+

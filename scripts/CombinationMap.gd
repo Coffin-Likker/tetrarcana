@@ -51,6 +51,7 @@ const MOVE_DIRECTIONS = {
 }
 
 signal combination_complete(result_piece)
+var is_ai_turn = false
 
 func _ready():
 	# initialize_move_timers()
@@ -103,7 +104,8 @@ func reset():
 	placed_pieces = []
 	active_piece = get_random_piece()
 	current_ghost_position = Vector2i(0, 0)
-	update_ghost_piece()
+	if not is_ai_turn:
+		update_ghost_piece()
 	print("Combination map reset")
 
 func _on_combination_complete(combined_piece):
@@ -126,6 +128,8 @@ func get_random_piece():
 # 		update_ghost_piece()
 
 func _unhandled_input(event):
+	if is_ai_turn:
+		return
 	if event is InputEventMouseMotion:
 		update_ghost_piece()
 	elif event is InputEventMouseButton and event.pressed:
@@ -173,6 +177,7 @@ func _on_tile_clicked(map_position: Vector2i):
 	place_piece(map_position, player_tile)
 
 func place_piece(base_position: Vector2i, tile: Vector2i):
+	var game_manager = get_parent().get_parent()
 	print_debug("Attempting to place piece at ", base_position)
 	if can_place_piece(base_position):
 		var new_piece = []
@@ -195,13 +200,13 @@ func place_piece(base_position: Vector2i, tile: Vector2i):
 			if placed_pieces.size() == 2:
 				var result_piece = combine_pieces()
 				print_debug("Combination complete. Result: ", result_piece)
-				var game_manager = get_parent().get_parent()
+				if game_manager.game_mode == game_manager.GameMode.SINGLE_PLAYER and game_manager.current_player == game_manager.Player.PLAYER_2:
+					await get_tree().create_timer(0.5).timeout  
 				var sound = "shadow" if game_manager.current_player == game_manager.Player.PLAYER_1 else "light"
 				sound_manager.play_combine_sound(sound)  # Add this line
 				_on_combination_complete(result_piece)
 			else:
 				active_piece = get_random_piece()
-				var game_manager = get_parent().get_parent()
 				var sound = "shadow" if game_manager.current_player == game_manager.Player.PLAYER_1 else "light"
 				sound_manager.play_place_sound(sound)  # Add this line				
 				print_debug("New active piece: ", active_piece)
@@ -210,8 +215,17 @@ func place_piece(base_position: Vector2i, tile: Vector2i):
 			print_debug("Cannot place piece: not all tiles are within bounds")
 	else:
 		print_debug("Cannot place piece at ", base_position)
-	
+
+func set_ai_turn(value: bool):
+	is_ai_turn = value
+	if is_ai_turn:
+		clear_layer(GHOST_LAYER)
+
 func update_ghost_piece():
+	if is_ai_turn:
+		clear_layer(GHOST_LAYER)
+		return
+
 	var local_position = get_local_mouse_position()
 	var map_position = local_to_map(local_position)
 	
