@@ -33,7 +33,7 @@ var filled_tiles: int
 
 enum GameMode { MULTIPLAYER, SINGLE_PLAYER }
 var game_mode = GameMode.MULTIPLAYER
-var ai_player
+var ai_player: AIOpponent
 
 func _ready():
 	tile_map.connect("piece_placed", Callable(self, "_on_piece_placed"))
