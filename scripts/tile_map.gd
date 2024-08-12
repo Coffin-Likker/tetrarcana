@@ -264,24 +264,25 @@ func update_ghost_piece(map_position: Vector2i) -> void:
 			set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
 
 func rotate_piece(direction: int):
-	var local_position = get_local_mouse_position()
-	var map_position = local_to_map(local_position)
+	var local_position: Vector2 = get_local_mouse_position()
+	var map_position: Vector2i  = local_to_map(local_position)
+	
 	if can_rotate():
 		# Create a rotation matrix for 90 degrees rotation (clockwise or counterclockwise)
-		var rotation_matrix = Transform2D().rotated(direction * PI/2)
-		var new_piece = []
+		var rotation_matrix := Transform2D().rotated(direction * PI/2)
+		var new_piece: Array[Vector2i] = []
 		# Rotate each block of the active piece
 		for block in active_piece:
 			# Apply rotation matrix to the block
-			var rotated_position = rotation_matrix * Vector2(block)
+			var rotated_position: Vector2 = rotation_matrix * Vector2(block)
 			# Round and store the rotated position
 			new_piece.append(Vector2i(round(rotated_position.x), round(rotated_position.y)))
 		
 		# Calculate offset to keep the rotated piece in the same general area
-		var min_x = active_piece[0].x
-		var min_y = active_piece[0].y
-		var rotated_min_x = new_piece[0].x
-		var rotated_min_y = new_piece[0].y
+		var min_x: int    = active_piece[0].x
+		var min_y: int         = active_piece[0].y
+		var rotated_min_x: int = new_piece[0].x
+		var rotated_min_y: int = new_piece[0].y
 		
 		for block in active_piece:
 			min_x = min(min_x, block.x)
@@ -292,14 +293,18 @@ func rotate_piece(direction: int):
 			rotated_min_y = min(rotated_min_y, block.y)
 
 		# Calculate the offset
-		var offset = Vector2i(min_x - rotated_min_x, min_y - rotated_min_y)
+		var offset := Vector2i(min_x - rotated_min_x, min_y - rotated_min_y)
 
 		# Apply the offset to each block of the new piece
-		active_piece = new_piece.map(func(block): return block + offset)
+		var rotated_piece: Array[Vector2i] = []
+		for block in new_piece:
+			rotated_piece.append(block + offset)
+		active_piece = rotated_piece
+		
 		sound_manager.play_rotate_sound()
 		update_ghost_piece(map_position)
 
-func can_rotate():
+func can_rotate() -> bool:
 	return true
 	
 func update_for_new_turn(new_player: Player):
