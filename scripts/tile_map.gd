@@ -19,7 +19,7 @@ enum Player { PLAYER_1, PLAYER_2 }
 enum GameState { MENU, PLACING, GAME_OVER }
 
 var current_ghost_position = Vector2i(0, 0)
-var active_piece = []
+var active_piece: Array[Vector2i] = []
 
 signal piece_placed
 
@@ -47,7 +47,7 @@ func initialize_move_timers():
 	for action in MOVE_DIRECTIONS.keys():
 		move_timers[action] = 0.0
 
-func set_active_piece(piece):
+func set_active_piece(piece: Array[Vector2i]):
 	clear_ghost_piece()
 	#var local_position = get_local_mouse_position()
 	#var map_position = local_to_map(local_position)
@@ -149,8 +149,8 @@ func handle_keyboard_input(keycode):
 			rotate_piece(1)
 
 func move_piece(direction: Vector2i):
-	var new_position = current_ghost_position + direction
-	if is_valid_position(new_position):
+	var new_position: Vector2i = current_ghost_position + direction
+	if is_in_bounds(active_piece, new_position):
 		current_ghost_position = new_position
 		update_ghost_piece(current_ghost_position)
 
@@ -164,14 +164,14 @@ func _process(delta):
 #		rotate_piece(-1)
 	update_ghost_piece_position()
 
-func update_ghost_piece_position():
+func update_ghost_piece_position() -> void:
 	var game_manager = get_parent()
 	if game_manager.game_state != game_manager.GameState.PLACING:
 		clear_ghost_piece()
 		return
 
-	var mouse_position = get_global_mouse_position()
-	var map_position = local_to_map(to_local(mouse_position))
+	var mouse_position: Vector2 = get_global_mouse_position()
+	var map_position: Vector2i  = local_to_map(to_local(mouse_position))
 
 	# Clamp the position to the board boundaries
 	map_position.x = clamp(map_position.x, board_rect.position.x, board_rect.end.x - 1)
@@ -181,50 +181,61 @@ func update_ghost_piece_position():
 		current_ghost_position = map_position
 		update_ghost_piece(current_ghost_position)
 
-func _unhandled_input(event):
-	var local_position = get_local_mouse_position()
-	var map_position = local_to_map(local_position)
-	var game_manager = get_parent()
+func _unhandled_input(event) -> void:
+	var local_position: Vector2 = get_local_mouse_position()
+	var map_position: Vector2i  = local_to_map(local_position)
+	var game_manager            = get_parent()
 	if event is InputEventMouseMotion and  game_manager.game_state == GameState.PLACING:
-		if is_valid_position(map_position):
+		if is_in_bounds(active_piece, map_position):
 			update_ghost_piece(map_position)
 
-func _on_tile_clicked(map_position: Vector2i):	
+func _on_tile_clicked(map_position: Vector2i) -> void:	
 	var game_manager = get_parent()
-	var player_tile = PLAYER_1_TILE if game_manager.current_player == Player.PLAYER_1 else PLAYER_2_TILE
-	place_piece(map_position, player_tile)
+	var player_tile: Vector2i = PLAYER_1_TILE if game_manager.current_player == Player.PLAYER_1 else PLAYER_2_TILE
+	place_piece(active_piece, map_position, player_tile)
 
-func place_piece(map_position: Vector2i, tile: Vector2i):
-	var game_manager = get_parent()
-	print_debug("Placing piece at base position: ", map_position)
+func place_piece(piece: Array[Vector2i], map_position: Vector2i, tile: Vector2i) -> void:
+	print_debug("Attempting to place piece at position %v" % map_position)
 	
-	if not is_valid_position(map_position):
+	if not can_place_piece(piece, map_position, tile):
 		sound_manager.play_cant_place_sound()
-		print_debug("Invalid placement: out of bounds")
-		return
 	
-	if can_place_piece(map_position, tile):
-		for offset in active_piece:
-			var tile_position = map_position + offset
-			set_cell(BOARD_LAYER, tile_position, TILESET_SOURCE_ID, tile)
-		clear_ghost_piece()  # Clear the ghost piece after placing
-		play_placing_sound()
-		emit_signal("piece_placed")
-	else:
-		sound_manager.play_cant_place_sound()  # Add this line
-		print_debug("Invalid placement")
+	for offset in piece:
+		var tile_position: Vector2i = map_position + offset
+		set_cell(BOARD_LAYER, tile_position, TILESET_SOURCE_ID, tile)
+	clear_ghost_piece()
+	play_placing_sound()
+	emit_signal("piece_placed")
 
-func can_place_piece(map_position: Vector2i, tile: Vector2i) -> bool:
-	var overlaps_own_color = false
-	for offset in active_piece:
-		var tile_position = map_position + offset
-		var existing_tile = get_cell_atlas_coords(BOARD_LAYER, tile_position)
-		if existing_tile == tile:
-			overlaps_own_color = true
-			break
-	return overlaps_own_color
+## Checks that the `piece` placed at this `map_position` would not go out of bounds and would overlap with the
+## player's own colour.
+func can_place_piece(piece: Array[Vector2i], map_position: Vector2i, player_tile: Vector2i, layer: int = BOARD_LAYER) -> bool:
+	return is_in_bounds(piece, map_position) and piece_overlaps(piece, map_position, player_tile, layer)
 
-func update_ghost_piece(map_position: Vector2i):
+
+## Checks if all positions of the piece are within the game board bounds.
+func is_in_bounds(piece: Array[Vector2i], map_position: Vector2i) -> bool:
+	return not calculate_piece_positions(piece, map_position).any(func(piece_position: Vector2i) -> bool:
+		return not get_used_rect().has_point(piece_position)
+	)
+
+
+## Checks if a piece overlaps with any existing tiles of the player.
+func piece_overlaps(piece: Array[Vector2i], map_position: Vector2i, player_tile: Vector2i, layer: int = BOARD_LAYER) -> bool:
+	return calculate_piece_positions(piece, map_position).any(func(piece_position: Vector2i) -> bool:
+		return get_cell_atlas_coords(layer, piece_position) == player_tile
+	)
+
+
+## Calculates all tile positions a piece would occupy.
+func calculate_piece_positions(piece: Array[Vector2i], map_position: Vector2i) -> Array[Vector2i]:
+	var positions: Array[Vector2i] = []
+	for offset in piece:
+		positions.append(map_position + offset)
+	return positions
+
+
+func update_ghost_piece(map_position: Vector2i) -> void:
 	clear_layer(GHOST_LAYER)
 	var game_manager = get_parent()
 	if game_manager.game_state != game_manager.GameState.PLACING:
@@ -237,10 +248,10 @@ func update_ghost_piece(map_position: Vector2i):
 	if map_position != current_ghost_position:
 		current_ghost_position = map_position
 
-	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
+	var current_player_tile: Vector2i = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
 	var ghost_tile 
 
-	var can_place = get_parent().game_state == get_parent().GameState.PLACING and can_place_piece(current_ghost_position, current_player_tile)
+	var can_place: bool = get_parent().game_state == get_parent().GameState.PLACING and can_place_piece(active_piece, current_ghost_position, current_player_tile)
 
 	if game_manager.current_player == game_manager.Player.PLAYER_1:
 		ghost_tile = GHOST_TILE if can_place else INVALID_GHOST_TILE
@@ -248,7 +259,7 @@ func update_ghost_piece(map_position: Vector2i):
 		ghost_tile = GHOST_TILE_OPPONENT if can_place else INVALID_GHOST_TILE_PLAYER_2
 
 	for offset in active_piece:
-		var tile_position = map_position + offset
+		var tile_position: Vector2i = map_position + offset
 		if get_used_rect().has_point(tile_position):
 			set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
 
@@ -299,10 +310,6 @@ func update_for_new_turn(new_player: Player):
 	
 func clear_ghost_piece():
 	clear_layer(GHOST_LAYER)
+	
 
-func is_valid_position(position: Vector2i) -> bool:
-	for offset in active_piece:
-		var tile_position = position + offset
-		if not get_used_rect().has_point(tile_position):
-			return false
-	return true
+

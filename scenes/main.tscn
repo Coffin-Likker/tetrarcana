@@ -219,7 +219,13 @@ offset_top = 90.0
 offset_right = 97.0
 offset_bottom = 166.0
 
-[node name="QuitToDesktop" parent="MenuManager/MainMenu/VBoxContainer" index="2"]
+[node name="Label" parent="MenuManager/MainMenu/VBoxContainer/SinglePlayer" index="0"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 148.0
+offset_bottom = 23.0
+
+[node name="QuitToDesktop" parent="MenuManager/MainMenu/VBoxContainer" index="3"]
 visible = false
 
 [node name="OptionsMenu" parent="MenuManager" index="2"]
@@ -230,9 +236,6 @@ offset_left = -188.0
 offset_top = -29.0
 offset_right = 180.0
 offset_bottom = 130.0
-
-[node name="GameOverMenu" parent="MenuManager" index="3"]
-visible = false
 
 [node name="VBoxContainer" parent="MenuManager/GameOverMenu" index="0"]
 offset_left = -99.0

@@ -82,7 +82,7 @@ func show_combination_board(player: Player):
 	game_state = GameState.COMBINING
 	sound_manager.play_parchment_sound()  # Play parchment sound when showing combination board
 
-func on_combination_complete(combined_piece):
+func on_combination_complete(combined_piece: Array[Vector2i]):
 	game_state = GameState.PLACING
 	tile_map.set_active_piece(combined_piece)
 	hide_combination_boards()

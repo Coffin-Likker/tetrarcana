@@ -108,7 +108,7 @@ func reset():
 		update_ghost_piece()
 	print("Combination map reset")
 
-func _on_combination_complete(combined_piece):
+func _on_combination_complete(combined_piece: Array[Vector2i]):
 	emit_signal("combination_complete", combined_piece)
 	reset()
 
@@ -261,13 +261,13 @@ func update_ghost_piece():
 		if is_within_bounds(tile_position):
 			set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
 
-func combine_pieces() -> Array:
-	var all_tiles = []
+func combine_pieces() -> Array[Vector2i]:
+	var all_tiles: Array[Vector2i] = []
 	for piece in placed_pieces:
 		all_tiles.append_array(piece)
 
 	# Remove duplicates (overlapping tiles)
-	var unique_tiles = []
+	var unique_tiles: Array[Vector2i] = []
 	for tile in all_tiles:
 		if tile not in unique_tiles:
 			unique_tiles.append(tile)
@@ -282,7 +282,7 @@ func combine_pieces() -> Array:
 		max_x = max(max_x, tile.x)
 		max_y = max(max_y, tile.y)
 
-	var normalized_shape = []
+	var normalized_shape: Array[Vector2i] = []
 	for tile in unique_tiles:
 		normalized_shape.append(Vector2i(tile.x - min_x, tile.y - min_y))
 
