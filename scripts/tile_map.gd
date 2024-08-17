@@ -140,7 +140,7 @@ func _input(event):
 		and event.pressed
 		and event.button_index == MOUSE_BUTTON_RIGHT
 	):
-		active_piece = rotate_piece(active_piece, 1)
+		set_active_piece(rotate_piece(active_piece, 1))
 	elif event is InputEventKey and event.pressed:
 		handle_keyboard_input(event.keycode)
 
@@ -158,7 +158,7 @@ func handle_keyboard_input(keycode):
 		KEY_ENTER:
 			_on_tile_clicked(current_ghost_position)
 		KEY_R:
-			active_piece = rotate_piece(active_piece, 1)
+			set_active_piece(rotate_piece(active_piece, 1))
 
 
 func move_piece(direction: Vector2i):
@@ -172,7 +172,7 @@ func _process(_delta):
 	if get_parent().game_state != get_parent().GameState.PLACING:
 		return
 	if Input.is_action_just_pressed("rotate_clockwise"):
-		rotate_piece(active_piece, 1)
+		set_active_piece(rotate_piece(active_piece, 1))
 	update_ghost_piece_position()
 
 
