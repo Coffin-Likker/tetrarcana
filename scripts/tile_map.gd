@@ -298,38 +298,21 @@ func update_ghost_piece(map_position: Vector2i) -> void:
 			set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
 
 
+## Return the given `piece_` rotated by `rotation_ * PI/2` around the origin block at `(0, 0)`.
 func rotate_piece(piece_: Array[Vector2i], rotation_: int) -> Array[Vector2i]:
-	# Create a rotation matrix for 90 degrees rotation (clockwise or counterclockwise)
-	var rotation_matrix := Transform2D().rotated(rotation_ * PI / 2)
+	# Calculate sine and cosine for the rotation
+	var angle = rotation_ * PI/2
+	var cos_theta = cos(angle)
+	var sin_theta = sin(angle)
 
-	var new_piece: Array[Vector2i] = []
-	# Rotate each block of the piece
-	for block in piece_:
-		# Apply rotation matrix to the block
-		var rotated_position: Vector2 = rotation_matrix * Vector2(block)
-		new_piece.append(Vector2i(rotated_position))
-
-	# Calculate offset to keep the rotated piece in the same general area
-	var min_x: int = piece_[0].x
-	var min_y: int = piece_[0].y
-	var rotated_min_x: int = new_piece[0].x
-	var rotated_min_y: int = new_piece[0].y
-
-	for block in piece_:
-		min_x = min(min_x, block.x)
-		min_y = min(min_y, block.y)
-
-	for block in new_piece:
-		rotated_min_x = min(rotated_min_x, block.x)
-		rotated_min_y = min(rotated_min_y, block.y)
-
-	# Calculate the offset
-	var offset := Vector2i(min_x - rotated_min_x, min_y - rotated_min_y)
-
-	# Apply the offset to each block of the new piece
+	# Rotate each block
 	var rotated_piece: Array[Vector2i] = []
-	for block in new_piece:
-		rotated_piece.append(block + offset)
+	for block in piece_:
+		# Apply rotation matrix manually
+		var rotated_x = round(block.x * cos_theta - block.y * sin_theta)
+		var rotated_y = round(block.x * sin_theta + block.y * cos_theta)
+		
+		rotated_piece.append(Vector2i(rotated_x, rotated_y))
 
 	return rotated_piece
 
