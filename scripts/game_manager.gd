@@ -6,15 +6,15 @@ enum GameState { MENU, COMBINING, PLACING, GAME_OVER }
 enum Player { PLAYER_1, PLAYER_2 }
 enum WinResult { PLAYER_1_WIN, PLAYER_2_WIN, TIE }
 
-var game_state: GameState 
-var current_player: Player 
+var game_state: GameState
+var current_player: Player
 var turn_count: int = 0
 var winner: WinResult
 var winner_message: String
 
 @onready var tile_map: TileMap = $TileMap
-@onready var combination_board_p1 : Control = $CombinationBoardP1
-@onready var combination_board_p2 : Control= $CombinationBoardP2
+@onready var combination_board_p1: Control = $CombinationBoardP1
+@onready var combination_board_p2: Control = $CombinationBoardP2
 @onready var game_manager = $"."
 @onready var menu_manager_node = $"../MenuManager"
 @onready var splash_screen = $"../SplashScreen"
@@ -35,19 +35,23 @@ enum GameMode { MULTIPLAYER, SINGLE_PLAYER }
 var game_mode = GameMode.MULTIPLAYER
 var ai_player: AIOpponent
 
+
 func _ready():
 	tile_map.connect("piece_placed", Callable(self, "_on_piece_placed"))
 	splash_screen.connect("go_main_menu", Callable(self, "go_main_menu"))
 	menu_manager_node.connect("go_main_menu", Callable(self, "go_main_menu"))
 	menu_manager_node.connect("game_started", Callable(self, "game_started"))
-	menu_manager_node.connect("single_player_game_started", Callable(self, "single_player_game_started"))
+	menu_manager_node.connect(
+		"single_player_game_started", Callable(self, "single_player_game_started")
+	)
 	combination_board_p1.connect("combination_complete", Callable(self, "on_combination_complete"))
 	combination_board_p2.connect("combination_complete", Callable(self, "on_combination_complete"))
 	game_state = GameState.MENU
 	hide_combination_boards()
-	
+
 	var board_rect = tile_map.get_used_rect()
 	total_tiles = board_rect.size.x * board_rect.size.y - 2 * board_rect.size.y  # Subtract the two starting columns
+
 
 func game_started():
 	game_state = GameState.COMBINING
@@ -58,15 +62,18 @@ func game_started():
 	update_progress_bar()
 	sound_manager.start_game_music()
 	show_combination_board(current_player)
-	
+
+
 func single_player_game_started():
 	game_mode = GameMode.SINGLE_PLAYER
 	ai_player = load("res://scripts/AIPlayer.gd").new(self, combination_board_p2, tile_map)
 	game_started()
 
+
 func hide_combination_boards():
 	combination_board_p1.hide_board()
 	combination_board_p2.hide_board()
+
 
 func show_combination_board(player: Player):
 	hide_combination_boards()
@@ -82,21 +89,25 @@ func show_combination_board(player: Player):
 	game_state = GameState.COMBINING
 	sound_manager.play_parchment_sound()  # Play parchment sound when showing combination board
 
+
 func on_combination_complete(combined_piece: Array[Vector2i]):
 	game_state = GameState.PLACING
+	tile_map.clear_layer(tile_map.GHOST_LAYER)
 	tile_map.set_active_piece(combined_piece)
 	hide_combination_boards()
+
 
 func _on_piece_placed():
 	if game_state != GameState.PLACING:
 		return
 	filled_tiles += tile_map.active_piece.size()
 	update_progress_bar()
-	
+
 	if (filled_tiles / float(total_tiles)) >= 0.9:
 		end_game()
 	else:
 		end_turn()
+
 
 func update_progress_bar():
 	var fill_percentage = filled_tiles / float(total_tiles)
@@ -108,7 +119,8 @@ func update_progress_bar():
 	potion_6.value = fill_percentage
 	potion_7.value = fill_percentage
 	potion_8.value = fill_percentage
-	
+
+
 func end_game():
 	potion_1.value = 1.1
 	potion_2.value = 1.1
@@ -133,12 +145,13 @@ func end_game():
 	print_debug(winner_message)
 	menu_manager_node.on_game_over(winner_message)
 
+
 func go_main_menu():
 	hide_combination_boards()
 	game_state = GameState.MENU
 
-func end_turn():
 
+func end_turn():
 	turn_count += 1
 	print_debug("Turn " + str(turn_count) + " completed")
 	switch_player()
@@ -149,19 +162,22 @@ func end_turn():
 	if game_mode == GameMode.SINGLE_PLAYER and current_player == Player.PLAYER_2:
 		ai_turn()
 
+
 func ai_turn():
 	show_combination_board(Player.PLAYER_2)
-	await get_tree().create_timer(1.0).timeout  
+	await get_tree().create_timer(1.0).timeout
 	ai_player.make_combination()
-	await get_tree().create_timer(1.0).timeout  
+	await get_tree().create_timer(1.0).timeout
 	hide_combination_boards()
-	await get_tree().create_timer(0.5).timeout  
+	await get_tree().create_timer(0.5).timeout
 	ai_player.place_piece()
-	await get_tree().create_timer(0.5).timeout  
+	await get_tree().create_timer(0.5).timeout
 	end_turn()
+
 
 func switch_player():
 	current_player = Player.PLAYER_2 if current_player == Player.PLAYER_1 else Player.PLAYER_1
+
 
 func determine_winner() -> WinResult:
 	var player1_tiles = 0
@@ -174,10 +190,10 @@ func determine_winner() -> WinResult:
 				player1_tiles += 1
 			elif cell == tile_map.PLAYER_2_TILE:
 				player2_tiles += 1
-	
+
 	print_debug("player1_tiles - ", player1_tiles)
 	print_debug("player2_tiles - ", player2_tiles)
-	
+
 	if player1_tiles > player2_tiles:
 		return WinResult.PLAYER_1_WIN
 	elif player2_tiles > player1_tiles:

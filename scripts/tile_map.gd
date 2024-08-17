@@ -51,9 +51,6 @@ func initialize_move_timers():
 
 
 func set_active_piece(piece: Array[Vector2i]):
-	clear_ghost_piece()
-	#var local_position = get_local_mouse_position()
-	#var map_position = local_to_map(local_position)
 	active_piece = piece
 	current_ghost_position = Vector2i(
 		board_rect.position.x + board_rect.size.x / 2, board_rect.position.y + board_rect.size.y / 2
@@ -124,7 +121,7 @@ func play_move_sound():
 
 func _input(event):
 	if get_parent().game_state != get_parent().GameState.PLACING:
-		clear_ghost_piece()
+		clear_layer(GHOST_LAYER)
 		return
 
 	if event is InputEventMouseMotion:
@@ -143,7 +140,7 @@ func _input(event):
 		and event.pressed
 		and event.button_index == MOUSE_BUTTON_RIGHT
 	):
-		rotate_piece(1)
+		active_piece = rotate_piece(active_piece, 1)
 	elif event is InputEventKey and event.pressed:
 		handle_keyboard_input(event.keycode)
 
@@ -161,7 +158,7 @@ func handle_keyboard_input(keycode):
 		KEY_ENTER:
 			_on_tile_clicked(current_ghost_position)
 		KEY_R:
-			rotate_piece(1)
+			active_piece = rotate_piece(active_piece, 1)
 
 
 func move_piece(direction: Vector2i):
@@ -171,21 +168,18 @@ func move_piece(direction: Vector2i):
 		update_ghost_piece(current_ghost_position)
 
 
-#FIX ROTATION BY COPYING IT IDENTICALLY FROM COMBINATION BOARD
-func _process(delta):
+func _process(_delta):
 	if get_parent().game_state != get_parent().GameState.PLACING:
 		return
 	if Input.is_action_just_pressed("rotate_clockwise"):
-		rotate_piece(1)
-#	elif Input.is_action_just_pressed("rotate_counterclockwise"):
-#		rotate_piece(-1)
+		rotate_piece(active_piece, 1)
 	update_ghost_piece_position()
 
 
 func update_ghost_piece_position() -> void:
 	var game_manager = get_parent()
 	if game_manager.game_state != game_manager.GameState.PLACING:
-		clear_ghost_piece()
+		clear_layer(GHOST_LAYER)
 		return
 
 	var mouse_position: Vector2 = get_global_mouse_position()
@@ -226,7 +220,7 @@ func place_piece(piece: Array[Vector2i], map_position: Vector2i, tile: Vector2i)
 	for offset in piece:
 		var tile_position: Vector2i = map_position + offset
 		set_cell(BOARD_LAYER, tile_position, TILESET_SOURCE_ID, tile)
-	clear_ghost_piece()
+	clear_layer(GHOST_LAYER)
 	play_placing_sound()
 	emit_signal("piece_placed")
 
@@ -272,7 +266,7 @@ func update_ghost_piece(map_position: Vector2i) -> void:
 	clear_layer(GHOST_LAYER)
 	var game_manager = get_parent()
 	if game_manager.game_state != game_manager.GameState.PLACING:
-		clear_ghost_piece()
+		clear_layer(GHOST_LAYER)
 		return
 
 	if active_piece.is_empty():
@@ -304,58 +298,44 @@ func update_ghost_piece(map_position: Vector2i) -> void:
 			set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
 
 
-func rotate_piece(direction: int):
-	var local_position: Vector2 = get_local_mouse_position()
-	var map_position: Vector2i = local_to_map(local_position)
+func rotate_piece(piece: Array[Vector2i], rotation: int) -> Array[Vector2i]:
+	# Create a rotation matrix for 90 degrees rotation (clockwise or counterclockwise)
+	var rotation_matrix := Transform2D().rotated(rotation * PI / 2)
 
-	if can_rotate():
-		# Create a rotation matrix for 90 degrees rotation (clockwise or counterclockwise)
-		var rotation_matrix := Transform2D().rotated(direction * PI / 2)
-		var new_piece: Array[Vector2i] = []
-		# Rotate each block of the active piece
-		for block in active_piece:
-			# Apply rotation matrix to the block
-			var rotated_position: Vector2 = rotation_matrix * Vector2(block)
-			# Round and store the rotated position
-			new_piece.append(Vector2i(round(rotated_position.x), round(rotated_position.y)))
+	var new_piece: Array[Vector2i] = []
+	# Rotate each block of the piece
+	for block in piece:
+		# Apply rotation matrix to the block
+		var rotated_position: Vector2 = rotation_matrix * Vector2(block)
+		new_piece.append(Vector2i(rotated_position))
 
-		# Calculate offset to keep the rotated piece in the same general area
-		var min_x: int = active_piece[0].x
-		var min_y: int = active_piece[0].y
-		var rotated_min_x: int = new_piece[0].x
-		var rotated_min_y: int = new_piece[0].y
+	# Calculate offset to keep the rotated piece in the same general area
+	var min_x: int = piece[0].x
+	var min_y: int = piece[0].y
+	var rotated_min_x: int = new_piece[0].x
+	var rotated_min_y: int = new_piece[0].y
 
-		for block in active_piece:
-			min_x = min(min_x, block.x)
-			min_y = min(min_y, block.y)
+	for block in piece:
+		min_x = min(min_x, block.x)
+		min_y = min(min_y, block.y)
 
-		for block in new_piece:
-			rotated_min_x = min(rotated_min_x, block.x)
-			rotated_min_y = min(rotated_min_y, block.y)
+	for block in new_piece:
+		rotated_min_x = min(rotated_min_x, block.x)
+		rotated_min_y = min(rotated_min_y, block.y)
 
-		# Calculate the offset
-		var offset := Vector2i(min_x - rotated_min_x, min_y - rotated_min_y)
+	# Calculate the offset
+	var offset := Vector2i(min_x - rotated_min_x, min_y - rotated_min_y)
 
-		# Apply the offset to each block of the new piece
-		var rotated_piece: Array[Vector2i] = []
-		for block in new_piece:
-			rotated_piece.append(block + offset)
-		active_piece = rotated_piece
+	# Apply the offset to each block of the new piece
+	var rotated_piece: Array[Vector2i] = []
+	for block in new_piece:
+		rotated_piece.append(block + offset)
 
-		sound_manager.play_rotate_sound()
-		update_ghost_piece(map_position)
-
-
-func can_rotate() -> bool:
-	return true
+	return rotated_piece
 
 
 func update_for_new_turn(new_player: Player):
 	var local_position = get_local_mouse_position()
 	var map_position = local_to_map(local_position)
-	clear_ghost_piece()  # Clear the ghost piece at the start of a new turn
-	update_ghost_piece(map_position)
-
-
-func clear_ghost_piece():
 	clear_layer(GHOST_LAYER)
+	update_ghost_piece(map_position)
