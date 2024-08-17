@@ -51,7 +51,7 @@ func get_possible_placements(current_player_tile: Vector2i) -> Array[Dictionary]
 	var board_rect: Rect2i = tile_map.get_used_rect()
 
 	for rotation in range(4):  # Try all 4 rotations
-		var rotated_piece: Array[Vector2i] = rotate_piece(tile_map.active_piece, rotation)
+		var rotated_piece: Array[Vector2i] = tile_map.rotate_piece(tile_map.active_piece, rotation)
 
 		for y in range(board_rect.position.y, board_rect.end.y):
 			for x in range(board_rect.position.x, board_rect.end.x):
@@ -67,18 +67,6 @@ func get_possible_placements(current_player_tile: Vector2i) -> Array[Dictionary]
 					)
 
 	return placements
-
-
-func rotate_piece(piece: Array[Vector2i], rotation: int) -> Array[Vector2i]:
-	var rotation_angle: float = PI / 2 * rotation
-	var rotation_transform: Transform2D = Transform2D().rotated(rotation_angle)
-
-	var rotated_piece: Array[Vector2i] = []
-	for block in piece:
-		var rotated_block: Vector2 = rotation_transform * Vector2(block)
-		rotated_piece.append(Vector2i(rotated_block))
-
-	return rotated_piece
 
 
 func choose_best_placement(placements: Array[Dictionary]) -> Dictionary:
