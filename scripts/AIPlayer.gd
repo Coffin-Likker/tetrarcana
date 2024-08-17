@@ -14,18 +14,65 @@ func _init(manager: game_manager, combo_board: Control, main_board: TileMap) -> 
 
 
 func make_combination() -> void:
-	var combination_map: Node = combination_board.get_node("CombinationMap")
-	var current_player_tile = (
+	var combination_map: TileMap = combination_board.get_node("CombinationMap")
+	var current_player_tile: Vector2i = (
 		combination_map.PLAYER_1_TILE
 		if game_manager.current_player == game_manager.Player.PLAYER_1
 		else combination_map.PLAYER_2_TILE
 	)
 
-	var first_position: Vector2i = Vector2i(0, 0)
-	combination_map.place_piece(first_position, current_player_tile)
+	# Find first valid placement for this piece
+	for position in combination_map.get_used_cells(combination_map.BOARD_LAYER):
+		if combination_map.can_place_piece(position):
+			combination_map.place_piece(position, current_player_tile)
+			break
+	
 	await game_manager.get_tree().create_timer(0.5).timeout
-	var second_position: Vector2i = Vector2i(1, 0)
-	combination_map.place_piece(second_position, current_player_tile)
+	
+	# Find the placement of the second piece that will maximise the size of the combined piece
+	var best_second_placement = find_best_second_placement(combination_map)
+	combination_map.place_piece(best_second_placement.position, current_player_tile)
+
+
+
+func find_best_second_placement(combination_map: TileMap) -> Dictionary:
+	var best_placement := {}
+	var max_combined_size: int = 0
+
+	for position in combination_map.get_used_cells(combination_map.BOARD_LAYER):
+		if combination_map.can_place_piece(position):
+			# Simulate placing the piece
+			var simulated_pieces = combination_map.placed_pieces.duplicate(true)
+			simulated_pieces.append(get_piece_tiles(combination_map.active_piece, position))
+
+			# Calculate the size of the combined piece
+			var combined_size: int = calculate_combined_size(simulated_pieces)
+
+			if combined_size > max_combined_size:
+				max_combined_size = combined_size
+				best_placement = {"position": position, "size": combined_size}
+	
+	return best_placement
+
+
+func get_piece_tiles(piece: Array, base_position: Vector2i) -> Array:
+	var tiles = []
+	for offset in piece:
+		tiles.append(base_position + offset)
+	return tiles
+
+
+func calculate_combined_size(pieces: Array) -> int:
+	var all_tiles = []
+	for piece in pieces:
+		all_tiles.append(piece)
+	
+	var unique_tiles = []
+	for tile in all_tiles:
+		if tile not in unique_tiles:
+			unique_tiles.append(tile)
+	
+	return unique_tiles.size()
 
 
 func place_piece() -> void:
@@ -51,7 +98,7 @@ func get_possible_placements(current_player_tile: Vector2i) -> Array[Dictionary]
 	var board_rect: Rect2i = tile_map.get_used_rect()
 
 	for rotation in range(4):  # Try all 4 rotations
-		var rotated_piece: Array[Vector2i] = rotate_piece(tile_map.active_piece, rotation)
+		var rotated_piece: Array[Vector2i] = tile_map.rotate_piece(tile_map.active_piece, rotation)
 
 		for y in range(board_rect.position.y, board_rect.end.y):
 			for x in range(board_rect.position.x, board_rect.end.x):
@@ -67,18 +114,6 @@ func get_possible_placements(current_player_tile: Vector2i) -> Array[Dictionary]
 					)
 
 	return placements
-
-
-func rotate_piece(piece: Array[Vector2i], rotation: int) -> Array[Vector2i]:
-	var rotation_angle: float = PI / 2 * rotation
-	var rotation_transform: Transform2D = Transform2D().rotated(rotation_angle)
-
-	var rotated_piece: Array[Vector2i] = []
-	for block in piece:
-		var rotated_block: Vector2 = rotation_transform * Vector2(block)
-		rotated_piece.append(Vector2i(rotated_block))
-
-	return rotated_piece
 
 
 func choose_best_placement(placements: Array[Dictionary]) -> Dictionary:
