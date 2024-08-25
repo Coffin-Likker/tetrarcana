@@ -73,8 +73,8 @@ func single_player_game_started():
 func hide_combination_boards():
 	combination_board_p1.hide_board()
 	combination_board_p2.hide_board()
-	combination_board_p1.get_node("CombinationMap").set_process_input(false)  # Disable input
-	combination_board_p2.get_node("CombinationMap").set_process_input(false)  # Disable input
+	combination_board_p1.get_node("CombinationMap").set_ai_turn(true)  # Change this line
+	combination_board_p2.get_node("CombinationMap").set_ai_turn(true)  # Change this line
 
 func show_combination_board(player: Player):
 	hide_combination_boards()
@@ -83,12 +83,10 @@ func show_combination_board(player: Player):
 		combination_board_p1.show_board()
 		combination_board_p1.get_node("CombinationMap").set_ai_turn(false)
 		combination_board_p1.get_node("CombinationMap").reset()
-		combination_board_p1.get_node("CombinationMap").set_process_input(true)  # Enable input
 	else:
 		combination_board_p2.show_board()
 		combination_board_p2.get_node("CombinationMap").set_ai_turn(is_ai_turn)
 		combination_board_p2.get_node("CombinationMap").reset()
-		combination_board_p2.get_node("CombinationMap").set_process_input(not is_ai_turn)  # Enable input for human player
 	game_state = GameState.COMBINING
 	sound_manager.play_parchment_sound()
 
