@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://cuqf4g5w6qaee"]
+[gd_scene load_steps=24 format=3 uid="uid://cuqf4g5w6qaee"]
 
 [ext_resource type="Texture2D" uid="uid://b53hxhtmdyc4e" path="res://assets/background/gamebackgroundnotimer_final.png" id="1_ipjdu"]
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_m4hak"]
@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://bnbcv3jlm2pxd" path="res://scenes/characters/shadow_character.tscn" id="16_bky40"]
 [ext_resource type="Script" path="res://scripts/GameSoundManager.gd" id="20_hoo7l"]
 [ext_resource type="PackedScene" uid="uid://bejmuskp8qi1j" path="res://scenes/SplashScreen.tscn" id="20_mj83k"]
+[ext_resource type="Script" path="res://scripts/InputManager.gd" id="22_57l6l"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_m4hak")
@@ -206,6 +207,9 @@ offset_bottom = 202.5
 
 [node name="GameSoundManager" type="Node" parent="GameManager"]
 script = ExtResource("20_hoo7l")
+
+[node name="InputManager" type="Node" parent="GameManager"]
+script = ExtResource("22_57l6l")
 
 [node name="MenuManager" parent="." instance=ExtResource("3_5h8my")]
 offset_left = 240.0

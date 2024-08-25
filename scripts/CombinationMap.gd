@@ -41,6 +41,7 @@ var move_cooldown = 0.1
 var move_timers = {}
 
 @onready var sound_manager = get_node("../../GameSoundManager")
+@onready var input_manager = get_node("../../InputManager")
 
 
 const MOVE_DIRECTIONS = {
@@ -59,42 +60,54 @@ func _ready():
 		add_layer(GHOST_LAYER)  # Add ghost layer if it doesn't exist
 	print("Combination map ready")
 	active_piece = get_random_piece()
+	set_process_unhandled_input(true)
 	update_ghost_piece()
 	reset()
+	input_manager.connect("move_piece", Callable(self, "_on_move_piece"))
+	input_manager.connect("rotate_piece", Callable(self, "_on_rotate_piece"))
+	input_manager.connect("place_piece", Callable(self, "_on_place_piece"))
+	
+func _input(event):
+	if is_ai_turn:
+		return
 
-# WORKING KEYBOARD SUPPORT BUT BREAKS MOUSE INPUT
-# func initialize_move_timers():
-# 	for action in MOVE_DIRECTIONS.keys():
-# 		move_timers[action] = 0.0
+	if event is InputEventMouseMotion:
+		var local_position = get_local_mouse_position()
+		var map_position = local_to_map(local_position)
+		if is_within_bounds(map_position):
+			current_ghost_position = map_position
+			update_ghost_piece()
 
-# func _process(delta):
-# 	handle_keyboard_input(delta)	
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var click_position = get_local_mouse_position()
+		var map_position = local_to_map(click_position)
+		if is_within_bounds(map_position):
+			_on_tile_clicked(map_position)
 
-# func handle_keyboard_input(delta):
-# 	for action in MOVE_DIRECTIONS.keys():
-# 		if Input.is_action_pressed(action):
-# 			move_timers[action] += delta
-# 			if move_timers[action] >= move_cooldown:
-# 				move_piece(MOVE_DIRECTIONS[action])
-# 				move_timers[action] = 0.0
-# 		else:
-# 			move_timers[action] = move_cooldown  # Reset timer when key is released
+func is_within_bounds(position: Vector2i) -> bool:
+	return (position.x >= BOARD_OFFSET.x and position.x < BOARD_OFFSET.x + BOARD_WIDTH and
+			position.y >= BOARD_OFFSET.y and position.y < BOARD_OFFSET.y + BOARD_HEIGHT)
 
-# 	if Input.is_action_just_pressed("ui_accept"):
-# 		_on_tile_clicked(current_ghost_position)
-# 	elif Input.is_action_just_pressed("rotate_clockwise"):
-# 		rotate_piece(current_ghost_position)
-# 	elif Input.is_action_just_pressed("rotate_counterclockwise"):
-# 		rotate_piece(current_ghost_position)
+func _on_move_piece(direction: Vector2i):
+	if not is_ai_turn:
+		move_piece(direction)
 
-# func move_piece(direction: Vector2i):
-# 	var new_position = current_ghost_position + direction
-# 	new_position.x = clamp(new_position.x, BOARD_OFFSET.x, BOARD_OFFSET.x + BOARD_WIDTH - 1)
-# 	new_position.y = clamp(new_position.y, BOARD_OFFSET.y, BOARD_OFFSET.y + BOARD_HEIGHT - 1)
-# 	if new_position != current_ghost_position:
-# 		current_ghost_position = new_position
-# 		update_ghost_piece()
+func _on_rotate_piece(clockwise: bool):
+	if not is_ai_turn:
+		rotate_piece(current_ghost_position, clockwise)
 
+func _on_place_piece():
+	if not is_ai_turn:
+		_on_tile_clicked(current_ghost_position)
+
+func move_piece(direction: Vector2i):
+	var new_position = current_ghost_position + direction
+	new_position.x = clamp(new_position.x, BOARD_OFFSET.x, BOARD_OFFSET.x + BOARD_WIDTH - 1)
+	new_position.y = clamp(new_position.y, BOARD_OFFSET.y, BOARD_OFFSET.y + BOARD_HEIGHT - 1)
+	if new_position != current_ghost_position:
+		current_ghost_position = new_position
+		update_ghost_piece()
+		sound_manager.play_move_sound()
 
 func reset():
 	for piece in placed_pieces:
@@ -114,37 +127,6 @@ func _on_combination_complete(combined_piece: Array[Vector2i]):
 
 func get_random_piece():
 	return ALL_SHAPES[randi() % ALL_SHAPES.size()]
-
-# func _unhandled_input(event):
-# 	if event is InputEventMouseButton and event.pressed:
-# 		var map_position = local_to_map(get_local_mouse_position())
-# 		if event.button_index == MOUSE_BUTTON_LEFT:
-# 			_on_tile_clicked(map_position)
-# 			print("Attempt to place piece at ", map_position)
-# 		elif event.button_index == MOUSE_BUTTON_RIGHT:
-# 			rotate_piece(map_position)
-# 			print("Attempt to rotate piece at ", map_position)
-# 	elif event is InputEventMouseMotion:
-# 		update_ghost_piece()
-
-func _unhandled_input(event):
-	if is_ai_turn:
-		return
-	if event is InputEventMouseMotion:
-		update_ghost_piece()
-	elif event is InputEventMouseButton and event.pressed:
-		var map_position = local_to_map(get_local_mouse_position())
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			_on_tile_clicked(map_position)
-		elif event.button_index == MOUSE_BUTTON_RIGHT:
-			rotate_piece(map_position)
-	if Input.is_action_just_pressed("rotate_clockwise"):
-		var map_position = local_to_map(get_local_mouse_position())
-		rotate_piece(map_position)
-
-func is_within_bounds(position: Vector2i) -> bool:
-	return (position.x >= BOARD_OFFSET.x and position.x < BOARD_OFFSET.x + BOARD_WIDTH and
-	position.y >= BOARD_OFFSET.y and position.y < BOARD_OFFSET.y + BOARD_HEIGHT)
 
 func can_place_piece(base_position: Vector2i) -> bool:
 	if placed_pieces.size() >= 2:
@@ -171,7 +153,7 @@ func can_place_piece(base_position: Vector2i) -> bool:
 
 	return overlaps
 
-func _on_tile_clicked(map_position: Vector2i):	
+func _on_tile_clicked(map_position: Vector2i):
 	var game_manager = get_parent().get_parent()
 	var player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
 	place_piece(map_position, player_tile)
@@ -220,47 +202,32 @@ func set_ai_turn(value: bool):
 	is_ai_turn = value
 	if is_ai_turn:
 		clear_layer(GHOST_LAYER)
-
-func update_ghost_piece():
+func update_ghost_piece(map_position = null):
 	if is_ai_turn:
 		clear_layer(GHOST_LAYER)
 		return
 
-	var local_position = get_local_mouse_position()
-	var map_position = local_to_map(local_position)
-	
 	clear_layer(GHOST_LAYER)
 	var game_manager = get_parent().get_parent()
 
-	map_position.x = clamp(map_position.x, BOARD_OFFSET.x, BOARD_OFFSET.x + BOARD_WIDTH - 1)
-	map_position.y = clamp(map_position.y, BOARD_OFFSET.y, BOARD_OFFSET.y + BOARD_HEIGHT - 1)
+	if active_piece.is_empty():
+		return
 
-
-	if map_position != current_ghost_position:
-		current_ghost_position = map_position
+	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
+	var ghost_tile
 
 	var can_place = can_place_piece(current_ghost_position)
-	var all_tiles_in_bounds = true
 	
-	var ghost_tile 
-		
-	for offset in active_piece:
-		var tile_position = current_ghost_position + offset
-		if not is_within_bounds(tile_position):
-			all_tiles_in_bounds = false
-			break
-
-
 	if game_manager.current_player == game_manager.Player.PLAYER_1:
-		ghost_tile = GHOST_TILE if  (can_place and all_tiles_in_bounds) else INVALID_GHOST_TILE
+		ghost_tile = GHOST_TILE if can_place else INVALID_GHOST_TILE
 	else:
-		ghost_tile = GHOST_TILE_OPPONENT if  (can_place and all_tiles_in_bounds) else INVALID_GHOST_TILE_PLAYER_2
+		ghost_tile = GHOST_TILE_OPPONENT if can_place else INVALID_GHOST_TILE_PLAYER_2
 
 	for offset in active_piece:
 		var tile_position = current_ghost_position + offset
 		if is_within_bounds(tile_position):
 			set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
-
+			
 func combine_pieces() -> Array[Vector2i]:
 	var all_tiles: Array[Vector2i] = []
 	for piece in placed_pieces:
@@ -289,43 +256,15 @@ func combine_pieces() -> Array[Vector2i]:
 	print("Combined and normalized shape: ", normalized_shape)
 	return normalized_shape
 	
-func rotate_piece(mouse_position: Vector2i):
+func rotate_piece(mouse_position: Vector2i, clockwise: bool = true):
 	if placed_pieces.size() >= 2:
 		return  # Don't rotate after combination
 
 	var rotated_piece = []
-	var pivot = Vector2i.ZERO
-
-	# Find the tile closest to the mouse position
-	var min_distance = INF
-	for i in range(active_piece.size()):
-		var tile = active_piece[i]
-		var distance = (mouse_position - (current_ghost_position + tile)).length_squared()
-		if distance < min_distance:
-			min_distance = distance
-			pivot = tile
-
-	# Rotate around the pivot
 	for tile in active_piece:
-		var relative_pos = tile - pivot
-		var rotated_pos = Vector2i(-relative_pos.y, relative_pos.x)  # 90-degree clockwise rotation
-		rotated_piece.append(rotated_pos + pivot)
+		var rotated_pos = Vector2i(-tile.y, tile.x) if clockwise else Vector2i(tile.y, -tile.x)
+		rotated_piece.append(rotated_pos)
 
-	# Adjust the position to keep the mouse on a tile and within bounds
-	var offset = mouse_position - (current_ghost_position + pivot)
-	var new_ghost_position = current_ghost_position + offset
-	new_ghost_position.x = clamp(new_ghost_position.x, BOARD_OFFSET.x, BOARD_OFFSET.x + BOARD_WIDTH - 1)
-	new_ghost_position.y = clamp(new_ghost_position.y, BOARD_OFFSET.y, BOARD_OFFSET.y + BOARD_HEIGHT - 1)
-	
-	# Check if the rotated piece is entirely within bounds
-	#var is_valid_rotation = true
-	#for tile in rotated_piece:
-		#if not is_within_bounds(new_ghost_position + tile):
-			#is_valid_rotation = false
-			#break
-	
-	#if is_valid_rotation:
 	active_piece = rotated_piece
-	current_ghost_position = new_ghost_position
 	update_ghost_piece()
-
+	sound_manager.play_move_sound()

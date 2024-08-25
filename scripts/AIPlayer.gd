@@ -32,7 +32,7 @@ func make_combination() -> void:
 	# Find the placement of the second piece that will maximise the size of the combined piece
 	var best_second_placement = find_best_second_placement(combination_map)
 	combination_map.place_piece(best_second_placement.position, current_player_tile)
-
+	await tile_map.piece_placed
 
 
 func find_best_second_placement(combination_map: TileMap) -> Dictionary:

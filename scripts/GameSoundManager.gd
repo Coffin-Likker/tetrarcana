@@ -29,7 +29,8 @@ func _ready():
 	add_child(loop_music)
 
 	# Connect the finished signal of the main music to start the loop
-	main_music.connect("finished", Callable(self, "_on_main_music_finished"))
+	main_music.finished.connect(_on_main_music_finished)
+
 
 	for i in range(1, 11):
 		var sound = AudioStreamPlayer.new()
@@ -107,10 +108,16 @@ func play_place_sound(player: String):
 	if player in place_sounds:
 		place_sounds[player].play()
 
+func stop_all_music():
+	main_music.stop()
+	loop_music.stop()
+
 func play_win_sound(player: String):
+	stop_all_music()  # Stop the main and loop music
 	if player in win_sounds:
 		win_sounds[player].play()
 
+	
 func play_combine_sound(player: String):
 	if player in combine_sounds:
 		combine_sounds[player].play()
@@ -130,10 +137,6 @@ func play_main_music():
 
 func _on_main_music_finished():
 	loop_music.play()
-
-func stop_all_music():
-	main_music.stop()
-	loop_music.stop()
 
 func set_music_volume(volume: float):
 	main_music.volume_db = volume
