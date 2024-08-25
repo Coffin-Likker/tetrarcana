@@ -125,8 +125,7 @@ func play_move_sound():
 
 
 func _input(event):
-	if get_parent().game_state != get_parent().GameState.PLACING:
-		clear_layer(GHOST_LAYER)
+	if get_parent().game_state != get_parent().GameState.PLACING or not is_processing_unhandled_input():
 		return
 
 	if event is InputEventMouseMotion:

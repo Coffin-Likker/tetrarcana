@@ -150,6 +150,12 @@ func end_game():
 func go_main_menu():
 	hide_combination_boards()
 	game_state = GameState.MENU
+	
+func enable_player_input():
+	# Enable input for player turn
+	tile_map.set_process_unhandled_input(true)
+	combination_board_p1.get_node("CombinationMap").set_process_unhandled_input(true)
+	combination_board_p2.get_node("CombinationMap").set_process_unhandled_input(true)
 
 
 func end_turn():
@@ -161,17 +167,24 @@ func end_turn():
 	tile_map.update_for_new_turn(current_player)
 	print_debug("Turn " + str(turn_count + 1) + " - Player " + str(current_player + 1) + "'s turn")
 	if game_mode == GameMode.SINGLE_PLAYER and current_player == Player.PLAYER_2:
-		ai_turn()
+		call_deferred("ai_turn")
+	else:
+		enable_player_input()
 
 
 func ai_turn():
+	# Disable player input during AI turn
+	tile_map.set_process_unhandled_input(false)
+	combination_board_p1.get_node("CombinationMap").set_process_unhandled_input(false)
+	combination_board_p2.get_node("CombinationMap").set_process_unhandled_input(false)
+
 	show_combination_board(Player.PLAYER_2)
 	await get_tree().create_timer(1.0).timeout
 	ai_player.make_combination()
 	await get_tree().create_timer(1.0).timeout
 	hide_combination_boards()
 	await get_tree().create_timer(0.5).timeout
-	ai_player.place_piece()
+	await ai_player.place_piece()  # Wait for piece placement to complete
 	await get_tree().create_timer(0.5).timeout
 	end_turn()
 
