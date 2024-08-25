@@ -10,6 +10,7 @@ const GHOST_TILE_OPPONENT = Vector2i(3, 0)
 const INVALID_GHOST_TILE = Vector2i(1, 1)
 const INVALID_GHOST_TILE_PLAYER_2 = Vector2i(3, 1)
 
+
 # Layer constants
 const BOARD_LAYER = 0
 const GHOST_LAYER = 1
@@ -28,6 +29,7 @@ var board_rect: Rect2i
 var is_mouse_over_board = false
 
 @onready var sound_manager = get_node("../GameSoundManager")
+@onready var input_manager = get_node("../InputManager")
 
 var move_cooldown = 0.1  # Time in seconds between moves when key is held
 var move_timers = {}
@@ -62,6 +64,9 @@ func set_active_piece(piece: Array[Vector2i]):
 func _ready():
 	InputMap.load_from_project_settings()
 	print_debug("TileMap initialized. Ready to process input.")
+	input_manager.connect("move_piece", Callable(self, "_on_move_piece"))
+	input_manager.connect("rotate_piece", Callable(self, "_on_rotate_piece"))
+	input_manager.connect("place_piece", Callable(self, "_on_place_piece"))
 
 	initialize_move_timers()
 	set_process_unhandled_input(true)
@@ -74,6 +79,7 @@ func _ready():
 	current_ghost_position = Vector2i(
 		board_rect.position.x + board_rect.size.x / 2, board_rect.position.y + board_rect.size.y / 2
 	)
+	update_ghost_piece(current_ghost_position)
 
 
 func reset():
@@ -135,30 +141,34 @@ func _input(event):
 		var map_position = local_to_map(click_position)
 		if get_used_rect().has_point(map_position):
 			_on_tile_clicked(map_position)
-	if (
-		event is InputEventMouseButton
-		and event.pressed
-		and event.button_index == MOUSE_BUTTON_RIGHT
-	):
-		set_active_piece(rotate_piece(active_piece, 1))
-	elif event is InputEventKey and event.pressed:
-		handle_keyboard_input(event.keycode)
 
 
-func handle_keyboard_input(keycode):
-	match keycode:
-		KEY_LEFT:
-			move_piece(Vector2i(-1, 0))
-		KEY_RIGHT:
-			move_piece(Vector2i(1, 0))
-		KEY_UP:
-			move_piece(Vector2i(0, -1))
-		KEY_DOWN:
-			move_piece(Vector2i(0, 1))
-		KEY_ENTER:
-			_on_tile_clicked(current_ghost_position)
-		KEY_R:
-			set_active_piece(rotate_piece(active_piece, 1))
+func _on_move_piece(direction: Vector2i):
+	if get_parent().game_state == get_parent().GameState.PLACING:
+		move_piece(direction)
+
+func _on_rotate_piece(clockwise: bool):
+	if get_parent().game_state == get_parent().GameState.PLACING:
+		set_active_piece(rotate_piece(active_piece, 1 if clockwise else -1))
+
+func _on_place_piece():
+	if get_parent().game_state == get_parent().GameState.PLACING:
+		_on_tile_clicked(current_ghost_position)
+
+#func handle_keyboard_input(keycode):
+	#match keycode:
+		#KEY_LEFT:
+			#move_piece(Vector2i(-1, 0))
+		#KEY_RIGHT:
+			#move_piece(Vector2i(1, 0))
+		#KEY_UP:
+			#move_piece(Vector2i(0, -1))
+		#KEY_DOWN:
+			#move_piece(Vector2i(0, 1))
+		#KEY_ENTER:
+			#_on_tile_clicked(current_ghost_position)
+		#KEY_R:
+			#set_active_piece(rotate_piece(active_piece, 1))
 
 
 func move_piece(direction: Vector2i):
@@ -166,42 +176,13 @@ func move_piece(direction: Vector2i):
 	if is_in_bounds(active_piece, new_position):
 		current_ghost_position = new_position
 		update_ghost_piece(current_ghost_position)
+		play_move_sound()
 
 
 func _process(_delta):
 	if get_parent().game_state != get_parent().GameState.PLACING:
 		return
-	if Input.is_action_just_pressed("rotate_clockwise"):
-		set_active_piece(rotate_piece(active_piece, 1))
-	update_ghost_piece_position()
-
-
-func update_ghost_piece_position() -> void:
-	var game_manager = get_parent()
-	if game_manager.game_state != game_manager.GameState.PLACING:
-		clear_layer(GHOST_LAYER)
-		return
-
-	var mouse_position: Vector2 = get_global_mouse_position()
-	var map_position: Vector2i = local_to_map(to_local(mouse_position))
-
-	# Clamp the position to the board boundaries
-	map_position.x = clamp(map_position.x, board_rect.position.x, board_rect.end.x - 1)
-	map_position.y = clamp(map_position.y, board_rect.position.y, board_rect.end.y - 1)
-
-	if map_position != current_ghost_position:
-		current_ghost_position = map_position
-		update_ghost_piece(current_ghost_position)
-
-
-func _unhandled_input(event) -> void:
-	var local_position: Vector2 = get_local_mouse_position()
-	var map_position: Vector2i = local_to_map(local_position)
-	var game_manager = get_parent()
-	if event is InputEventMouseMotion and game_manager.game_state == GameState.PLACING:
-		if is_in_bounds(active_piece, map_position):
-			update_ghost_piece(map_position)
-
+	update_ghost_piece(current_ghost_position)
 
 func _on_tile_clicked(map_position: Vector2i) -> void:
 	var game_manager = get_parent()
@@ -216,6 +197,7 @@ func place_piece(piece: Array[Vector2i], map_position: Vector2i, tile: Vector2i)
 
 	if not can_place_piece(piece, map_position, tile):
 		sound_manager.play_cant_place_sound()
+		return
 
 	for offset in piece:
 		var tile_position: Vector2i = map_position + offset
