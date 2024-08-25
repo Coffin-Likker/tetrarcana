@@ -10,7 +10,6 @@ const GHOST_TILE_OPPONENT = Vector2i(3, 0)
 const INVALID_GHOST_TILE = Vector2i(1, 1)
 const INVALID_GHOST_TILE_PLAYER_2 = Vector2i(3, 1)
 
-
 # Layer constants
 const BOARD_LAYER = 0
 const GHOST_LAYER = 1
@@ -154,22 +153,6 @@ func _on_rotate_piece(clockwise: bool):
 func _on_place_piece():
 	if get_parent().game_state == get_parent().GameState.PLACING:
 		_on_tile_clicked(current_ghost_position)
-
-#func handle_keyboard_input(keycode):
-	#match keycode:
-		#KEY_LEFT:
-			#move_piece(Vector2i(-1, 0))
-		#KEY_RIGHT:
-			#move_piece(Vector2i(1, 0))
-		#KEY_UP:
-			#move_piece(Vector2i(0, -1))
-		#KEY_DOWN:
-			#move_piece(Vector2i(0, 1))
-		#KEY_ENTER:
-			#_on_tile_clicked(current_ghost_position)
-		#KEY_R:
-			#set_active_piece(rotate_piece(active_piece, 1))
-
 
 func move_piece(direction: Vector2i):
 	var new_position: Vector2i = current_ghost_position + direction
