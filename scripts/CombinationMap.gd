@@ -66,6 +66,27 @@ func _ready():
 	input_manager.connect("move_piece", Callable(self, "_on_move_piece"))
 	input_manager.connect("rotate_piece", Callable(self, "_on_rotate_piece"))
 	input_manager.connect("place_piece", Callable(self, "_on_place_piece"))
+	
+func _input(event):
+	if is_ai_turn:
+		return
+
+	if event is InputEventMouseMotion:
+		var local_position = get_local_mouse_position()
+		var map_position = local_to_map(local_position)
+		if is_within_bounds(map_position):
+			current_ghost_position = map_position
+			update_ghost_piece()
+
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var click_position = get_local_mouse_position()
+		var map_position = local_to_map(click_position)
+		if is_within_bounds(map_position):
+			_on_tile_clicked(map_position)
+
+func is_within_bounds(position: Vector2i) -> bool:
+	return (position.x >= BOARD_OFFSET.x and position.x < BOARD_OFFSET.x + BOARD_WIDTH and
+			position.y >= BOARD_OFFSET.y and position.y < BOARD_OFFSET.y + BOARD_HEIGHT)
 
 func _on_move_piece(direction: Vector2i):
 	if not is_ai_turn:
@@ -107,11 +128,6 @@ func _on_combination_complete(combined_piece: Array[Vector2i]):
 func get_random_piece():
 	return ALL_SHAPES[randi() % ALL_SHAPES.size()]
 
-
-func is_within_bounds(position: Vector2i) -> bool:
-	return (position.x >= BOARD_OFFSET.x and position.x < BOARD_OFFSET.x + BOARD_WIDTH and
-	position.y >= BOARD_OFFSET.y and position.y < BOARD_OFFSET.y + BOARD_HEIGHT)
-
 func can_place_piece(base_position: Vector2i) -> bool:
 	if placed_pieces.size() >= 2:
 		return false 
@@ -137,7 +153,7 @@ func can_place_piece(base_position: Vector2i) -> bool:
 
 	return overlaps
 
-func _on_tile_clicked(map_position: Vector2i):	
+func _on_tile_clicked(map_position: Vector2i):
 	var game_manager = get_parent().get_parent()
 	var player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
 	place_piece(map_position, player_tile)
