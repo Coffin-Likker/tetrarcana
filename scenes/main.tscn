@@ -224,16 +224,14 @@ offset_right = 97.0
 offset_bottom = 166.0
 
 [node name="Label" parent="MenuManager/MainMenu/VBoxContainer/SinglePlayer" index="0"]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 148.0
-offset_bottom = 23.0
+anchors_preset = 0
+offset_left = 41.0
+offset_top = 10.0
+offset_right = 189.0
+offset_bottom = 33.0
 
 [node name="QuitToDesktop" parent="MenuManager/MainMenu/VBoxContainer" index="3"]
 visible = false
-
-[node name="OptionsMenu" parent="MenuManager" index="2"]
-visible = true
 
 [node name="OptionsVBox" parent="MenuManager/OptionsMenu" index="1"]
 offset_left = -188.0
