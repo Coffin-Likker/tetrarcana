@@ -29,6 +29,7 @@ var is_mouse_over_board = false
 
 @onready var sound_manager = get_node("../GameSoundManager")
 @onready var input_manager = get_node("../InputManager")
+@onready var boundary_polygon: CollisionPolygon2D = $BoardBoundary/CollisionPolygon2D
 
 var move_cooldown = 0.1  # Time in seconds between moves when key is held
 var move_timers = {}
@@ -203,7 +204,7 @@ func can_place_piece(
 ## Checks if all positions of the piece are within the game board bounds.
 func is_in_bounds(piece: Array[Vector2i], map_position: Vector2i) -> bool:
 	return not calculate_piece_positions(piece, map_position).any(
-		func(piece_position: Vector2i) -> bool: return not get_used_rect().has_point(piece_position)
+		func(piece_position: Vector2i) -> bool: return not Geometry2D.is_point_in_polygon(Vector2(piece_position), boundary_polygon.polygon)
 	)
 
 

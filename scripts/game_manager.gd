@@ -30,6 +30,8 @@ var winner_message: String
 
 var total_tiles: int
 var filled_tiles: int
+var unique_filled_tiles: Dictionary
+
 
 enum GameMode { MULTIPLAYER, SINGLE_PLAYER }
 var game_mode = GameMode.MULTIPLAYER
@@ -54,21 +56,32 @@ func _ready():
 
 
 func game_started():
+	game_mode = GameMode.MULTIPLAYER
 	game_state = GameState.COMBINING
 	current_player = Player.PLAYER_1
 	turn_count = 0
 	tile_map.reset()
 	filled_tiles = 0
 	update_progress_bar()
+	unique_filled_tiles.clear()
 	sound_manager.start_game_music()
+	print("Game started. Mode: ", "Multiplayer" if game_mode == GameMode.MULTIPLAYER else "Single Player")
 	show_combination_board(current_player)
 
 
 func single_player_game_started():
 	game_mode = GameMode.SINGLE_PLAYER
 	ai_player = load("res://scripts/AIPlayer.gd").new(self, combination_board_p2, tile_map)
-	game_started()
-
+	game_state = GameState.COMBINING
+	current_player = Player.PLAYER_1
+	turn_count = 0
+	tile_map.reset()
+	filled_tiles = 0
+	update_progress_bar()
+	unique_filled_tiles.clear()
+	sound_manager.start_game_music()
+	print("Game started. Mode: ", "SinglePlayer" if game_mode == GameMode.SINGLE_PLAYER else "Multi Player")
+	show_combination_board(current_player)
 
 func hide_combination_boards():
 	combination_board_p1.hide_board()
@@ -77,9 +90,10 @@ func hide_combination_boards():
 	combination_board_p2.get_node("CombinationMap").set_ai_turn(true)  # Change this line
 
 func show_combination_board(player: Player):
+	print("Showing combination board for player: ", player, " Game mode: ", game_mode)
 	hide_combination_boards()
 	var is_ai_turn = game_mode == GameMode.SINGLE_PLAYER and player == Player.PLAYER_2
-	if player == Player.PLAYER_1:
+	if not is_ai_turn:
 		combination_board_p1.show_board()
 		combination_board_p1.get_node("CombinationMap").set_ai_turn(false)
 		combination_board_p1.get_node("CombinationMap").reset()
@@ -103,15 +117,22 @@ func _on_piece_placed():
 		return
 	filled_tiles += tile_map.active_piece.size()
 	update_progress_bar()
-
-	if (filled_tiles / float(total_tiles)) >= 0.9:
+	update_unique_filled_tiles()
+	if (unique_filled_tiles.size() / float(total_tiles)) >= 0.9:
 		end_game()
 	else:
 		end_turn()
 
+func update_unique_filled_tiles():
+	var board_rect = tile_map.get_used_rect()
+	for x in range(board_rect.position.x, board_rect.end.x):
+		for y in range(board_rect.position.y, board_rect.end.y):
+			var cell = tile_map.get_cell_atlas_coords(0, Vector2i(x, y))
+			if cell != tile_map.EMPTY_TILE:
+				unique_filled_tiles[Vector2i(x, y)] = true
 
 func update_progress_bar():
-	var fill_percentage = filled_tiles / float(total_tiles)
+	var fill_percentage = unique_filled_tiles.size() / float(total_tiles)
 	potion_1.value = fill_percentage
 	potion_2.value = fill_percentage
 	potion_3.value = fill_percentage
@@ -143,7 +164,7 @@ func end_game():
 		WinResult.TIE:
 			winner_message = "Game Over! It's a tie!"
 			sound_manager.play_win_sound("shadow")  # Play any win sound for a tie
-	print_debug(winner_message)
+	#print_debug(winner_message)
 	menu_manager_node.on_game_over(winner_message)
 
 
@@ -159,13 +180,14 @@ func enable_player_input():
 
 
 func end_turn():
+	print("End turn. Current player: ", current_player, " Game mode: ", game_mode)
 	turn_count += 1
-	print_debug("Turn " + str(turn_count) + " completed")
+	#print_debug("Turn " + str(turn_count) + " completed")
 	switch_player()
 	game_state = GameState.COMBINING
 	show_combination_board(current_player)
 	tile_map.update_for_new_turn(current_player)
-	print_debug("Turn " + str(turn_count + 1) + " - Player " + str(current_player + 1) + "'s turn")
+	#print_debug("Turn " + str(turn_count + 1) + " - Player " + str(current_player + 1) + "'s turn")
 	if game_mode == GameMode.SINGLE_PLAYER and current_player == Player.PLAYER_2:
 		call_deferred("ai_turn")
 	else:
@@ -173,6 +195,7 @@ func end_turn():
 
 
 func ai_turn():
+	print("AI turn started")
 	# Disable player input during AI turn
 	tile_map.set_process_unhandled_input(false)
 	combination_board_p1.get_node("CombinationMap").set_process_unhandled_input(false)
@@ -204,9 +227,9 @@ func determine_winner() -> WinResult:
 				player1_tiles += 1
 			elif cell == tile_map.PLAYER_2_TILE:
 				player2_tiles += 1
-
-	print_debug("player1_tiles - ", player1_tiles)
-	print_debug("player2_tiles - ", player2_tiles)
+#
+	#print_debug("player1_tiles - ", player1_tiles)
+	#print_debug("player2_tiles - ", player2_tiles)
 
 	if player1_tiles > player2_tiles:
 		return WinResult.PLAYER_1_WIN

@@ -139,6 +139,11 @@ volume_db = -10.0
 stream = ExtResource("14_al88k")
 volume_db = -10.0
 
+[node name="BoardBoundary" type="Area2D" parent="GameManager/TileMap" index="12"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GameManager/TileMap/BoardBoundary"]
+polygon = PackedVector2Array(-1.04166, -1.04167, 222.917, -1.04167, 223.958, 111.458, -2.08333, 111.458)
+
 [node name="CombinationBoardP1" parent="GameManager" index="1"]
 offset_left = 133.0
 offset_top = 216.0
@@ -177,16 +182,14 @@ offset_right = 97.0
 offset_bottom = 166.0
 
 [node name="Label" parent="MenuManager/MainMenu/VBoxContainer/SinglePlayer" index="0"]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 148.0
-offset_bottom = 23.0
+anchors_preset = 0
+offset_left = 41.0
+offset_top = 10.0
+offset_right = 189.0
+offset_bottom = 33.0
 
 [node name="QuitToDesktop" parent="MenuManager/MainMenu/VBoxContainer" index="3"]
 visible = false
-
-[node name="OptionsMenu" parent="MenuManager" index="2"]
-visible = true
 
 [node name="OptionsVBox" parent="MenuManager/OptionsMenu" index="1"]
 offset_left = -188.0
