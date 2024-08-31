@@ -69,10 +69,10 @@ offset_top = 172.0
 offset_right = 181.6
 offset_bottom = 172.0
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="Potions" type="Node2D" parent="."]
 position = Vector2(372, 99)
 
-[node name="Potion1" type="TextureProgressBar" parent="Node2D"]
+[node name="Potion1" type="TextureProgressBar" parent="Potions"]
 offset_left = 317.0
 offset_top = 94.0
 offset_right = 357.0
@@ -83,7 +83,7 @@ fill_mode = 3
 texture_under = ExtResource("5_iwn32")
 texture_progress = ExtResource("6_1nvub")
 
-[node name="Potion2" type="TextureProgressBar" parent="Node2D"]
+[node name="Potion2" type="TextureProgressBar" parent="Potions"]
 offset_left = 294.0
 offset_top = 129.0
 offset_right = 334.0
@@ -94,7 +94,7 @@ fill_mode = 3
 texture_under = ExtResource("7_7p1xy")
 texture_progress = ExtResource("8_figqx")
 
-[node name="Potion3" type="TextureProgressBar" parent="Node2D"]
+[node name="Potion3" type="TextureProgressBar" parent="Potions"]
 offset_left = 146.0
 offset_top = 185.0
 offset_right = 186.0
@@ -106,7 +106,7 @@ fill_mode = 3
 texture_under = ExtResource("9_koeom")
 texture_progress = ExtResource("10_tce8m")
 
-[node name="Potion4" type="TextureProgressBar" parent="Node2D"]
+[node name="Potion4" type="TextureProgressBar" parent="Potions"]
 offset_left = 290.0
 offset_top = 49.0
 offset_right = 350.0
@@ -117,7 +117,7 @@ fill_mode = 3
 texture_under = ExtResource("11_0bxmr")
 texture_progress = ExtResource("12_qx1rf")
 
-[node name="Potion5" type="TextureProgressBar" parent="Node2D"]
+[node name="Potion5" type="TextureProgressBar" parent="Potions"]
 offset_left = 250.0
 offset_top = 93.0
 offset_right = 290.0
@@ -129,7 +129,7 @@ fill_mode = 3
 texture_under = ExtResource("7_7p1xy")
 texture_progress = ExtResource("8_figqx")
 
-[node name="Potion6" type="TextureProgressBar" parent="Node2D"]
+[node name="Potion6" type="TextureProgressBar" parent="Potions"]
 offset_left = 256.0
 offset_top = 16.0
 offset_right = 296.0
@@ -141,7 +141,7 @@ fill_mode = 3
 texture_under = ExtResource("5_iwn32")
 texture_progress = ExtResource("6_1nvub")
 
-[node name="Potion7" type="TextureProgressBar" parent="Node2D"]
+[node name="Potion7" type="TextureProgressBar" parent="Potions"]
 offset_left = 252.0
 offset_top = 72.0
 offset_right = 292.0
@@ -152,7 +152,7 @@ fill_mode = 3
 texture_under = ExtResource("5_iwn32")
 texture_progress = ExtResource("6_1nvub")
 
-[node name="Potion8" type="TextureProgressBar" parent="Node2D"]
+[node name="Potion8" type="TextureProgressBar" parent="Potions"]
 offset_left = 284.0
 offset_top = 4.0
 offset_right = 324.0

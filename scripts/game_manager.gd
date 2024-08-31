@@ -18,15 +18,16 @@ var winner_message: String
 @onready var game_manager = $"."
 @onready var menu_manager_node = $"../MenuManager"
 @onready var splash_screen = $"../SplashScreen"
-@onready var potion_1: TextureProgressBar = $Potion1
-@onready var potion_2: TextureProgressBar = $Potion2
-@onready var potion_3: TextureProgressBar = $Potion3
-@onready var potion_4: TextureProgressBar = $Potion4
-@onready var potion_5: TextureProgressBar = $Potion5
-@onready var potion_6: TextureProgressBar = $Potion6
-@onready var potion_7: TextureProgressBar = $Potion7
-@onready var potion_8: TextureProgressBar = $Potion8
+@onready var potion_1: TextureProgressBar = $Potions/Potion1
+@onready var potion_2: TextureProgressBar = $Potions/Potion2
+@onready var potion_3: TextureProgressBar = $Potions/Potion3
+@onready var potion_4: TextureProgressBar = $Potions/Potion4
+@onready var potion_5: TextureProgressBar = $Potions/Potion5
+@onready var potion_6: TextureProgressBar = $Potions/Potion6
+@onready var potion_7: TextureProgressBar = $Potions/Potion7
+@onready var potion_8: TextureProgressBar = $Potions/Potion8
 @onready var sound_manager = $GameSoundManager
+@onready var boundary_polygon: CollisionPolygon2D = $TileMap/BoardBoundary/CollisionPolygon2D
 
 var total_tiles: int
 var filled_tiles: int

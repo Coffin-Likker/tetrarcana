@@ -142,7 +142,7 @@ volume_db = -10.0
 [node name="BoardBoundary" type="Area2D" parent="GameManager/TileMap" index="12"]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GameManager/TileMap/BoardBoundary"]
-polygon = PackedVector2Array(-1.04166, -1.04167, 222.917, -1.04167, 223.958, 111.458, -2.08333, 111.458)
+polygon = PackedVector2Array(0, 0, 96.25, 0, 96.25, -96.25, 191.25, -95, 191.25, 1.25, 287.5, 1.25, 287.5, 95, 0, 95)
 
 [node name="CombinationBoardP1" parent="GameManager" index="1"]
 offset_left = 133.0
