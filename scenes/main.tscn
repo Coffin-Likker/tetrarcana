@@ -139,6 +139,11 @@ volume_db = -10.0
 stream = ExtResource("14_al88k")
 volume_db = -10.0
 
+[node name="BoardBoundary" type="Area2D" parent="GameManager/TileMap" index="12"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GameManager/TileMap/BoardBoundary"]
+polygon = PackedVector2Array(-1.04166, -1.04167, 222.917, -1.04167, 223.958, 111.458, -2.08333, 111.458)
+
 [node name="CombinationBoardP1" parent="GameManager" index="1"]
 offset_left = 133.0
 offset_top = 216.0
