@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://bqwy0lc55ksab"]
+[gd_scene load_steps=7 format=3 uid="uid://bqwy0lc55ksab"]
 
 [ext_resource type="Script" path="res://scripts/menu-scripts/MenuManager.gd" id="1_qcj65"]
 [ext_resource type="AudioStream" uid="uid://cebhn3co8nfvv" path="res://assets/main_menu.wav" id="2_1d223"]
 [ext_resource type="PackedScene" uid="uid://bts3l1tbe6g7j" path="res://scenes/menu-scenes/MainMenu.tscn" id="3_yqfju"]
 [ext_resource type="PackedScene" uid="uid://wan2isystoxp" path="res://scenes/menu-scenes/OptionsMenu.tscn" id="4_qi2jo"]
+[ext_resource type="PackedScene" uid="uid://c5fo02of13hth" path="res://scenes/menu-scenes/DifficultyMenu.tscn" id="5_n8ioo"]
 [ext_resource type="PackedScene" uid="uid://bdrku4cijohn3" path="res://scenes/menu-scenes/GameOverMenu.tscn" id="5_qhptl"]
 
 [node name="MenuManager" type="Container"]
@@ -18,11 +19,14 @@ bus = &"Music"
 layout_mode = 2
 
 [node name="Label" parent="MainMenu/VBoxContainer/SinglePlayer" index="0"]
-offset_top = 9.0
 offset_right = 149.064
 offset_bottom = 32.0
 
 [node name="OptionsMenu" parent="." instance=ExtResource("4_qi2jo")]
+visible = false
+layout_mode = 2
+
+[node name="DifficultyMenu" parent="." instance=ExtResource("5_n8ioo")]
 visible = false
 layout_mode = 2
 
