@@ -18,15 +18,16 @@ var winner_message: String
 @onready var game_manager = $"."
 @onready var menu_manager_node = $"../MenuManager"
 @onready var splash_screen = $"../SplashScreen"
-@onready var potion_1: TextureProgressBar = $Potion1
-@onready var potion_2: TextureProgressBar = $Potion2
-@onready var potion_3: TextureProgressBar = $Potion3
-@onready var potion_4: TextureProgressBar = $Potion4
-@onready var potion_5: TextureProgressBar = $Potion5
-@onready var potion_6: TextureProgressBar = $Potion6
-@onready var potion_7: TextureProgressBar = $Potion7
-@onready var potion_8: TextureProgressBar = $Potion8
+@onready var potion_1: TextureProgressBar = $Potions/Potion1
+@onready var potion_2: TextureProgressBar = $Potions/Potion2
+@onready var potion_3: TextureProgressBar = $Potions/Potion3
+@onready var potion_4: TextureProgressBar = $Potions/Potion4
+@onready var potion_5: TextureProgressBar = $Potions/Potion5
+@onready var potion_6: TextureProgressBar = $Potions/Potion6
+@onready var potion_7: TextureProgressBar = $Potions/Potion7
+@onready var potion_8: TextureProgressBar = $Potions/Potion8
 @onready var sound_manager = $GameSoundManager
+@onready var boundary_polygon: CollisionPolygon2D = $TileMap/BoardBoundary/CollisionPolygon2D
 
 var total_tiles: int
 var filled_tiles: int
@@ -50,9 +51,10 @@ func _ready():
 	combination_board_p2.connect("combination_complete", Callable(self, "on_combination_complete"))
 	game_state = GameState.MENU
 	hide_combination_boards()
-
-	var board_rect = tile_map.get_used_rect()
-	total_tiles = board_rect.size.x * board_rect.size.y - 2 * board_rect.size.y  # Subtract the two starting columns
+	
+	# Count the total number of tiles on the board (that don't start filled)
+	var empty_tiles = tile_map.get_used_cells_by_id(tile_map.BOARD_LAYER, tile_map.TILESET_SOURCE_ID, tile_map.EMPTY_TILE)
+	total_tiles = len(empty_tiles)
 
 
 func game_started():
@@ -123,13 +125,12 @@ func _on_piece_placed():
 	else:
 		end_turn()
 
+## Update the dictionary of unique cells that have been filled by players
 func update_unique_filled_tiles():
-	var board_rect = tile_map.get_used_rect()
-	for x in range(board_rect.position.x, board_rect.end.x):
-		for y in range(board_rect.position.y, board_rect.end.y):
-			var cell = tile_map.get_cell_atlas_coords(0, Vector2i(x, y))
-			if cell != tile_map.EMPTY_TILE:
-				unique_filled_tiles[Vector2i(x, y)] = true
+	for cell in tile_map.get_used_cells(tile_map.BOARD_LAYER):
+		var atlas_coords = tile_map.get_cell_atlas_coords(tile_map.BOARD_LAYER, cell)
+		if atlas_coords != tile_map.EMPTY_TILE:
+			unique_filled_tiles[cell] = true
 
 func update_progress_bar():
 	var fill_percentage = unique_filled_tiles.size() / float(total_tiles)
@@ -219,17 +220,13 @@ func switch_player():
 func determine_winner() -> WinResult:
 	var player1_tiles = 0
 	var player2_tiles = 0
-	var board_size = tile_map.get_used_rect().size
-	for x in range(board_size.x):
-		for y in range(board_size.y):
-			var cell = tile_map.get_cell_atlas_coords(0, Vector2i(x, y))
-			if cell == tile_map.PLAYER_1_TILE:
-				player1_tiles += 1
-			elif cell == tile_map.PLAYER_2_TILE:
-				player2_tiles += 1
-#
-	#print_debug("player1_tiles - ", player1_tiles)
-	#print_debug("player2_tiles - ", player2_tiles)
+				
+	for cell in tile_map.get_used_cells(tile_map.BOARD_LAYER):
+		var atlas_coords = tile_map.get_cell_atlas_coords(tile_map.BOARD_LAYER, cell)
+		if atlas_coords == tile_map.PLAYER_1_TILE:
+			player1_tiles += 1
+		elif atlas_coords == tile_map.PLAYER_2_TILE:
+			player2_tiles += 1
 
 	if player1_tiles > player2_tiles:
 		return WinResult.PLAYER_1_WIN

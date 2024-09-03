@@ -1,6 +1,7 @@
-[gd_scene load_steps=15 format=3 uid="uid://c6x3w78dh2e2n"]
+[gd_scene load_steps=17 format=3 uid="uid://c6x3w78dh2e2n"]
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_ko4jb"]
+[ext_resource type="Texture2D" uid="uid://dt88nmtesrlme" path="res://assets/tiles_sheet_newborder.png" id="2_d7ae7"]
 [ext_resource type="PackedScene" uid="uid://do0fobsnwpl66" path="res://scenes/combination_board.tscn" id="2_hdvyb"]
 [ext_resource type="Texture2D" uid="uid://boq8fputfekr5" path="res://assets/tiles_sheet_circles.png" id="2_xwqbi"]
 [ext_resource type="Script" path="res://scripts/tile_map.gd" id="3_l56uk"]
@@ -12,6 +13,22 @@
 [ext_resource type="Texture2D" uid="uid://yg4317qgsu3a" path="res://assets/potions/finalpotion3_filled.png" id="10_tce8m"]
 [ext_resource type="Texture2D" uid="uid://bql0mcq1fkpsn" path="res://assets/potions/finalpotion4_empty.png" id="11_0bxmr"]
 [ext_resource type="Texture2D" uid="uid://bmtag1n3qawhd" path="res://assets/potions/finalpotion4_filled.png" id="12_qx1rf"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_b1vs0"]
+texture = ExtResource("2_d7ae7")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_n654h"]
 texture = ExtResource("2_xwqbi")
@@ -28,7 +45,8 @@ texture = ExtResource("2_xwqbi")
 
 [sub_resource type="TileSet" id="TileSet_2umof"]
 uv_clipping = true
-sources/0 = SubResource("TileSetAtlasSource_n654h")
+sources/2 = SubResource("TileSetAtlasSource_n654h")
+sources/0 = SubResource("TileSetAtlasSource_b1vs0")
 
 [node name="GameManager" type="Node2D"]
 script = ExtResource("1_ko4jb")
@@ -36,7 +54,7 @@ script = ExtResource("1_ko4jb")
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_2umof")
 format = 2
-layer_0/tile_data = PackedInt32Array(0, 262144, 0, 65536, 262144, 0, 131072, 262144, 0, 196608, 262144, 0, 262144, 262144, 0, 327680, 262144, 0, 393216, 262144, 0, 1, 262144, 0, 65537, 262144, 0, 131073, 262144, 0, 196609, 262144, 0, 262145, 262144, 0, 327681, 262144, 0, 393217, 262144, 0, 2, 262144, 0, 65538, 262144, 0, 131074, 262144, 0, 196610, 262144, 0, 262146, 262144, 0, 327682, 262144, 0, 393218, 262144, 0, 3, 262144, 0, 65539, 262144, 0, 131075, 262144, 0, 196611, 262144, 0, 262147, 262144, 0, 327683, 262144, 0, 393219, 262144, 0, 4, 262144, 0, 65540, 262144, 0, 131076, 262144, 0, 196612, 262144, 0, 262148, 262144, 0, 327684, 262144, 0, 393220, 262144, 0, 5, 262144, 0, 65541, 262144, 0, 131077, 262144, 0, 196613, 262144, 0, 262149, 262144, 0, 327685, 262144, 0, 393221, 262144, 0, 6, 262144, 0, 65542, 262144, 0, 131078, 262144, 0, 196614, 262144, 0, 262150, 262144, 0, 327686, 262144, 0, 393222, 262144, 0, 7, 262144, 0, 65543, 262144, 0, 131079, 262144, 0, 196615, 262144, 0, 262151, 262144, 0, 327687, 262144, 0, 393223, 262144, 0, 8, 262144, 0, 65544, 262144, 0, 131080, 262144, 0, 196616, 262144, 0, 262152, 262144, 0, 327688, 262144, 0, 393224, 262144, 0, 9, 262144, 0, 65545, 262144, 0, 131081, 262144, 0, 196617, 262144, 0, 262153, 262144, 0, 327689, 262144, 0, 393225, 262144, 0, 10, 262144, 0, 65546, 262144, 0, 131082, 262144, 0, 196618, 262144, 0, 262154, 262144, 0, 327690, 262144, 0, 393226, 262144, 0, 11, 262144, 0, 65547, 262144, 0, 131083, 262144, 0, 196619, 262144, 0, 262155, 262144, 0, 327691, 262144, 0, 393227, 262144, 0, 12, 262144, 0, 65548, 262144, 0, 131084, 262144, 0, 196620, 262144, 0, 262156, 262144, 0, 327692, 262144, 0, 393228, 262144, 0, 13, 262144, 0, 65549, 262144, 0, 131085, 262144, 0, 196621, 262144, 0, 262157, 262144, 0, 327693, 262144, 0, 393229, 262144, 0)
+layer_0/tile_data = PackedInt32Array(0, 393216, 1342177280, 65536, 458752, 0, 131072, 458752, 0, 196608, 458752, 0, 262144, 458752, 0, 1, 458752, 1342177280, 65537, 262144, 0, 131073, 262144, 0, 196609, 262144, 0, 262145, 262144, 0, 2, 458752, 1342177280, 65538, 262144, 0, 131074, 262144, 0, 196610, 262144, 0, 262146, 262144, 0, 3, 458752, 1342177280, 65539, 262144, 0, 131075, 262144, 0, 196611, 262144, 0, 262147, 262144, 0, 4, 458752, 1342177280, 65540, 262144, 0, 131076, 262144, 0, 196612, 262144, 0, 262148, 262144, 0, 5, 458752, 1342177280, 65541, 262144, 0, 131077, 262144, 0, 196613, 262144, 0, 262149, 262144, 0, 6, 262144, 0, 65542, 262144, 0, 131078, 262144, 0, 196614, 262144, 0, 262150, 262144, 0, 7, 262144, 0, 65543, 262144, 0, 131079, 262144, 0, 196615, 262144, 0, 262151, 262144, 0, 8, 262144, 0, 65544, 262144, 0, 131080, 262144, 0, 196616, 262144, 0, 262152, 262144, 0, 9, 262144, 0, 65545, 262144, 0, 131081, 262144, 0, 196617, 262144, 0, 262153, 262144, 0, 10, 262144, 0, 65546, 262144, 0, 131082, 262144, 0, 196618, 262144, 0, 262154, 262144, 0, 11, 262144, 0, 65547, 262144, 0, 131083, 262144, 0, 196619, 262144, 0, 262155, 262144, 0, 12, 458752, 1342177280, 65548, 262144, 0, 131084, 262144, 0, 196620, 262144, 0, 262156, 262144, 0, 13, 458752, 1342177280, 131085, 262144, 0, 196621, 262144, 0, 262157, 262144, 0, 14, 458752, 1342177280, 65550, 262144, 0, 131086, 262144, 0, 196622, 262144, 0, 262158, 262144, 0, 65549, 262144, 0, -327673, 262144, 0, -327672, 262144, 0, -327671, 262144, 0, -262135, 262144, 0, -196599, 262144, 0, -131063, 262144, 0, -65527, 262144, 0, -65528, 262144, 0, -65529, 262144, 0, -131065, 262144, 0, -131064, 262144, 0, -196600, 262144, 0, -196601, 262144, 0, -262137, 262144, 0, -262136, 262144, 0, 327680, 393216, 0, 327681, 458752, 1610612736, 327682, 458752, 1610612736, 327683, 458752, 1610612736, 327684, 458752, 1610612736, 327685, 458752, 1610612736, 327686, 458752, 1610612736, 327687, 458752, 1610612736, 327688, 458752, 1610612736, 327689, 458752, 1610612736, 327690, 458752, 1610612736, 327691, 458752, 1610612736, 327692, 458752, 1610612736, 327693, 458752, 1610612736, 327694, 458752, 1610612736, -327670, 262144, 0, -327669, 458752, 805306368, -262133, 458752, 805306368, -196597, 458752, 805306368, -131061, 458752, 805306368, -65525, 458752, 805306368, -65526, 262144, 0, -131062, 262144, 0, -196598, 262144, 0, -262134, 262144, 0, 15, 458752, 1342177280, 16, 458752, 1342177280, 17, 393216, 805306368, 65553, 458752, 805306368, 131089, 458752, 805306368, 196625, 458752, 805306368, 262161, 458752, 805306368, 327697, 393216, 1610612736, 327696, 458752, 1610612736, 327695, 458752, 1610612736, 262159, 262144, 0, 262160, 262144, 0, 196624, 262144, 0, 196623, 262144, 0, 131087, 262144, 0, 65551, 262144, 0, 65552, 262144, 0, 131088, 262144, 0, -393209, 458752, 1342177280, -393208, 458752, 1342177280, -393207, 458752, 1342177280, -393206, 458752, 1342177280, -393205, 393216, 805306368, -393210, 393216, 1342177280, -327674, 458752, 0, -262138, 458752, 0, -196602, 458752, 0, -131066, 458752, 0, -65530, 458752, 0)
 script = ExtResource("3_l56uk")
 
 [node name="CombinationBoardP1" parent="." instance=ExtResource("2_hdvyb")]
@@ -51,7 +69,10 @@ offset_top = 172.0
 offset_right = 181.6
 offset_bottom = 172.0
 
-[node name="Potion1" type="TextureProgressBar" parent="."]
+[node name="Potions" type="Node2D" parent="."]
+position = Vector2(372, 99)
+
+[node name="Potion1" type="TextureProgressBar" parent="Potions"]
 offset_left = 317.0
 offset_top = 94.0
 offset_right = 357.0
@@ -62,18 +83,22 @@ fill_mode = 3
 texture_under = ExtResource("5_iwn32")
 texture_progress = ExtResource("6_1nvub")
 
-[node name="Potion2" type="TextureProgressBar" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Potion2" type="TextureProgressBar" parent="Potions"]
+offset_left = 294.0
+offset_top = 129.0
+offset_right = 334.0
+offset_bottom = 180.0
 max_value = 1.1
 step = 0.1
 fill_mode = 3
 texture_under = ExtResource("7_7p1xy")
 texture_progress = ExtResource("8_figqx")
 
-[node name="Potion3" type="TextureProgressBar" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Potion3" type="TextureProgressBar" parent="Potions"]
+offset_left = 146.0
+offset_top = 185.0
+offset_right = 186.0
+offset_bottom = 225.0
 scale = Vector2(1.1, 1.1)
 max_value = 1.1
 step = 0.1
@@ -81,18 +106,22 @@ fill_mode = 3
 texture_under = ExtResource("9_koeom")
 texture_progress = ExtResource("10_tce8m")
 
-[node name="Potion4" type="TextureProgressBar" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Potion4" type="TextureProgressBar" parent="Potions"]
+offset_left = 290.0
+offset_top = 49.0
+offset_right = 350.0
+offset_bottom = 110.0
 max_value = 1.1
 step = 0.1
 fill_mode = 3
 texture_under = ExtResource("11_0bxmr")
 texture_progress = ExtResource("12_qx1rf")
 
-[node name="Potion5" type="TextureProgressBar" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Potion5" type="TextureProgressBar" parent="Potions"]
+offset_left = 250.0
+offset_top = 93.0
+offset_right = 290.0
+offset_bottom = 144.0
 scale = Vector2(1.1, 1.1)
 max_value = 1.1
 step = 0.1
@@ -100,7 +129,7 @@ fill_mode = 3
 texture_under = ExtResource("7_7p1xy")
 texture_progress = ExtResource("8_figqx")
 
-[node name="Potion6" type="TextureProgressBar" parent="."]
+[node name="Potion6" type="TextureProgressBar" parent="Potions"]
 offset_left = 256.0
 offset_top = 16.0
 offset_right = 296.0
@@ -112,18 +141,22 @@ fill_mode = 3
 texture_under = ExtResource("5_iwn32")
 texture_progress = ExtResource("6_1nvub")
 
-[node name="Potion7" type="TextureProgressBar" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Potion7" type="TextureProgressBar" parent="Potions"]
+offset_left = 252.0
+offset_top = 72.0
+offset_right = 292.0
+offset_bottom = 112.0
 max_value = 1.1
 step = 0.1
 fill_mode = 3
 texture_under = ExtResource("5_iwn32")
 texture_progress = ExtResource("6_1nvub")
 
-[node name="Potion8" type="TextureProgressBar" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Potion8" type="TextureProgressBar" parent="Potions"]
+offset_left = 284.0
+offset_top = 4.0
+offset_right = 324.0
+offset_bottom = 44.0
 scale = Vector2(1.2, 1.2)
 max_value = 1.1
 step = 0.1

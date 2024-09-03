@@ -75,11 +75,21 @@ func _ready():
 
 	set_layer_z_index(GHOST_LAYER, GHOST_LAYER_Z_INDEX)
 
-	board_rect = get_used_rect()
-	current_ghost_position = Vector2i(
-		board_rect.position.x + board_rect.size.x / 2, board_rect.position.y + board_rect.size.y / 2
-	)
-	update_ghost_piece(current_ghost_position)
+	place_ghost_in_centre()
+
+func place_ghost_in_centre():
+	# Calculate board centroid
+	var sum_x = 0
+	var sum_y = 0
+	var count = 0
+	
+	for cell in get_used_cells(BOARD_LAYER):
+		sum_x += cell.x
+		sum_y += cell.y
+		count += 1
+	
+	var centroid = Vector2i(sum_x / count, sum_y / count)
+	update_ghost_piece(centroid)
 
 
 func reset():
@@ -87,23 +97,32 @@ func reset():
 	var map_position = local_to_map(local_position)
 	print_debug("Resetting the game board")
 
-	# Clear both layers of the TileMap
-	var board_size = get_used_rect().size
-	for x in range(board_size.x):
-		for y in range(board_size.y):
-			var cell_pos = Vector2i(x, y)
-			var cell_atlas_coords = get_cell_atlas_coords(BOARD_LAYER, cell_pos)
-			if cell_atlas_coords != EMPTY_TILE:
-				set_cell(BOARD_LAYER, cell_pos, TILESET_SOURCE_ID, EMPTY_TILE)
+	# Clear the tilemap	
+	for cell in get_used_cells(BOARD_LAYER):
+		var atlas_coords = get_cell_atlas_coords(BOARD_LAYER, cell)
+		if atlas_coords != EMPTY_TILE:
+			set_cell(BOARD_LAYER, cell, TILESET_SOURCE_ID, EMPTY_TILE)
+	
+	# Find the x-coordinate of the rightmost column of cells
+	var rightmost_coord = -INF
+	for cell in get_used_cells(BOARD_LAYER):
+		if cell.x > rightmost_coord:
+			rightmost_coord = cell.x
 
 	# Create starting columns for each player
-	# TODO: Would be nice to have these fill out one-by-one with a sound.
-	for y in range(board_size.y):
-		var player_1_cell_pos = Vector2i(0, y)
-		set_cell(BOARD_LAYER, player_1_cell_pos, TILESET_SOURCE_ID, PLAYER_1_TILE)
+	var leftmost_cells = []
+	var rightmost_cells = []
+	for cell in get_used_cells(BOARD_LAYER):
+		if cell.x == 0:
+			leftmost_cells.append(cell)
+		elif cell.x == rightmost_coord:
+			rightmost_cells.append(cell)
+			
+	for cell in leftmost_cells:
+		set_cell(BOARD_LAYER, cell, TILESET_SOURCE_ID, PLAYER_1_TILE)
 
-		var player_2_cell_pos = Vector2i(board_size.x - 1, y)
-		set_cell(BOARD_LAYER, player_2_cell_pos, TILESET_SOURCE_ID, PLAYER_2_TILE)
+	for cell in rightmost_cells:
+		set_cell(BOARD_LAYER, cell, TILESET_SOURCE_ID, PLAYER_2_TILE)
 
 	clear_layer(GHOST_LAYER)
 
@@ -129,16 +148,18 @@ func _input(event):
 	if get_parent().game_state != get_parent().GameState.PLACING or not is_processing_unhandled_input():
 		return
 
+	# Move the ghost pieces around to follow the mouse
 	if event is InputEventMouseMotion:
 		var local_position = get_local_mouse_position()
-		var map_position = local_to_map(local_position)
-		if get_used_rect().has_point(map_position):
+		if Geometry2D.is_point_in_polygon(local_position, boundary_polygon.polygon):
+			var map_position = local_to_map(local_position)
 			update_ghost_piece(map_position)
 
+	# Try and place pieces (if valid) when the user clicks
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var click_position = get_local_mouse_position()
-		var map_position = local_to_map(click_position)
-		if get_used_rect().has_point(map_position):
+		if Geometry2D.is_point_in_polygon(click_position, boundary_polygon.polygon):
+			var map_position = local_to_map(click_position)
 			_on_tile_clicked(map_position)
 
 
@@ -203,20 +224,33 @@ func can_place_piece(
 
 ## Checks if all positions of the piece are within the game board bounds.
 func is_in_bounds(piece: Array[Vector2i], map_position: Vector2i) -> bool:
-	return not calculate_piece_positions(piece, map_position).any(
-		func(piece_position: Vector2i) -> bool: return not Geometry2D.is_point_in_polygon(Vector2(piece_position), boundary_polygon.polygon)
-	)
+	#return calculate_piece_positions(piece, map_position).all(
+		#func(piece_position: Vector2i) -> bool: return Geometry2D.is_point_in_polygon(Vector2(piece_position), boundary_polygon.polygon)
+	#)
+	
+	var piece_positions = calculate_piece_positions(piece, map_position)
+	for position in piece_positions:
+		var local_position = map_to_local(position)
+		if not Geometry2D.is_point_in_polygon(local_position, boundary_polygon.polygon):
+			return false
+	return true
 
 
 ## Checks if a piece overlaps with any existing tiles of the player.
 func piece_overlaps(
 	piece: Array[Vector2i], map_position: Vector2i, player_tile: Vector2i, layer: int = BOARD_LAYER
 ) -> bool:
-	return calculate_piece_positions(piece, map_position).any(
-		func(piece_position: Vector2i) -> bool: return (
-			get_cell_atlas_coords(layer, piece_position) == player_tile
-		)
-	)
+	#return calculate_piece_positions(piece, map_position).any(
+		#func(piece_position: Vector2i) -> bool: return (
+			#get_cell_atlas_coords(layer, piece_position) == player_tile
+		#)
+	#)
+	
+	var piece_positions = calculate_piece_positions(piece, map_position)
+	for position in piece_positions:
+		if get_cell_atlas_coords(layer, position) == player_tile:
+			return true
+	return false
 
 
 ## Calculates all tile positions a piece would occupy.
@@ -257,9 +291,11 @@ func update_ghost_piece(map_position: Vector2i) -> void:
 	else:
 		ghost_tile = GHOST_TILE_OPPONENT if can_place else INVALID_GHOST_TILE_PLAYER_2
 
+	# Draw the ghost piece onto the board
 	for offset in active_piece:
 		var tile_position: Vector2i = map_position + offset
-		if get_used_rect().has_point(tile_position):
+		var local_position = map_to_local(tile_position)
+		if Geometry2D.is_point_in_polygon(local_position, boundary_polygon.polygon):
 			set_cell(GHOST_LAYER, tile_position, TILESET_SOURCE_ID, ghost_tile)
 
 
