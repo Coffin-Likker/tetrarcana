@@ -115,7 +115,7 @@ func _on_piece_placed():
 	filled_tiles += tile_map.active_piece.size()
 	update_progress_bar()
 	update_unique_filled_tiles()
-	if (unique_filled_tiles.size() / float(total_tiles)) >= 0.9:
+	if (unique_filled_tiles.size() / float(total_tiles)) >= 0.75:
 		end_game()
 	else:
 		end_turn()
@@ -124,7 +124,7 @@ func _on_piece_placed():
 func update_unique_filled_tiles():
 	for cell in tile_map.get_used_cells(tile_map.BOARD_LAYER):
 		var atlas_coords = tile_map.get_cell_atlas_coords(tile_map.BOARD_LAYER, cell)
-		if atlas_coords != tile_map.EMPTY_TILE:
+		if atlas_coords != tile_map.FULLY_EMPTY_TILE:
 			unique_filled_tiles[cell] = true
 
 func update_progress_bar():

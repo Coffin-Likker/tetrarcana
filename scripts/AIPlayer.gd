@@ -2,6 +2,7 @@ class_name AIOpponent
 
 extends Node
 
+var aggression = 1.0
 var game_manager: game_manager
 var combination_board: Control
 var tile_map: TileMap
@@ -138,7 +139,7 @@ func evaluate_placement(
 		var existing_tile: Vector2i = tile_map.get_cell_atlas_coords(
 			tile_map.BOARD_LAYER, position_to_check
 		)
-		if existing_tile == tile_map.EMPTY_TILE:
+		if existing_tile == tile_map.FULLY_EMPTY_TILE:
 			score += 1.0
 
 	var opponent_tile = (
@@ -152,7 +153,7 @@ func evaluate_placement(
 			tile_map.BOARD_LAYER, position_to_check
 		)
 		if existing_tile == opponent_tile:
-			score += 2.0
+			score += 1.0 + aggression
 
 	score += randf_range(0, 0.5)
 

@@ -6,11 +6,14 @@ const TILESET_SOURCE_ID = 0  # Make sure this matches your tileset source ID
 
 const PLAYER_1_TILE = Vector2i(0, 0)
 const PLAYER_2_TILE = Vector2i(2, 0)  # Red tile
-const EMPTY_TILE = Vector2i(4, 0)
+const FULLY_EMPTY_TILE = Vector2i(4, 0)
 const GHOST_TILE = Vector2i(1, 0)
 const GHOST_TILE_OPPONENT = Vector2i(3, 0)
 const INVALID_GHOST_TILE = Vector2i(1, 1)
 const INVALID_GHOST_TILE_PLAYER_2 = Vector2i(3, 1)
+
+# No I don't know why the reset pattern gets offset by 6 tiles
+const BOARD_ORIGIN = Vector2i(0, -6)
 
 # Layer constants
 const BOARD_LAYER = 0
@@ -26,6 +29,8 @@ signal piece_placed
 @onready var sound_manager = get_node("../GameSoundManager")
 @onready var input_manager = get_node("../InputManager")
 @onready var boundary_polygon: CollisionPolygon2D = $BoardBoundary/CollisionPolygon2D
+@onready var clean_board: TileMapPattern
+
 
 var move_cooldown = 0.1  # Time in seconds between moves when key is held
 var move_timers = {}
@@ -55,6 +60,8 @@ func set_active_piece(piece: Array[Vector2i]):
 
 
 func _ready():
+	clean_board = get_pattern(BOARD_LAYER, get_used_cells(BOARD_LAYER))
+	
 	InputMap.load_from_project_settings()
 	print_debug("TileMap initialized. Ready to process input.")
 	input_manager.connect("move_piece", Callable(self, "_on_move_piece"))
@@ -86,15 +93,8 @@ func place_ghost_in_centre():
 
 
 func reset():
-	var local_position = get_local_mouse_position()
-	var map_position = local_to_map(local_position)
-	print_debug("Resetting the game board")
-
-	# Clear the tilemap	
-	for cell in get_used_cells(BOARD_LAYER):
-		var atlas_coords = get_cell_atlas_coords(BOARD_LAYER, cell)
-		if atlas_coords != EMPTY_TILE:
-			set_cell(BOARD_LAYER, cell, TILESET_SOURCE_ID, EMPTY_TILE)
+	# Restore the board to its original state
+	set_pattern(BOARD_LAYER, BOARD_ORIGIN, clean_board)
 	
 	# Find the x-coordinate of the rightmost column of cells
 	var rightmost_coord = -INF
@@ -128,6 +128,8 @@ func reset():
 		add_layer(GHOST_LAYER)
 
 	# Update the ghost piece to reflect the new active piece
+	var local_position = get_local_mouse_position()
+	var map_position = local_to_map(local_position)
 	update_ghost_piece(map_position)
 
 	print_debug("Game board reset complete")
