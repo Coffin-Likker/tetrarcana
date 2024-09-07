@@ -1,3 +1,5 @@
+class_name GameBoard
+
 extends TileMap
 
 const TILESET_SOURCE_ID = 0  # Make sure this matches your tileset source ID
@@ -15,17 +17,11 @@ const BOARD_LAYER = 0
 const GHOST_LAYER = 1
 const GHOST_LAYER_Z_INDEX = 1
 
-enum Player { PLAYER_1, PLAYER_2 }
-enum GameState { MENU, PLACING, GAME_OVER }
-
 var current_ghost_position = Vector2i(0, 0)
 var active_piece: Array[Vector2i] = []
 
 signal piece_placed
 
-var board_rect: Rect2i
-
-var is_mouse_over_board = false
 
 @onready var sound_manager = get_node("../GameSoundManager")
 @onready var input_manager = get_node("../InputManager")
@@ -43,7 +39,7 @@ const MOVE_DIRECTIONS = {
 
 
 func play_placing_sound():
-	var sound = "shadow" if get_parent().current_player == Player.PLAYER_1 else "light"
+	var sound = "shadow" if get_parent().current_player == Constants.Player.PLAYER_1 else "light"
 	sound_manager.play_place_sound(sound)
 
 
@@ -54,10 +50,7 @@ func initialize_move_timers():
 
 func set_active_piece(piece: Array[Vector2i]):
 	active_piece = piece
-	current_ghost_position = Vector2i(
-		board_rect.position.x + board_rect.size.x / 2, board_rect.position.y + board_rect.size.y / 2
-	)
-	update_ghost_piece(current_ghost_position)
+	place_ghost_in_centre()
 	print_debug("Active piece set: ", active_piece)
 
 
@@ -145,7 +138,7 @@ func play_move_sound():
 
 
 func _input(event):
-	if get_parent().game_state != get_parent().GameState.PLACING or not is_processing_unhandled_input():
+	if get_parent().game_state != Constants.GameState.PLACING or not is_processing_unhandled_input():
 		return
 
 	# Move the ghost pieces around to follow the mouse
@@ -164,15 +157,15 @@ func _input(event):
 
 
 func _on_move_piece(direction: Vector2i):
-	if get_parent().game_state == get_parent().GameState.PLACING:
+	if get_parent().game_state == Constants.GameState.PLACING:
 		move_piece(direction)
 
 func _on_rotate_piece(clockwise: bool):
-	if get_parent().game_state == get_parent().GameState.PLACING:
+	if get_parent().game_state == Constants.GameState.PLACING:
 		set_active_piece(rotate_piece(active_piece, 1 if clockwise else -1))
 
 func _on_place_piece():
-	if get_parent().game_state == get_parent().GameState.PLACING:
+	if get_parent().game_state == Constants.GameState.PLACING:
 		_on_tile_clicked(current_ghost_position)
 
 func move_piece(direction: Vector2i):
@@ -184,14 +177,14 @@ func move_piece(direction: Vector2i):
 
 
 func _process(_delta):
-	if get_parent().game_state != get_parent().GameState.PLACING:
+	if get_parent().game_state != Constants.GameState.PLACING:
 		return
 	update_ghost_piece(current_ghost_position)
 
 func _on_tile_clicked(map_position: Vector2i) -> void:
 	var game_manager = get_parent()
 	var player_tile: Vector2i = (
-		PLAYER_1_TILE if game_manager.current_player == Player.PLAYER_1 else PLAYER_2_TILE
+		PLAYER_1_TILE if game_manager.current_player == Constants.Player.PLAYER_1 else PLAYER_2_TILE
 	)
 	place_piece(active_piece, map_position, player_tile)
 
@@ -224,33 +217,20 @@ func can_place_piece(
 
 ## Checks if all positions of the piece are within the game board bounds.
 func is_in_bounds(piece: Array[Vector2i], map_position: Vector2i) -> bool:
-	#return calculate_piece_positions(piece, map_position).all(
-		#func(piece_position: Vector2i) -> bool: return Geometry2D.is_point_in_polygon(Vector2(piece_position), boundary_polygon.polygon)
-	#)
-	
-	var piece_positions = calculate_piece_positions(piece, map_position)
-	for position in piece_positions:
-		var local_position = map_to_local(position)
-		if not Geometry2D.is_point_in_polygon(local_position, boundary_polygon.polygon):
-			return false
-	return true
+	return calculate_piece_positions(piece, map_position).all(
+		func(position: Vector2i) -> bool: return Geometry2D.is_point_in_polygon(map_to_local(position), boundary_polygon.polygon)
+	)
 
 
 ## Checks if a piece overlaps with any existing tiles of the player.
 func piece_overlaps(
 	piece: Array[Vector2i], map_position: Vector2i, player_tile: Vector2i, layer: int = BOARD_LAYER
 ) -> bool:
-	#return calculate_piece_positions(piece, map_position).any(
-		#func(piece_position: Vector2i) -> bool: return (
-			#get_cell_atlas_coords(layer, piece_position) == player_tile
-		#)
-	#)
-	
-	var piece_positions = calculate_piece_positions(piece, map_position)
-	for position in piece_positions:
-		if get_cell_atlas_coords(layer, position) == player_tile:
-			return true
-	return false
+	return calculate_piece_positions(piece, map_position).any(
+		func(piece_position: Vector2i) -> bool: return (
+			get_cell_atlas_coords(layer, piece_position) == player_tile
+		)
+	)
 
 
 ## Calculates all tile positions a piece would occupy.
@@ -264,7 +244,7 @@ func calculate_piece_positions(piece: Array[Vector2i], map_position: Vector2i) -
 func update_ghost_piece(map_position: Vector2i) -> void:
 	clear_layer(GHOST_LAYER)
 	var game_manager = get_parent()
-	if game_manager.game_state != game_manager.GameState.PLACING:
+	if game_manager.game_state != Constants.GameState.PLACING:
 		clear_layer(GHOST_LAYER)
 		return
 
@@ -276,17 +256,17 @@ func update_ghost_piece(map_position: Vector2i) -> void:
 
 	var current_player_tile: Vector2i = (
 		PLAYER_1_TILE
-		if game_manager.current_player == game_manager.Player.PLAYER_1
+		if game_manager.current_player == Constants.Player.PLAYER_1
 		else PLAYER_2_TILE
 	)
 	var ghost_tile
 
 	var can_place: bool = (
-		get_parent().game_state == get_parent().GameState.PLACING
+		get_parent().game_state == Constants.GameState.PLACING
 		and can_place_piece(active_piece, current_ghost_position, current_player_tile)
 	)
 
-	if game_manager.current_player == game_manager.Player.PLAYER_1:
+	if game_manager.current_player == Constants.Player.PLAYER_1:
 		ghost_tile = GHOST_TILE if can_place else INVALID_GHOST_TILE
 	else:
 		ghost_tile = GHOST_TILE_OPPONENT if can_place else INVALID_GHOST_TILE_PLAYER_2
@@ -318,8 +298,20 @@ func rotate_piece(piece_: Array[Vector2i], rotation_: int) -> Array[Vector2i]:
 	return rotated_piece
 
 
-func update_for_new_turn(new_player: Player):
+func update_for_new_turn(new_player: Constants.Player):
 	var local_position = get_local_mouse_position()
 	var map_position = local_to_map(local_position)
 	clear_layer(GHOST_LAYER)
 	update_ghost_piece(map_position)
+
+func get_empty_tiles():
+	var empty_tiles = []
+	for tile in get_used_cells(BOARD_LAYER):
+		var coords = get_cell_atlas_coords(BOARD_LAYER, tile)
+		var data = get_cell_tile_data(BOARD_LAYER, coords)
+		if data and data.get_custom_data("is_empty"):
+			empty_tiles.append(tile)
+	return empty_tiles
+
+func count_empty_tiles():
+	return len(get_empty_tiles())

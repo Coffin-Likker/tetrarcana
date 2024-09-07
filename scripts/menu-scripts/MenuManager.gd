@@ -145,5 +145,3 @@ func start_menu_music():
 
 func stop_menu_music():
 	bg_music.stop()
-
-

@@ -155,7 +155,7 @@ func can_place_piece(base_position: Vector2i) -> bool:
 
 func _on_tile_clicked(map_position: Vector2i):
 	var game_manager = get_parent().get_parent()
-	var player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
+	var player_tile = PLAYER_1_TILE if game_manager.current_player == Constants.Player.PLAYER_1 else PLAYER_2_TILE
 	place_piece(map_position, player_tile)
 
 func place_piece(base_position: Vector2i, tile: Vector2i):
@@ -182,14 +182,14 @@ func place_piece(base_position: Vector2i, tile: Vector2i):
 			if placed_pieces.size() == 2:
 				var result_piece = combine_pieces()
 				print_debug("Combination complete. Result: ", result_piece)
-				if game_manager.game_mode == game_manager.GameMode.SINGLE_PLAYER and game_manager.current_player == game_manager.Player.PLAYER_2:
+				if game_manager.game_mode == game_manager.GameMode.SINGLE_PLAYER and game_manager.current_player == Constants.Player.PLAYER_2:
 					await get_tree().create_timer(0.5).timeout  
-				var sound = "shadow" if game_manager.current_player == game_manager.Player.PLAYER_1 else "light"
+				var sound = "shadow" if game_manager.current_player == Constants.Player.PLAYER_1 else "light"
 				sound_manager.play_combine_sound(sound)  # Add this line
 				_on_combination_complete(result_piece)
 			else:
 				active_piece = get_random_piece()
-				var sound = "shadow" if game_manager.current_player == game_manager.Player.PLAYER_1 else "light"
+				var sound = "shadow" if game_manager.current_player == Constants.Player.PLAYER_1 else "light"
 				sound_manager.play_place_sound(sound)  # Add this line				
 				print_debug("New active piece: ", active_piece)
 			update_ghost_piece()
@@ -213,12 +213,12 @@ func update_ghost_piece(map_position = null):
 	if active_piece.is_empty():
 		return
 
-	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == game_manager.Player.PLAYER_1 else PLAYER_2_TILE
+	var current_player_tile = PLAYER_1_TILE if game_manager.current_player == Constants.Player.PLAYER_1 else PLAYER_2_TILE
 	var ghost_tile
 
 	var can_place = can_place_piece(current_ghost_position)
 	
-	if game_manager.current_player == game_manager.Player.PLAYER_1:
+	if game_manager.current_player == Constants.Player.PLAYER_1:
 		ghost_tile = GHOST_TILE if can_place else INVALID_GHOST_TILE
 	else:
 		ghost_tile = GHOST_TILE_OPPONENT if can_place else INVALID_GHOST_TILE_PLAYER_2

@@ -17,7 +17,7 @@ func make_combination() -> void:
 	var combination_map: TileMap = combination_board.get_node("CombinationMap")
 	var current_player_tile: Vector2i = (
 		combination_map.PLAYER_1_TILE
-		if game_manager.current_player == game_manager.Player.PLAYER_1
+		if game_manager.current_player == Constants.Player.PLAYER_1
 		else combination_map.PLAYER_2_TILE
 	)
 
@@ -78,7 +78,7 @@ func calculate_combined_size(pieces: Array) -> int:
 func place_piece() -> void:
 	var current_player_tile: Vector2i = (
 		tile_map.PLAYER_1_TILE
-		if game_manager.current_player == game_manager.Player.PLAYER_1
+		if game_manager.current_player == Constants.Player.PLAYER_1
 		else tile_map.PLAYER_2_TILE
 	)
 

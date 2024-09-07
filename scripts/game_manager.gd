@@ -2,17 +2,15 @@ extends Node2D
 
 class_name game_manager
 
-enum GameState { MENU, COMBINING, PLACING, GAME_OVER }
-enum Player { PLAYER_1, PLAYER_2 }
 enum WinResult { PLAYER_1_WIN, PLAYER_2_WIN, TIE }
 
-var game_state: GameState
-var current_player: Player
+var game_state: Constants.GameState
+var current_player: Constants.Player
 var turn_count: int = 0
 var winner: WinResult
 var winner_message: String
 
-@onready var tile_map: TileMap = $TileMap
+@onready var tile_map: GameBoard = $TileMap
 @onready var combination_board_p1: Control = $CombinationBoardP1
 @onready var combination_board_p2: Control = $CombinationBoardP2
 @onready var game_manager = $"."
@@ -33,7 +31,6 @@ var total_tiles: int
 var filled_tiles: int
 var unique_filled_tiles: Dictionary
 
-
 enum GameMode { MULTIPLAYER, SINGLE_PLAYER }
 var game_mode = GameMode.MULTIPLAYER
 var ai_player: AIOpponent
@@ -49,18 +46,16 @@ func _ready():
 	)
 	combination_board_p1.connect("combination_complete", Callable(self, "on_combination_complete"))
 	combination_board_p2.connect("combination_complete", Callable(self, "on_combination_complete"))
-	game_state = GameState.MENU
+	game_state = Constants.GameState.MENU
 	hide_combination_boards()
 	
-	# Count the total number of tiles on the board (that don't start filled)
-	var empty_tiles = tile_map.get_used_cells_by_id(tile_map.BOARD_LAYER, tile_map.TILESET_SOURCE_ID, tile_map.EMPTY_TILE)
-	total_tiles = len(empty_tiles)
+	total_tiles = tile_map.count_empty_tiles()
 
 
 func game_started():
 	game_mode = GameMode.MULTIPLAYER
-	game_state = GameState.COMBINING
-	current_player = Player.PLAYER_1
+	game_state = Constants.GameState.COMBINING
+	current_player = Constants.Player.PLAYER_1
 	turn_count = 0
 	tile_map.reset()
 	filled_tiles = 0
@@ -74,8 +69,8 @@ func game_started():
 func single_player_game_started():
 	game_mode = GameMode.SINGLE_PLAYER
 	ai_player = load("res://scripts/AIPlayer.gd").new(self, combination_board_p2, tile_map)
-	game_state = GameState.COMBINING
-	current_player = Player.PLAYER_1
+	game_state = Constants.GameState.COMBINING
+	current_player = Constants.Player.PLAYER_1
 	turn_count = 0
 	tile_map.reset()
 	filled_tiles = 0
@@ -91,10 +86,10 @@ func hide_combination_boards():
 	combination_board_p1.get_node("CombinationMap").set_ai_turn(true)  # Change this line
 	combination_board_p2.get_node("CombinationMap").set_ai_turn(true)  # Change this line
 
-func show_combination_board(player: Player):
+func show_combination_board(player: Constants.Player):
 	print("Showing combination board for player: ", player, " Game mode: ", game_mode)
 	hide_combination_boards()
-	var is_ai_turn = game_mode == GameMode.SINGLE_PLAYER and player == Player.PLAYER_2
+	var is_ai_turn = game_mode == GameMode.SINGLE_PLAYER and player == Constants.Player.PLAYER_2
 	if not is_ai_turn:
 		combination_board_p1.show_board()
 		combination_board_p1.get_node("CombinationMap").set_ai_turn(false)
@@ -103,19 +98,19 @@ func show_combination_board(player: Player):
 		combination_board_p2.show_board()
 		combination_board_p2.get_node("CombinationMap").set_ai_turn(is_ai_turn)
 		combination_board_p2.get_node("CombinationMap").reset()
-	game_state = GameState.COMBINING
+	game_state = Constants.GameState.COMBINING
 	sound_manager.play_parchment_sound()
 
 
 func on_combination_complete(combined_piece: Array[Vector2i]):
-	game_state = GameState.PLACING
+	game_state = Constants.GameState.PLACING
 	tile_map.clear_layer(tile_map.GHOST_LAYER)
 	tile_map.set_active_piece(combined_piece)
 	hide_combination_boards()
 
 
 func _on_piece_placed():
-	if game_state != GameState.PLACING:
+	if game_state != Constants.GameState.PLACING:
 		return
 	filled_tiles += tile_map.active_piece.size()
 	update_progress_bar()
@@ -153,7 +148,7 @@ func end_game():
 	potion_6.value = 1.1
 	potion_7.value = 1.1
 	potion_8.value = 1.1
-	game_state = GameState.GAME_OVER
+	game_state = Constants.GameState.GAME_OVER
 	winner = determine_winner()
 	match winner:
 		WinResult.PLAYER_1_WIN:
@@ -171,7 +166,7 @@ func end_game():
 
 func go_main_menu():
 	hide_combination_boards()
-	game_state = GameState.MENU
+	game_state = Constants.GameState.MENU
 	
 func enable_player_input():
 	# Enable input for player turn
@@ -183,13 +178,11 @@ func enable_player_input():
 func end_turn():
 	print("End turn. Current player: ", current_player, " Game mode: ", game_mode)
 	turn_count += 1
-	#print_debug("Turn " + str(turn_count) + " completed")
 	switch_player()
-	game_state = GameState.COMBINING
+	game_state = Constants.GameState.COMBINING
 	show_combination_board(current_player)
 	tile_map.update_for_new_turn(current_player)
-	#print_debug("Turn " + str(turn_count + 1) + " - Player " + str(current_player + 1) + "'s turn")
-	if game_mode == GameMode.SINGLE_PLAYER and current_player == Player.PLAYER_2:
+	if game_mode == GameMode.SINGLE_PLAYER and current_player == Constants.Player.PLAYER_2:
 		call_deferred("ai_turn")
 	else:
 		enable_player_input()
@@ -202,7 +195,7 @@ func ai_turn():
 	combination_board_p1.get_node("CombinationMap").set_process_unhandled_input(false)
 	combination_board_p2.get_node("CombinationMap").set_process_unhandled_input(false)
 
-	show_combination_board(Player.PLAYER_2)
+	show_combination_board(Constants.Player.PLAYER_2)
 	await get_tree().create_timer(1.0).timeout
 	ai_player.make_combination()
 	await get_tree().create_timer(1.0).timeout
@@ -214,7 +207,7 @@ func ai_turn():
 
 
 func switch_player():
-	current_player = Player.PLAYER_2 if current_player == Player.PLAYER_1 else Player.PLAYER_1
+	current_player = Constants.Player.PLAYER_2 if current_player == Constants.Player.PLAYER_1 else Constants.Player.PLAYER_1
 
 
 func determine_winner() -> WinResult:
