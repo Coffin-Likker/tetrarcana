@@ -183,7 +183,7 @@ func end_turn():
 	show_combination_board(current_player)
 	tile_map.update_for_new_turn(current_player)
 	if game_mode == GameMode.SINGLE_PLAYER and current_player == Constants.Player.PLAYER_2:
-		call_deferred("ai_turn")
+		ai_turn()
 	else:
 		enable_player_input()
 
@@ -201,9 +201,10 @@ func ai_turn():
 	await get_tree().create_timer(1.0).timeout
 	hide_combination_boards()
 	await get_tree().create_timer(0.5).timeout
-	await ai_player.place_piece()  # Wait for piece placement to complete
-	await get_tree().create_timer(0.5).timeout
-	end_turn()
+	game_state = Constants.GameState.PLACING
+	ai_player.place_piece()
+	#await get_tree().create_timer(0.5).timeout
+	#end_turn()
 
 
 func switch_player():
